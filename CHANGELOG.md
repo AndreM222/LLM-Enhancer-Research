@@ -17,3 +17,4 @@
 ### ⚙️ Miscellaneous Tasks
 
 - *(changelog)* Update CHANGELOG.md [skip ci]
+- *(changelog)* Update CHANGELOG.md [skip ci]
