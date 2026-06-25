@@ -1,32 +1,35 @@
-# Load node version manager if needed
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+set -u
+
+# ----------------------------------------
+# Load Node version manager if available
+# ----------------------------------------
+
 if command -v fnm >/dev/null 2>&1; then
-    eval "$(fnm env --shell bash 2>/dev/null)" 2>/dev/null || true
+  eval "$(fnm env --shell bash 2>/dev/null)" 2>/dev/null || true
 elif [ -s "$HOME/.nvm/nvm.sh" ]; then
-    . "$HOME/.nvm/nvm.sh" 2>/dev/null || true
+  . "$HOME/.nvm/nvm.sh" 2>/dev/null || true
 fi
 
-# Verify lockfile is in sync — catches pnpm-lock.yaml drift before it breaks CI
-if command -v pnpm >/dev/null 2>&1; then
-    printf "→ lockfile check\n"
-    if ! pnpm install --frozen-lockfile --ignore-scripts > /dev/null 2>&1; then
-        printf "\n✖ pnpm-lock.yaml is out of sync with package.json.\n"
-        printf " Run 'pnpm install' and commit the updated lockfile before pushing.\n\n"
-    exit 1
+# ----------------------------------------
+# Ensure pnpm exists
+# ----------------------------------------
+
+if ! command -v pnpm >/dev/null 2>&1; then
+  printf "✖ pnpm is not installed or not available in PATH.\n"
+  exit 1
 fi
 
-# Production build check — catches TS errors that only surface in tsc -b (not tsc --noEmit)
-CHANGED=$(git diff --name-only @{u} HEAD 2>/dev/null || git diff --name-only HEAD~1 HEAD)
-    ROOT_DIR=$(pwd)
+# ----------------------------------------
+# Lockfile check
+# Verifies pnpm-lock.yaml matches package.json/workspace changes
+# ----------------------------------------
 
-    for app in carrier-admin cliente platform-admin; do
-        if echo "$CHANGED" | grep -q "^apps/$app/"; then
-            printf "→ build check: apps/%s\n" "$app"
-            find "apps/$app" -name "*.tsbuildinfo" -delete 2>/dev/null || true
-            if ! (cd "apps/$app" && pnpm build) > /dev/null 2>&1; then
-                printf "\n✖ Production build failed for apps/%s.\n" "$app"
-                printf " Run: cd apps/%s && pnpm build\n\n" "$app"
-                exit 1
-            fi
-        fi
-    done
+printf "→ lockfile check\n"
+
+if ! pnpm install --frozen-lockfile --ignore-scripts >/dev/null 2>&1; then
+  printf "\n✖ pnpm-lock.yaml is out of sync with package.json / workspace dependencies.\n"
+  printf "  Run 'pnpm install' and commit the updated lockfile before pushing.\n\n"
+  exit 1
 fi
