@@ -17,15 +17,25 @@ jobs:
       - name: Prettify code
         uses: creyD/prettier_action@v4.6
 
-  clippy:
-    name: Eslint
+  linter:
+    name: ESLint
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
-      - name: Install modules
-        run: yarn
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
       - name: Run ESLint
-        run: eslint . --ext .js,.jsx,.ts,.tsx
+        run: yarn eslint . --ext .js,.jsx,.ts,.tsx
 
   typos:
     name: Spell Check
