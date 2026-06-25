@@ -7,3 +7,13 @@
 ### 🐛 Bug Fixes
 
 - *(push action)* Fix push action checker
+- *(linter)* Fix linter setup
+- *(actions)* Fix linter and spellcheck actions
+- *(actions)* Fix actions with right setup
+- *(standard)* Update standard setup to use checkers
+- *(package manager)* Swithc to pnpm backage manager for ci
+- *(package caller)* Swithc package manager caller
+
+### ⚙️ Miscellaneous Tasks
+
+- *(changelog)* Update CHANGELOG.md [skip ci]
