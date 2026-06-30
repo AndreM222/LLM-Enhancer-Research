@@ -1,4 +1,4 @@
-import { Box, Database, Logs, Users } from 'lucide-react';
+import { Box, Database, Logs, MessagesSquare, Users } from 'lucide-react';
 import {
   Sidebar,
   SidebarFooter,
@@ -88,6 +88,12 @@ const data = {
           icon: <Logs />,
           isActive: true,
         },
+        {
+          title: 'Prompts',
+          url: '/prompts',
+          icon: <MessagesSquare />,
+          isActive: true,
+        },
       ],
     },
   ],
@@ -99,12 +105,7 @@ export const AppSidebar = () => {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              variant="ghost"
-              size="icon"
-              className="rounded-full gap-3 font-bold"
-              asChild
-            >
+            <SidebarMenuButton className="rounded-full gap-3 font-bold" asChild>
               <a href="/">
                 <Avatar className="m-[-7]">
                   <AvatarImage src="" alt="shadcn" />
