@@ -2,19 +2,12 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import './globals.css';
-import { AppSidebar } from '@/components/app-sidebar';
+import { AppSidebar, PageHeader } from '@/components/app-sidebar';
 import { ThemeProvider } from '@/components/theme-provider';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
 import { GrAddCircle } from 'react-icons/gr';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import DynamicCrumbs from '@/components/dynamicBreadCrumb';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -53,27 +46,20 @@ export default function RootLayout({
             <SidebarProvider>
               <AppSidebar />
               <SidebarInset>
-                <header className="sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b px-4 justify-between">
+                <header className="z-50 sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b px-4 justify-between backdrop-blur-md">
                   <div className="flex items-center gap-2 px-4">
                     <SidebarTrigger className="-ml-1" />
-                    <Breadcrumb>
-                      <BreadcrumbList>
-                        <BreadcrumbItem className="hidden md:block">
-                          <BreadcrumbLink href="/">Projects</BreadcrumbLink>
-                        </BreadcrumbItem>
-                        <BreadcrumbSeparator className="hidden md:block" />
-                        <BreadcrumbItem>
-                          <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                        </BreadcrumbItem>
-                      </BreadcrumbList>
-                    </Breadcrumb>
+                    <DynamicCrumbs />
                   </div>
                   <Button>
                     <GrAddCircle />
                     Create Project
                   </Button>
                 </header>
-                {children}
+                <div className="space-y-6 p-6">
+                <PageHeader />
+                  {children}
+                </div>
               </SidebarInset>
             </SidebarProvider>
           </ThemeProvider>

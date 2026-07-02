@@ -1,3 +1,5 @@
+'use client';
+
 import { Box, Database, Logs, MessagesSquare, Users } from 'lucide-react';
 import {
   Sidebar,
@@ -12,6 +14,7 @@ import { FaGear } from 'react-icons/fa6';
 import { IoMdAnalytics } from 'react-icons/io';
 import { NavUser } from './user-button';
 import { NavContent } from './sidebarContent';
+import { usePathname } from 'next/navigation';
 
 const data = {
   user: {
@@ -25,48 +28,56 @@ const data = {
       tabs: [
         {
           title: 'Projects',
+          description: 'List of projects with unique setup for different cases.',
           url: '/',
           icon: <Box />,
           isActive: true,
         },
         {
           title: 'Users',
+          description: 'Monitor prompt quality, correction impact, and model performance.',
           url: '/users',
           icon: <Users />,
           isActive: true,
           items: [
             {
               title: 'Invitations',
-              url: '/invitations',
+              description: 'Monitor prompt quality, correction impact, and model performance.',
+              url: '/users/invitations',
               isActive: true,
             },
             {
               title: 'Roles',
-              url: '/roles',
+              description: 'Monitor prompt quality, correction impact, and model performance.',
+              url: '/users/roles',
               isActive: true,
             },
           ],
         },
         {
           title: 'Settings',
+          description: 'Monitor prompt quality, correction impact, and model performance.',
           url: '/settings',
           icon: <FaGear />,
           isActive: true,
           items: [
             {
               title: 'Account',
-              url: '/account',
+              description: 'Monitor prompt quality, correction impact, and model performance.',
+              url: '/settings/account',
               isActive: true,
             },
             {
               title: 'Roles',
-              url: '/roles',
+              description: 'Monitor prompt quality, correction impact, and model performance.',
+              url: '/settings/roles',
               isActive: true,
             },
           ],
         },
         {
           title: 'Activity',
+          description: 'Monitor prompt quality, correction impact, and model performance.',
           url: '/activity',
           icon: <Database />,
           isActive: true,
@@ -78,18 +89,21 @@ const data = {
       tabs: [
         {
           title: 'Analytics',
+          description: 'Monitor prompt quality, correction impact, and model performance.',
           url: '/analytics',
           icon: <IoMdAnalytics />,
           isActive: true,
         },
         {
           title: 'Logs',
+          description: 'Monitor connection activity.',
           url: '/logs',
           icon: <Logs />,
           isActive: true,
         },
         {
           title: 'Prompts',
+          description: 'Manage prompt versions generated from image detections and human corrections.',
           url: '/prompts',
           icon: <MessagesSquare />,
           isActive: true,
@@ -97,6 +111,46 @@ const data = {
       ],
     },
   ],
+};
+
+function useCurrentPage() {
+  const pathname = usePathname();
+
+  for (const group of data.navigation) {
+    for (const tab of group.tabs) {
+      if (tab.items) {
+        const subMatch = tab.items.find((item) => item.url === pathname);
+        if (subMatch) {
+          return {
+            title: subMatch.title,
+            description: subMatch.description,
+          };
+        }
+      }
+      if (tab.url === pathname) {
+        return {
+          title: tab.title,
+          description: tab.description,
+        };
+      }
+    }
+  }
+
+  return { title: 'Dashboard', description: '' };
+}
+
+export const PageHeader = () => {
+  const { title, description } = useCurrentPage();
+  return (
+    <div className="flex items-start justify-between gap-4">
+      <div>
+        <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
+        <p className="text-muted-foreground">
+        {description}
+        </p>
+      </div>
+    </div>
+  );
 };
 
 export const AppSidebar = () => {

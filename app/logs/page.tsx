@@ -35,7 +35,7 @@ function getData(): Log[] {
 export default function Logs() {
   const data = getData();
   return (
-    <div className="container mx-auto py-10 space-y-2">
+    <div className="space-y-6">
       <div className="flex space-x-1">
         <Select defaultValue="none">
           <SelectTrigger className="w-45">
