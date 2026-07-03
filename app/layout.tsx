@@ -56,8 +56,8 @@ export default function RootLayout({
                     Create Project
                   </Button>
                 </header>
-                <div className="space-y-6 p-6">
-                <PageHeader />
+                <div className="space-y-6 p-6 flex-1">
+                  <PageHeader />
                   {children}
                 </div>
               </SidebarInset>

@@ -103,7 +103,8 @@ const data = {
         },
         {
           title: 'Prompts',
-          description: 'Manage prompt versions generated from image detections and human corrections.',
+          description:
+            'Manage prompt versions generated from image detections and human corrections.',
           url: '/prompts',
           icon: <MessagesSquare />,
           isActive: true,
@@ -145,9 +146,7 @@ export const PageHeader = () => {
     <div className="flex items-start justify-between gap-4">
       <div>
         <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
-        <p className="text-muted-foreground">
-        {description}
-        </p>
+        <p className="text-muted-foreground">{description}</p>
       </div>
     </div>
   );
