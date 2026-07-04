@@ -32,10 +32,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} h-dvh antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">
+      <body className="h-full flex flex-col">
         <TooltipProvider>
           <ThemeProvider
             attribute="class"
@@ -43,9 +43,9 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <SidebarProvider>
+            <SidebarProvider className="flex-1 min-h-0">
               <AppSidebar />
-              <SidebarInset>
+              <SidebarInset className="flex flex-col min-h-0">
                 <header className="z-50 sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b px-4 justify-between backdrop-blur-md">
                   <div className="flex items-center gap-2 px-4">
                     <SidebarTrigger className="-ml-1" />
@@ -56,7 +56,7 @@ export default function RootLayout({
                     Create Project
                   </Button>
                 </header>
-                <div className="space-y-6 p-6 flex-1">
+                <div className="flex-1 min-h-0 overflow-y-auto flex flex-col p-6 gap-6">
                   <PageHeader />
                   {children}
                 </div>
