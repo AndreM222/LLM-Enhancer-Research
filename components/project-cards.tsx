@@ -1,5 +1,5 @@
-import Link from 'next/link'
-import { Badge } from '@/components/ui/badge'
+import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardAction,
@@ -8,8 +8,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 const data = [
   {
@@ -39,22 +39,22 @@ const data = [
     accuracy: 94,
     prompt: 'v5.1',
   },
-]
+];
 
 const ProjectCard = ({
   item,
 }: {
   item: {
-    id: string
-    title: string
-    total: number
-    state: string
-    description: string
-    accuracy: number
-    prompt: string
-  }
+    id: string;
+    title: string;
+    total: number;
+    state: string;
+    description: string;
+    accuracy: number;
+    prompt: string;
+  };
 }) => {
-  const currState = item.state === 'online'
+  const currState = item.state === 'online';
 
   return (
     <Link href={item.id} className="group block">
@@ -63,9 +63,7 @@ const ProjectCard = ({
           <div className="flex items-start justify-between gap-3">
             <div>
               <CardTitle className="text-xl">{item.title}</CardTitle>
-              <CardDescription className="mt-1 line-clamp-2">
-                {item.description}
-              </CardDescription>
+              <CardDescription className="mt-1 line-clamp-2">{item.description}</CardDescription>
             </div>
 
             <CardAction>
@@ -74,7 +72,6 @@ const ProjectCard = ({
               </Badge>
             </CardAction>
           </div>
-
         </CardHeader>
 
         <CardContent className="space-y-4">
@@ -97,21 +94,19 @@ const ProjectCard = ({
         </CardContent>
 
         <CardFooter className="flex items-center justify-between border-t bg-muted/20 px-6 py-4">
-          <p className="text-sm text-muted-foreground">
-            Click to open project workspace
-          </p>
+          <p className="text-sm text-muted-foreground">Click to open project workspace</p>
           <Button size="sm" variant="secondary">
             Open project
           </Button>
         </CardFooter>
       </Card>
     </Link>
-  )
-}
+  );
+};
 
 export function Projects() {
   return (
-    <div className="space-y-6 px-4 lg:px-6">
+    <div className="space-y-6">
       <div className="flex w-full justify-end">
         <Button>Create project</Button>
       </div>
@@ -144,5 +139,5 @@ export function Projects() {
         ))}
       </div>
     </div>
-  )
+  );
 }

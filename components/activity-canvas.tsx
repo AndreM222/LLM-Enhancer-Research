@@ -33,6 +33,7 @@ import {
   Maximize2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTheme } from 'next-themes';
 
 const nodeTypes = { service: ServiceNode };
 
@@ -207,6 +208,7 @@ const initialEdges: Edge[] = [
 ];
 
 export default function ActivityCanvas() {
+  const { resolvedTheme } = useTheme();
   const [nodes, , onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
@@ -224,10 +226,12 @@ export default function ActivityCanvas() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        style={{ backgroundColor: 'var(--card)' }}
         nodeTypes={nodeTypes}
         fitView
-        colorMode="dark"
-        className="rounded-3xl"
+        colorMode={resolvedTheme === 'dark' ? 'dark' : 'light'}
+        className="rounded-3xl border"
+        suppressHydrationWarning
       >
         <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="#333" />
         <Panel position="bottom-left">
