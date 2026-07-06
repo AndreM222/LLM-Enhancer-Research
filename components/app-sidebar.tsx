@@ -1,22 +1,19 @@
 'use client';
 
 import { Box, Database, Logs, MessagesSquare, Users } from 'lucide-react';
-import {
-  Sidebar,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from './ui/sidebar';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenu } from './ui/sidebar';
 import { FaGear } from 'react-icons/fa6';
 import { IoMdAnalytics } from 'react-icons/io';
 import { NavUser } from './user-button';
 import { NavContent } from './sidebarContent';
 import { usePathname } from 'next/navigation';
+import { WorkspaceButton } from './workspace-banner';
 
 const data = {
+  workspace: {
+    name: 'Damage Visualizer',
+    logo: '',
+  },
   user: {
     name: 'Jacke Myres',
     email: 'Jacke@gmail.com',
@@ -35,43 +32,49 @@ const data = {
         },
         {
           title: 'Users',
-          description: 'Monitor prompt quality, correction impact, and model performance.',
+          description: 'Configuration of users list and permissiones by roles.',
           url: '/users',
           icon: <Users />,
           isActive: true,
           items: [
             {
               title: 'Invitations',
-              description: 'Monitor prompt quality, correction impact, and model performance.',
+              description: 'Manage access, roles, invitations, and account actions.',
               url: '/users/invitations',
-              isActive: true,
+              isactive: true,
             },
             {
               title: 'Roles',
-              description: 'Monitor prompt quality, correction impact, and model performance.',
+              description: 'Create roles, define permissions, and choose the default invite role.',
               url: '/users/roles',
-              isActive: true,
+              isactive: true,
             },
           ],
         },
         {
           title: 'Settings',
-          description: 'Monitor prompt quality, correction impact, and model performance.',
+          description: 'Configuration of workspace and account.',
           url: '/settings',
           icon: <FaGear />,
           isActive: true,
           items: [
             {
-              title: 'Account',
-              description: 'Monitor prompt quality, correction impact, and model performance.',
-              url: '/settings/account',
-              isActive: true,
+              title: 'General',
+              description: 'configure defaults.',
+              url: '/settings/general',
+              isactive: true,
             },
             {
-              title: 'Roles',
-              description: 'Monitor prompt quality, correction impact, and model performance.',
-              url: '/settings/roles',
-              isActive: true,
+              title: 'Workspace',
+              description: 'configure workspace-wide behavior.',
+              url: '/settings/workspace',
+              isactive: true,
+            },
+            {
+              title: 'Account',
+              description: 'update your personal profile and security settings.',
+              url: '/settings/account',
+              isactive: true,
             },
           ],
         },
@@ -132,12 +135,18 @@ function useCurrentPage() {
         return {
           title: tab.title,
           description: tab.description,
+          items: tab.items,
         };
       }
     }
   }
 
   return { title: 'Dashboard', description: '' };
+}
+
+export function PageItems() {
+  const { items } = useCurrentPage();
+  return items;
 }
 
 export const PageHeader = () => {
@@ -157,17 +166,7 @@ export const AppSidebar = () => {
     <Sidebar variant="floating" collapsible="icon">
       <SidebarHeader>
         <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton className="rounded-full gap-3 font-bold" asChild>
-              <a href="/">
-                <Avatar className="m-[-7]">
-                  <AvatarImage src="" alt="shadcn" />
-                  <AvatarFallback>DV</AvatarFallback>
-                </Avatar>
-                <span>Damage Visualizer</span>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          <WorkspaceButton workspace={data.workspace} />
         </SidebarMenu>
       </SidebarHeader>
 

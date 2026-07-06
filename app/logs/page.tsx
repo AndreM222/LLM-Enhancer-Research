@@ -1,4 +1,4 @@
-import { type Log } from '@/components/logs-columns';
+import { Log } from '@/components/tables/logs-columns';
 import { LogsTable } from '@/components/tables/logs-table';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
@@ -27,6 +27,20 @@ function getData(): Log[] {
       type: 'DELETE',
       request: '/api/server/user',
       status: 500,
+      time: new Date().toISOString(),
+    },
+    {
+      id: '728ed54f',
+      type: 'DELETE',
+      request: '/api/server/user',
+      status: 100,
+      time: new Date().toISOString(),
+    },
+    {
+      id: '728ed54f',
+      type: 'DELETE',
+      request: '/api/server/user',
+      status: 400,
       time: new Date().toISOString(),
     },
   ];

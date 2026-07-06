@@ -54,8 +54,18 @@ function FlowControls() {
 }
 
 function StepEdge({
-  id, sourceX, sourceY, targetX, targetY,
-}: { id: string; sourceX: number; sourceY: number; targetX: number; targetY: number }) {
+  id,
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+}: {
+  id: string;
+  sourceX: number;
+  sourceY: number;
+  targetX: number;
+  targetY: number;
+}) {
   const centerY = (targetY - sourceY) / 2 + sourceY;
   const path = `M ${sourceX} ${sourceY} L ${sourceX} ${centerY} L ${targetX} ${centerY} L ${targetX} ${targetY}`;
   return <BaseEdge id={id} path={path} />;
@@ -101,7 +111,12 @@ const initialNodes: Node[] = [
     id: 'prompt-engine',
     type: 'service',
     position: { x: COL.api, y: ROW.top },
-    data: { name: 'Prompt Engine', status: 'online', icon: <GitBranch />, volume: 'prompt optimizer' },
+    data: {
+      name: 'Prompt Engine',
+      status: 'online',
+      icon: <GitBranch />,
+      volume: 'prompt optimizer',
+    },
   },
 
   // ── AI Layer ──
@@ -135,7 +150,12 @@ const initialNodes: Node[] = [
     id: 'db-prompts',
     type: 'service',
     position: { x: COL.db, y: ROW.mid3 },
-    data: { name: 'Prompts DB', status: 'online', icon: <ScrollText />, volume: 'best + last prompt' },
+    data: {
+      name: 'Prompts DB',
+      status: 'online',
+      icon: <ScrollText />,
+      volume: 'best + last prompt',
+    },
   },
 ];
 
@@ -146,44 +166,44 @@ function e(
   target: string,
   th: string,
   animated = true,
-  label?: string,
+  label?: string
 ): Edge {
   return { id, source, sourceHandle: sh, target, targetHandle: th, type: 'step', animated, label };
 }
 
 const initialEdges: Edge[] = [
   // User uploads photo → Frontend → API
-  e('fe-api',       'frontend',      'right',  'api',           'left'),
+  e('fe-api', 'frontend', 'right', 'api', 'left'),
   // Frontend hosts the canvas editor
-  e('fe-canvas',    'frontend',      'bottom', 'canvas',        'top'),
+  e('fe-canvas', 'frontend', 'bottom', 'canvas', 'top'),
   // Canvas (corrected boxes) → API saves correction
-  e('canvas-api',   'canvas',        'right',  'api',           'left'),
+  e('canvas-api', 'canvas', 'right', 'api', 'left'),
   // API → Detection Service (run detection)
-  e('api-det',      'api',           'bottom', 'detection',     'top'),
+  e('api-det', 'api', 'bottom', 'detection', 'top'),
   // Detection Service → Gemini Flash (inference)
-  e('det-gemini',   'detection',     'right',  'gemini',        'left'),
+  e('det-gemini', 'detection', 'right', 'gemini', 'left'),
   // Gemini Flash → Detection Service (returns bboxes)
-  e('gemini-det',   'gemini',        'bottom', 'llm-optimizer', 'top'),
+  e('gemini-det', 'gemini', 'bottom', 'llm-optimizer', 'top'),
   // API pulls active prompt from Prompt Engine
-  e('pe-api',       'prompt-engine', 'bottom', 'api',           'top'),
+  e('pe-api', 'prompt-engine', 'bottom', 'api', 'top'),
   // Prompt Engine → Gemini Flash (send prompt)
-  e('pe-gemini',    'prompt-engine', 'right',  'gemini',        'left'),
+  e('pe-gemini', 'prompt-engine', 'right', 'gemini', 'left'),
   // API → LLM Optimizer (send A+B for prompt improvement)
-  e('api-llm',      'api',           'right',  'llm-optimizer', 'left'),
+  e('api-llm', 'api', 'right', 'llm-optimizer', 'left'),
   // LLM Optimizer → Prompt Engine (returns improved prompt)
-  e('llm-pe',       'llm-optimizer', 'left',   'prompt-engine', 'right'),
+  e('llm-pe', 'llm-optimizer', 'left', 'prompt-engine', 'right'),
   // LLM Optimizer saves new prompt
-  e('llm-dbp',      'llm-optimizer', 'right',  'db-prompts',    'left'),
+  e('llm-dbp', 'llm-optimizer', 'right', 'db-prompts', 'left'),
   // Prompt Engine reads best/last prompt
-  e('pe-dbp',       'prompt-engine', 'right',  'db-prompts',    'left'),
+  e('pe-dbp', 'prompt-engine', 'right', 'db-prompts', 'left'),
   // API saves A/B detections
-  e('api-dbd',      'api',           'right',  'db-detections', 'left'),
+  e('api-dbd', 'api', 'right', 'db-detections', 'left'),
   // Canvas reads detection results
-  e('dbd-canvas',   'db-detections', 'bottom', 'canvas',        'right'),
+  e('dbd-canvas', 'db-detections', 'bottom', 'canvas', 'right'),
   // Image store feeds detection service
-  e('img-det',      'image-store',   'top',    'detection',     'bottom'),
+  e('img-det', 'image-store', 'top', 'detection', 'bottom'),
   // API manages image storage
-  e('api-img',      'api',           'bottom', 'image-store',   'top'),
+  e('api-img', 'api', 'bottom', 'image-store', 'top'),
 ];
 
 export default function ActivityCanvas() {
@@ -192,7 +212,7 @@ export default function ActivityCanvas() {
 
   const onConnect = useCallback(
     (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
-    [setEdges],
+    [setEdges]
   );
 
   return (

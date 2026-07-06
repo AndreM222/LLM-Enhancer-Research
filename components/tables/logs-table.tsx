@@ -1,6 +1,6 @@
 'use client';
 
-import { columns, type Log } from '@/components/logs-columns';
+import { columns, type Log } from '@/components/tables/logs-columns';
 import { DataTable, type RowStatus } from '@/components/data-table';
 
 function getRowStatus(log: Log): RowStatus {

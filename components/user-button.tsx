@@ -18,6 +18,54 @@ import {
 } from '@/components/ui/sidebar';
 import { LogOut, UserCircle } from 'lucide-react';
 import { FaGear } from 'react-icons/fa6';
+import { cn } from '@/lib/utils';
+
+const sizeConfig = {
+  sm: { avatar: 'h-8 w-8', name: 'text-sm', email: 'text-xs' },
+  md: { avatar: 'h-12 w-12', name: 'text-base', email: 'text-sm' },
+  lg: { avatar: 'h-16 w-16', name: 'text-xl', email: 'text-base' },
+} as const;
+
+type BannerSize = keyof typeof sizeConfig;
+
+export function pictureFallback(name: string): string {
+  let fallback: string = name[0];
+
+  const firstChar: string[] = name
+    .split(' ')
+    .slice(1)
+    .filter((word) => word.length > 0)
+    .map((word) => word[0]);
+
+  fallback += firstChar[0] ?? '';
+
+  return fallback;
+}
+
+export function AccountBanner({
+  user,
+  size = 'sm',
+}: {
+  user: { name: string; email: string; avatar: string };
+  size?: BannerSize;
+}) {
+  const s = sizeConfig[size];
+
+  return (
+    <div className="flex gap-2 items-center">
+      <Avatar className={cn('rounded-full', s.avatar)}>
+        <AvatarImage src={user.avatar} alt={user.name} />
+        <AvatarFallback className={cn('rounded-full', s.name)}>
+          {pictureFallback(user.name)}
+        </AvatarFallback>
+      </Avatar>
+      <div className="grid flex-1 text-left leading-tight">
+        <span className={cn('truncate font-medium', s.name)}>{user.name}</span>
+        <span className={cn('truncate text-muted-foreground', s.email)}>{user.email}</span>
+      </div>
+    </div>
+  );
+}
 
 export function NavUser({
   user,
@@ -30,20 +78,6 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar();
 
-  function pictureFallback(name: string): string {
-    let fallback: string = name[0];
-
-    const firstChar: string[] = name
-      .split(' ')
-      .slice(1)
-      .filter((word) => word.length > 0)
-      .map((word) => word[0]);
-
-    fallback += firstChar[0] ?? '';
-
-    return fallback;
-  }
-
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -53,16 +87,7 @@ export function NavUser({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-full">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-full">
-                  {pictureFallback(user.name)}
-                </AvatarFallback>
-              </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
-                <span className="truncate text-xs text-muted-foreground">{user.email}</span>
-              </div>
+              <AccountBanner user={user} />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
