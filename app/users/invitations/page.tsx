@@ -1,5 +1,7 @@
+'use client';
+
 import { User } from '@/components/tables/users-columns';
-import { UsersTable } from '@/components/tables/users-table';
+import { CreateUsersTable } from '@/components/tables/users-table';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,24 +20,24 @@ function getData(): User[] {
   return [
     {
       id: '728ed52f',
-      type: 'GET',
-      request: '/api/server/connect',
+      name: 'David',
+      role: 'Japan',
       status: 'SENT',
-      time: new Date().toISOString(),
+      time: '2026-07-07T18:00:00.000Z',
     },
     {
       id: '731ed57f',
-      type: 'DELETE',
-      request: '/api/server/user',
+      name: 'Stephanie',
+      role: 'Scratches',
       status: 'REJECTED',
-      time: new Date().toISOString(),
+      time: '2026-07-07T17:30:00.000Z',
     },
     {
       id: '728ed54f',
-      type: 'DELETE',
-      request: '/api/server/user',
+      name: 'Jerry',
+      role: 'Scratches',
       status: 'ACCEPTED',
-      time: new Date().toISOString(),
+      time: '2026-07-07T16:45:00.000Z',
     },
   ];
 }
@@ -112,7 +114,11 @@ export default function Users() {
         </Field>
       </div>
 
-      <UsersTable data={data} />
+      <CreateUsersTable
+        data={data}
+        onDelete={() => console.log('Deleted')}
+        onOpen={() => console.log('Opened')}
+      />
     </div>
   );
 }

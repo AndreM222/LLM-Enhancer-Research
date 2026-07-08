@@ -71,6 +71,12 @@ const data = {
               isactive: true,
             },
             {
+              title: 'Templates',
+              description: 'configure workspace-wide behavior.',
+              url: '/settings/templates',
+              isactive: true,
+            },
+            {
               title: 'Account',
               description: 'update your personal profile and security settings.',
               url: '/settings/account',
@@ -141,7 +147,7 @@ function useCurrentPage() {
     }
   }
 
-  return { title: 'Dashboard', description: '' };
+  return { title: '', description: '' };
 }
 
 export function PageItems() {
@@ -149,16 +155,29 @@ export function PageItems() {
   return items;
 }
 
-export const PageHeader = () => {
-  const { title, description } = useCurrentPage();
-  return (
-    <div className="flex items-start justify-between gap-4">
-      <div>
-        <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
-        <p className="text-muted-foreground">{description}</p>
+export const PageHeader = ({
+  newTitle,
+  newDescription,
+}: {
+  newTitle?: string;
+  newDescription?: string;
+}) => {
+  let { title, description } = useCurrentPage();
+
+  title = title || newTitle || '';
+  description = description || newDescription || '';
+
+  if (title !== '')
+    return (
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
+          <p className="text-muted-foreground">{description}</p>
+        </div>
       </div>
-    </div>
-  );
+    );
+
+  return <div className="-m-3" />;
 };
 
 export const AppSidebar = () => {

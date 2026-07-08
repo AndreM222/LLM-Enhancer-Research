@@ -18,7 +18,7 @@ export default function SettingsLayout() {
             key={item.url}
             href={item.url}
             className={cn(
-              buttonVariants({ variant: 'ghost' }),
+              buttonVariants({ variant: 'outline' }),
               'h-auto w-full justify-start rounded-xl border px-4 py-3 text-left transition-colors',
               'border-primary/20 bg-primary/10 text-primary hover:bg-primary/10'
             )}
