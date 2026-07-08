@@ -60,26 +60,32 @@ const data = {
           items: [
             {
               title: 'General',
-              description: 'configure defaults.',
+              description: 'Configure defaults.',
               url: '/settings/general',
               isactive: true,
             },
             {
               title: 'Workspace',
-              description: 'configure workspace-wide behavior.',
+              description: 'Configure workspace-wide behavior.',
               url: '/settings/workspace',
               isactive: true,
             },
             {
+              title: 'Account',
+              description: 'Update your personal profile and security settings.',
+              url: '/settings/account',
+              isactive: true,
+            },
+            {
               title: 'Templates',
-              description: 'configure workspace-wide behavior.',
+              description: 'Configure templates for project behavior.',
               url: '/settings/templates',
               isactive: true,
             },
             {
-              title: 'Account',
-              description: 'update your personal profile and security settings.',
-              url: '/settings/account',
+              title: 'Tags',
+              description: 'Configure tags for project behavior.',
+              url: '/settings/tags',
               isactive: true,
             },
           ],

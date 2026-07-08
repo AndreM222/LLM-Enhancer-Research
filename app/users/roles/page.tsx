@@ -16,6 +16,8 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { RolesTable } from '@/components/tables/roles-table';
 import { Role } from '@/components/tables/roles-columns';
+import { Field } from '@/components/ui/field';
+import { ButtonGroup } from '@/components/ui/button-group';
 
 function getData(): Role[] {
   return [
@@ -157,6 +159,13 @@ export default function RolesPage() {
           </CardContent>
         </Card>
       </div>
+
+      <Field>
+        <ButtonGroup>
+          <Input id="input-button-group" placeholder="Type to search..." />
+          <Button variant="outline">Search</Button>
+        </ButtonGroup>
+      </Field>
 
       <RolesTable data={data} />
     </div>
