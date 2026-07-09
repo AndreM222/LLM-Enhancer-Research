@@ -1,6 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { cn } from '@/lib/utils';
-import { SidebarMenuButton, SidebarMenuItem } from './ui/sidebar';
 
 type BannerSize = keyof typeof sizeConfig;
 
@@ -30,24 +29,5 @@ export function WorkspaceBanner({
       </Avatar>
       <span className={cn('truncate font-medium', s.name)}>{workspace.name}</span>
     </div>
-  );
-}
-
-export function WorkspaceButton({
-  workspace,
-}: {
-  workspace: {
-    name: string;
-    logo: string;
-  };
-}) {
-  return (
-    <SidebarMenuItem>
-      <SidebarMenuButton className="rounded-full gap-3 font-bold" asChild>
-        <a href="/">
-          <WorkspaceBanner workspace={workspace} />
-        </a>
-      </SidebarMenuButton>
-    </SidebarMenuItem>
   );
 }

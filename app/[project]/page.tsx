@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { PageHeader } from '@/components/app-sidebar';
+import { PageHeader } from '@/components/app-navigation';
 import { IconName, ProjectIconDialog } from '@/components/dialogs/project-icon';
 import { useMemo, useState } from 'react';
 import * as LucideIcons from 'lucide-react';
@@ -32,6 +32,7 @@ import { Field } from '@/components/ui/field';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { CreateDetectionTable } from '@/components/tables/detection-table';
 import { DetectionSession } from '@/components/tables/detection-columns';
+import LinkGraph from '@/components/linkGraph';
 
 const tagsList: TagGroup[] = [
   {
@@ -192,10 +193,15 @@ export default function Project() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        newTitle={id?.toUpperCase()}
-        newDescription={`${id?.toUpperCase()} project image detections`}
-      />
+      <div className="flex gap-2">
+        <PageHeader
+          newIcon={<Selected />}
+          iconBg={selectedColor}
+          iconFg={selectedColor}
+          newTitle={id?.toUpperCase()}
+          newDescription={`${id?.toUpperCase()} project image detections`}
+        />
+      </div>
 
       <Tabs defaultValue="processed" className="space-y-6">
         <TabsList>
@@ -227,11 +233,7 @@ export default function Project() {
                 </ButtonGroup>
               </Field>
             </div>
-            <CreateDetectionTable
-              data={detectionList}
-              onDelete={() => console.log('Delete')}
-              onOpen={() => console.log('Open')}
-            />
+            <CreateDetectionTable data={detectionList} onDelete={() => console.log('Delete')} />
           </div>
         </TabsContent>
 
@@ -557,6 +559,7 @@ export default function Project() {
               />
             </CardContent>
           </Card>
+          <LinkGraph className="relative min-h-150 w-full overflow-hidden rounded-3xl border" />
         </TabsContent>
       </Tabs>
     </div>

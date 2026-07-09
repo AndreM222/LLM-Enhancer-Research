@@ -1,5 +1,6 @@
 'use client';
 
+import LinkGraph from '@/components/linkGraph';
 import { TagGroup } from '@/components/tables/tags-columns';
 import { CreateTagGroupTable } from '@/components/tables/tags-table';
 import { Button } from '@/components/ui/button';
@@ -7,14 +8,6 @@ import { ButtonGroup } from '@/components/ui/button-group';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 
 function getData(): TagGroup[] {
   return [
@@ -39,7 +32,7 @@ export default function Tags() {
   return (
     <div className="space-y-6">
       <div className="flex w-full justify-end">
-        <Button>Create Template</Button>
+        <Button>Create Tag</Button>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -76,6 +69,7 @@ export default function Tags() {
         onDelete={() => console.log('Deleted')}
         onOpen={() => console.log('Opened')}
       />
+      <LinkGraph />
     </div>
   );
 }

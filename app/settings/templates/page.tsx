@@ -1,5 +1,6 @@
 'use client';
 
+import LinkGraph from '@/components/linkGraph';
 import { Template } from '@/components/tables/templates-columns';
 import { CreateTemplateTable } from '@/components/tables/templates-table';
 import { Button } from '@/components/ui/button';
@@ -91,6 +92,8 @@ export default function Templates() {
         onDelete={() => console.log('Deleted')}
         onOpen={() => console.log('Opened')}
       />
+
+      <LinkGraph />
     </div>
   );
 }

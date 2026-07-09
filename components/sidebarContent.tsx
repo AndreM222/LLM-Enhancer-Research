@@ -27,6 +27,7 @@ function Groups({
     items?: {
       title: string;
       url: string;
+      icon?: React.ReactNode;
     }[];
   }[];
 }) {
@@ -55,6 +56,7 @@ function Groups({
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild>
                           <a href={subItem.url}>
+                            {subItem.icon}
                             <span>{subItem.title}</span>
                           </a>
                         </SidebarMenuSubButton>
@@ -85,6 +87,7 @@ export function NavContent({
       items?: {
         title: string;
         url: string;
+        icon?: React.ReactNode;
       }[];
     }[];
   }[];

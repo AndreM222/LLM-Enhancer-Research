@@ -14,12 +14,10 @@ function getRowStatus(session: DetectionSession): RowStatus {
 export function CreateDetectionTable({
   data,
   onDelete,
-  onOpen,
 }: {
   data: DetectionSession[];
   onDelete: (id: string) => void;
-  onOpen: (id: string) => void;
 }) {
-  const columns = useMemo(() => createDetectionColumns(onDelete, onOpen), [onDelete, onOpen]);
+  const columns = useMemo(() => createDetectionColumns(onDelete), [onDelete]);
   return <DataTable columns={columns} data={data} getRowStatus={getRowStatus} />;
 }

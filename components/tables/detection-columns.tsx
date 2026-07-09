@@ -5,6 +5,8 @@ import { Badge } from '../ui/badge';
 import { ButtonGroup } from '../ui/button-group';
 import { Button } from '../ui/button';
 import { ChevronRight, Trash } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export type DetectionSession = {
   id: string;
@@ -31,8 +33,7 @@ function statusVariant(status: DetectionSession['status']) {
 }
 
 export function createDetectionColumns(
-  onDelete: (id: string) => void,
-  onOpen: (id: string) => void
+  onDelete: (id: string) => void
 ): ColumnDef<DetectionSession>[] {
   return [
     {
@@ -75,20 +76,27 @@ export function createDetectionColumns(
     {
       id: 'actions',
       header: '',
-      cell: ({ row }) => (
-        <ButtonGroup>
-          <Button
-            size="sm"
-            variant="destructive"
-            onClick={() => onDelete(row.getValue<string>('id'))}
-          >
-            <Trash className="h-4 w-4" />
-          </Button>
-          <Button size="sm" variant="outline" onClick={() => onOpen(row.getValue<string>('id'))}>
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </ButtonGroup>
-      ),
+      cell: ({ row }) => {
+        const id = row.getValue<string>('id');
+        const path = usePathname().split('/').pop();
+
+        return (
+          <ButtonGroup>
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={() => onDelete(row.getValue<string>('id'))}
+            >
+              <Trash className="h-4 w-4" />
+            </Button>
+            <Button size="sm" variant="outline" asChild>
+              <Link href={`./${path}/${id}`}>
+                <ChevronRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </ButtonGroup>
+        );
+      },
     },
   ];
 }

@@ -2,12 +2,13 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import './globals.css';
-import { AppSidebar, PageHeader } from '@/components/app-sidebar';
+import { AppSidebar, PageHeader } from '@/components/app-navigation';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Button } from '@/components/ui/button';
-import { GrAddCircle } from 'react-icons/gr';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import DynamicCrumbs from '@/components/dynamicBreadCrumb';
+import { Bell } from 'lucide-react';
+import { FaCircle } from 'react-icons/fa6';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -51,9 +52,9 @@ export default function RootLayout({
                     <SidebarTrigger className="-ml-1" />
                     <DynamicCrumbs />
                   </div>
-                  <Button>
-                    <GrAddCircle />
-                    Create Project
+                  <Button variant="outline" className="relative">
+                    <FaCircle className="absolute size-2 -top-1 -right-1" />
+                    <Bell />
                   </Button>
                 </header>
                 <div className="flex-1 min-h-0 overflow-y-auto flex flex-col p-6 gap-6">
