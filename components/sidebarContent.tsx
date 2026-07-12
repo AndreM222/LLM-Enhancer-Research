@@ -21,11 +21,13 @@ function Groups({
 }: {
   items: {
     title: string;
+    summary?: string;
     url: string;
     icon: React.ReactNode;
     isActive?: boolean;
     items?: {
       title: string;
+      summary?: string;
       url: string;
       icon?: React.ReactNode;
     }[];

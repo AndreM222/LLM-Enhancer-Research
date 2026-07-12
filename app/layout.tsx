@@ -9,6 +9,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import DynamicCrumbs from '@/components/dynamicBreadCrumb';
 import { Bell } from 'lucide-react';
 import { FaCircle } from 'react-icons/fa6';
+import { SearchBar } from '@/components/search-bar';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -52,10 +53,13 @@ export default function RootLayout({
                     <SidebarTrigger className="-ml-1" />
                     <DynamicCrumbs />
                   </div>
-                  <Button variant="outline" className="relative">
-                    <FaCircle className="absolute size-2 -top-1 -right-1" />
-                    <Bell />
-                  </Button>
+                  <div className="flex space-x-2">
+                    <SearchBar />
+                    <Button variant="outline" className="relative">
+                      <FaCircle className="absolute size-2 -top-1 -right-1" />
+                      <Bell />
+                    </Button>
+                  </div>
                 </header>
                 <div className="flex-1 min-h-0 overflow-y-auto flex flex-col p-6 gap-6">
                   <PageHeader />

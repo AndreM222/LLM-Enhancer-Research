@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { ChevronRight, Trash, X } from 'lucide-react';
+import { ChevronRight, Copy, Pen, Trash, X } from 'lucide-react';
 import { Button } from '../ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 
@@ -46,8 +46,13 @@ export function createTagsColumns(
           >
             <Trash />
           </Button>
+
+          <Button size="sm" variant="outline" onClick={() => onDelete(row.getValue<string>('id'))}>
+            <Copy />
+          </Button>
+
           <Button size="sm" variant="outline" onClick={() => onOpen(row.getValue<string>('id'))}>
-            <ChevronRight />
+            <Pen />
           </Button>
         </ButtonGroup>
       ),

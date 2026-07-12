@@ -24,6 +24,12 @@ import { pictureFallback } from './user-button';
 
 type BannerSize = keyof typeof sizeConfig;
 
+type Workspace = {
+  name: string;
+  logo: string;
+  summary?: string;
+};
+
 const sizeConfig = {
   sm: { avatar: 'h-8 w-8', name: 'text-sm', email: 'text-xs' },
   md: { avatar: 'h-12 w-12', name: 'text-base', email: 'text-sm' },
@@ -34,11 +40,7 @@ export function WorkspaceBanner({
   workspace,
   size = 'sm',
 }: {
-  workspace: {
-    name: string;
-    logo: string;
-    plan: string;
-  };
+  workspace: Workspace;
   size?: BannerSize;
 }) {
   const s = sizeConfig[size];
@@ -54,19 +56,11 @@ export function WorkspaceBanner({
   );
 }
 
-export function TeamSwitcher({
-  teams,
-}: {
-  teams: {
-    name: string;
-    logo: string;
-    plan: string;
-  }[];
-}) {
+export function WorkspaceSwitcher({ workspaces: workspaces }: { workspaces: Workspace[] }) {
   const { isMobile } = useSidebar();
-  const [activeTeam, setActiveTeam] = React.useState(teams[0]);
+  const [activeWorkspace, setActiveWorkspace] = React.useState(workspaces[0]);
 
-  if (!activeTeam) {
+  if (!activeWorkspace) {
     return null;
   }
 
@@ -80,12 +74,12 @@ export function TeamSwitcher({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="rounded-md">
-                <AvatarImage src={activeTeam.logo} alt="shadcn" />
-                <AvatarFallback>{pictureFallback(activeTeam.name)}</AvatarFallback>
+                <AvatarImage src={activeWorkspace.logo} alt="shadcn" />
+                <AvatarFallback>{pictureFallback(activeWorkspace.name)}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{activeTeam.name}</span>
-                <span className="truncate text-xs">{activeTeam.plan}</span>
+                <span className="truncate font-medium">{activeWorkspace.name}</span>
+                <span className="truncate text-xs">{activeWorkspace.summary}</span>
               </div>
               <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
@@ -96,11 +90,13 @@ export function TeamSwitcher({
             side={isMobile ? 'bottom' : 'right'}
             sideOffset={4}
           >
-            <DropdownMenuLabel className="text-xs text-muted-foreground">Teams</DropdownMenuLabel>
-            {teams.map((team, index) => (
+            <DropdownMenuLabel className="text-xs text-muted-foreground">
+              Workspaces
+            </DropdownMenuLabel>
+            {workspaces.map((team, index) => (
               <DropdownMenuItem
                 key={team.name}
-                onClick={() => setActiveTeam(team)}
+                onClick={() => setActiveWorkspace(team)}
                 className="gap-2 p-2"
               >
                 <div className="flex size-6 items-center justify-center rounded-md border">

@@ -233,7 +233,7 @@ export default function Project() {
                 </ButtonGroup>
               </Field>
             </div>
-            <CreateDetectionTable data={detectionList} onDelete={() => console.log('Delete')} />
+            <CreateDetectionTable data={detectionList} onDeleteAction={() => console.log('Delete')} />
           </div>
         </TabsContent>
 

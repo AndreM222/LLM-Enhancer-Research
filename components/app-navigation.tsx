@@ -3,6 +3,7 @@
 import {
   Box,
   BriefcaseBusiness,
+  ChartArea,
   Database,
   Layers,
   LayoutTemplate,
@@ -16,16 +17,23 @@ import {
   Users,
 } from 'lucide-react';
 import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenu } from './ui/sidebar';
-import { IoMdAnalytics } from 'react-icons/io';
 import { NavUser } from './user-button';
 import { NavContent } from './sidebarContent';
 import { usePathname } from 'next/navigation';
-import { TeamSwitcher } from './team-switcher';
+import { WorkspaceSwitcher } from './team-switcher';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import React from 'react';
+
+type NavItem = {
+  title: string;
+  description: string;
+  url: string;
+  icon: React.JSX.Element;
+  isActive: boolean;
+};
 
 const data = {
   workspace: [
@@ -72,15 +80,15 @@ const data = {
               title: 'Invitations',
               description: 'Manage access, roles, invitations, and account actions.',
               url: '/users/invitations',
-              isactive: true,
               icon: <Mail />,
+              isActive: true,
             },
             {
               title: 'Roles',
               description: 'Create roles, define permissions, and choose the default invite role.',
               url: '/users/roles',
-              isactive: true,
               icon: <Lock />,
+              isActive: true,
             },
           ],
         },
@@ -95,36 +103,36 @@ const data = {
               title: 'General',
               description: 'Configure defaults.',
               url: '/settings/general',
-              isactive: true,
               icon: <Layers />,
+              isActive: true,
             },
             {
               title: 'Workspace',
               description: 'Configure workspace-wide behavior.',
               url: '/settings/workspace',
-              isactive: true,
               icon: <BriefcaseBusiness />,
+              isActive: true,
             },
             {
               title: 'Account',
               description: 'Update your personal profile and security settings.',
               url: '/settings/account',
-              isactive: true,
               icon: <User />,
+              isActive: true,
             },
             {
               title: 'Templates',
               description: 'Configure templates for project behavior.',
               url: '/settings/templates',
-              isactive: true,
               icon: <LayoutTemplate />,
+              isActive: true,
             },
             {
               title: 'Tags',
               description: 'Configure tags for project behavior.',
               url: '/settings/tags',
-              isactive: true,
               icon: <Tags />,
+              isActive: true,
             },
           ],
         },
@@ -144,7 +152,7 @@ const data = {
           title: 'Analytics',
           description: 'Monitor prompt quality, correction impact, and model performance.',
           url: '/analytics',
-          icon: <IoMdAnalytics />,
+          icon: <ChartArea />,
           isActive: true,
         },
         {
@@ -250,7 +258,7 @@ export const AppSidebar = () => {
     <Sidebar variant="floating" collapsible="icon">
       <SidebarHeader>
         <SidebarMenu>
-          <TeamSwitcher teams={data.workspace} />
+          <WorkspaceSwitcher workspaces={data.workspace} />
         </SidebarMenu>
       </SidebarHeader>
 
@@ -263,13 +271,47 @@ export const AppSidebar = () => {
   );
 };
 
+export function getNavigationItems(): {
+  group: string;
+  tabs: NavItem[];
+}[] {
+  let items: {
+    group: string;
+    tabs: NavItem[];
+  }[] = [];
+
+  const navData = data.navigation;
+
+  // Sanatize
+  navData.map((group) => {
+    let currItem: { group: string; tabs: NavItem[] } = {
+      group: group.group,
+      tabs: [],
+    };
+
+    group.tabs.map((item) => {
+      currItem.tabs.push(item);
+
+      if (item?.items) {
+        item.items.map((subItem) => {
+          currItem.tabs.push(subItem);
+        });
+      }
+    });
+
+    items.push(currItem);
+  });
+
+  return items;
+}
+
 export default function SubNavigator() {
   const items = PageItems();
 
   return (
     <nav className="flex flex-col gap-2">
       {items?.map((item) => {
-        if (!item.isactive) return null;
+        if (!item.isActive) return null;
 
         return (
           <Link
