@@ -57,22 +57,41 @@ function CommandDialog({
 }
 
 function CommandInput({
+  searchIcon,
+  placeholderContent,
   className,
   ...props
-}: React.ComponentProps<typeof CommandPrimitive.Input>) {
+}: {
+  searchIcon?: React.JSX.Element;
+  placeholderContent?: React.ReactNode;
+} & Omit<React.ComponentProps<typeof CommandPrimitive.Input>, 'placeholder'> & {
+    placeholder?: string;
+  }) {
+  const hasValue = Boolean(props.value);
+
   return (
     <div data-slot="command-input-wrapper" className="p-1 pb-0">
       <InputGroup className="h-8! rounded-lg! border-input/30 bg-input/30 shadow-none! *:data-[slot=input-group-addon]:pl-2!">
-        <CommandPrimitive.Input
-          data-slot="command-input"
-          className={cn(
-            'w-full text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50',
-            className
+        <div className="relative flex-1">
+          <CommandPrimitive.Input
+            data-slot="command-input"
+            className={cn(
+              'w-full pl-3 text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50',
+              placeholderContent && 'placeholder:opacity-0',
+              className
+            )}
+            {...props}
+          />
+          {placeholderContent && !hasValue && (
+            <div className="pointer-events-none absolute inset-0 flex items-center text-sm text-muted-foreground p-3">
+              {placeholderContent}
+            </div>
           )}
-          {...props}
-        />
+        </div>
         <InputGroupAddon>
-          <SearchIcon className="size-4 shrink-0 opacity-50" />
+          <span className="size-4 shrink-0 opacity-50 flex items-center justify-center">
+            {searchIcon ?? <SearchIcon />}
+          </span>
         </InputGroupAddon>
       </InputGroup>
     </div>

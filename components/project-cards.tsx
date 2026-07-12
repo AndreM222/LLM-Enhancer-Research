@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardAction,
@@ -14,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import * as LucideIcons from 'lucide-react';
 import { IconName } from './dialogs/project-icon';
+import { CircularProgress } from './ui/circular-progress';
 
 const data = [
   {
@@ -51,21 +51,23 @@ const data = [
   },
 ];
 
-const ProjectCard = ({
-  item,
-}: {
-  item: {
-    id: string;
-    title: string;
-    total: number;
-    state: string;
-    description: string;
-    accuracy: number;
-    prompt: string;
-    icon: IconName;
-    color: string;
-  };
-}) => {
+export type Project = {
+  id: string;
+  title: string;
+  total: number;
+  state: string;
+  description: string;
+  accuracy: number;
+  prompt: string;
+  icon: IconName;
+  color: string;
+};
+
+export function getProjects(): Project[] {
+  return data;
+}
+
+const ProjectCard = ({ item }: { item: Project }) => {
   const currState = item.state === 'online';
   const Selected = LucideIcons[item.icon] as React.ComponentType<{ className?: string }>;
 
@@ -89,9 +91,19 @@ const ProjectCard = ({
             </div>
 
             <CardAction>
-              <Badge variant={currState ? 'secondary' : 'outline'}>
-                {currState ? 'Online' : 'Processing'}
-              </Badge>
+              <CircularProgress
+                variant="animated"
+                size={40}
+                strokeWidth={11}
+                showLabel
+                renderLabel={() => {
+                  if (currState) return <LucideIcons.CheckCheck className="size-5" />;
+
+                  return <LucideIcons.CloudSync className="size-5" />;
+                }}
+                gaugePrimaryColor={currState ? 'var(--color-sky-600)' : 'var(--color-yellow-600)'}
+                value={currState ? 100 : 50}
+              />
             </CardAction>
           </div>
         </CardHeader>

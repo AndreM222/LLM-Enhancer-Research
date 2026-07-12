@@ -27,12 +27,14 @@ import { buttonVariants } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import React from 'react';
 
-type NavItem = {
+export type NavItem = {
   title: string;
   description: string;
   url: string;
   icon: React.JSX.Element;
   isActive: boolean;
+  iconBg?: string;
+  iconFg?: string;
 };
 
 const data = {
