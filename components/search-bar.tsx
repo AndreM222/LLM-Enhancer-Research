@@ -23,7 +23,7 @@ import * as LucideIcons from 'lucide-react';
 const SEARCHBAR_KEYBOARD_SHORTCUT = '/';
 const CLEAN_COMMAND_SHORTCUT = 'Backspace';
 
-const FILTER_COMMANDS = ['> ', '/ '];
+const FILTER_COMMANDS = ['>', '/'];
 
 function getSearchItems(
   command: string,
@@ -70,7 +70,7 @@ function getSearchItems(
   };
 
   switch (command) {
-    case '> ':
+    case '>':
       setProjects();
       break;
 
@@ -124,7 +124,7 @@ export function SearchBar() {
   }, [command]);
 
   const handeCommands = (searchVal: string) => {
-    const matchedKeyword = FILTER_COMMANDS.find((keyword) => searchVal.startsWith(keyword));
+    const matchedKeyword = FILTER_COMMANDS.find((keyword) => searchVal.startsWith(keyword + ' '));
 
     if (matchedKeyword) {
       let remainingText = searchVal.slice(matchedKeyword.length);
@@ -142,8 +142,8 @@ export function SearchBar() {
 
   function SearchIndicator({ command }: { command: string }) {
     switch (command) {
-      case '> ':
-        return <LucideIcons.Box />;
+      case '>':
+        return <LucideIcons.Box className="text-orange-400" />;
 
       default:
         return <LucideIcons.SearchIcon />;
