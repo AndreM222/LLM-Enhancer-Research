@@ -57,7 +57,7 @@ export const columns: ColumnDef<Role>[] = [
       const roleId = row.getValue<string>('id');
 
       return (
-        <Button>
+        <Button variant="outline">
           <Link href={roleId}>
             <ChevronRight />
           </Link>

@@ -16,7 +16,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { LogOut, UserCircle } from 'lucide-react';
+import { LogOut, UserCircle, Wallet } from 'lucide-react';
 import { FaGear } from 'react-icons/fa6';
 import { cn } from '@/lib/utils';
 
@@ -119,6 +119,10 @@ export function NavUser({
               <DropdownMenuItem>
                 <FaGear />
                 Settings
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Wallet />
+                Billing
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

@@ -14,42 +14,8 @@ import { Button } from '@/components/ui/button';
 import * as LucideIcons from 'lucide-react';
 import { IconName } from './dialogs/project-icon';
 import { CircularProgress } from './ui/circular-progress';
-
-const data = [
-  {
-    id: 'area',
-    title: 'Area',
-    total: 23,
-    state: 'online',
-    description: 'Reducing the detection area for focused car inspections.',
-    accuracy: 91,
-    prompt: 'v4.2',
-    icon: 'Folder' as IconName, // ← PascalCase + cast
-    color: '#7c3aed',
-  },
-  {
-    id: 'simple',
-    title: 'Simple',
-    total: 23,
-    state: 'processing',
-    description: 'Simple parsing rules for clean, minimal detections.',
-    accuracy: 89,
-    prompt: 'v3.8',
-    icon: 'Globe' as IconName,
-    color: '#ef4444',
-  },
-  {
-    id: 'tags',
-    title: 'Tags',
-    total: 23,
-    state: 'online',
-    description: 'Uses tags to specialize what the project should look for.',
-    accuracy: 94,
-    prompt: 'v5.1',
-    icon: 'ClipboardList' as IconName,
-    color: '#0ea5e9',
-  },
-];
+import { UsageTable } from './tables/usage-table';
+import { Usage } from './tables/usage-columns';
 
 export type Project = {
   id: string;
@@ -57,11 +23,149 @@ export type Project = {
   total: number;
   state: string;
   description: string;
-  accuracy: number;
-  prompt: string;
+  model: string;
   icon: IconName;
   color: string;
+  usage: Usage[];
 };
+
+const data: Project[] = [
+  {
+    id: 'area',
+    title: 'Area',
+    total: 23,
+    state: 'online',
+    description: 'Reducing the detection area for focused car inspections.',
+    model: 'Gemini',
+    icon: 'Folder' as IconName, // ← PascalCase + cast
+    color: '#7c3aed',
+    usage: [
+      {
+        id: '1',
+        name: 'Data Usage',
+        description: 'Total data usage of the AI model',
+        usedData: 1.24,
+        maxData: 100,
+        dataType: 'GB',
+      },
+      {
+        id: '1',
+        name: 'Image Optimization',
+        description:
+          'The number of image transformations that were requested from your Deployments.',
+        usedData: 12,
+        maxData: 100,
+        dataType: 'K',
+      },
+      {
+        id: '1',
+        name: 'Fast Memory',
+        description: 'Total memory usage for optimization.',
+        usedData: 12,
+        maxData: 64,
+        dataType: 'GB',
+      },
+      {
+        id: '1',
+        name: 'Fast Memory',
+        description: 'Total memory usage for optimization.',
+        usedData: 12,
+        maxData: 64,
+        dataType: 'GB',
+      },
+    ],
+  },
+  {
+    id: 'simple',
+    title: 'Simple',
+    total: 23,
+    state: 'processing',
+    description: 'Simple parsing rules for clean, minimal detections.',
+    model: 'GPT',
+    icon: 'Globe' as IconName,
+    color: '#ef4444',
+    usage: [
+      {
+        id: '1',
+        name: 'Data Usage',
+        description: 'Total data usage of the AI model',
+        usedData: 1.24,
+        maxData: 100,
+        dataType: 'GB',
+      },
+      {
+        id: '1',
+        name: 'Image Optimization',
+        description:
+          'The number of image transformations that were requested from your Deployments.',
+        usedData: 12,
+        maxData: 100,
+        dataType: 'K',
+      },
+      {
+        id: '1',
+        name: 'Fast Memory',
+        description: 'Total memory usage for optimization.',
+        usedData: 12,
+        maxData: 64,
+        dataType: 'GB',
+      },
+      {
+        id: '1',
+        name: 'Fast Memory',
+        description: 'Total memory usage for optimization.',
+        usedData: 12,
+        maxData: 64,
+        dataType: 'GB',
+      },
+    ],
+  },
+  {
+    id: 'tags',
+    title: 'Tags',
+    total: 23,
+    state: 'online',
+    description: 'Uses tags to specialize what the project should look for.',
+    model: 'Gemini',
+    icon: 'ClipboardList' as IconName,
+    color: '#0ea5e9',
+    usage: [
+      {
+        id: '1',
+        name: 'Data Usage',
+        description: 'Total data usage of the AI model',
+        usedData: 1.24,
+        maxData: 100,
+        dataType: 'GB',
+      },
+      {
+        id: '1',
+        name: 'Image Optimization',
+        description:
+          'The number of image transformations that were requested from your Deployments.',
+        usedData: 12,
+        maxData: 100,
+        dataType: 'K',
+      },
+      {
+        id: '1',
+        name: 'Fast Memory',
+        description: 'Total memory usage for optimization.',
+        usedData: 12,
+        maxData: 64,
+        dataType: 'GB',
+      },
+      {
+        id: '1',
+        name: 'Fast Memory',
+        description: 'Total memory usage for optimization.',
+        usedData: 12,
+        maxData: 64,
+        dataType: 'GB',
+      },
+    ],
+  },
+];
 
 export function getProjects(): Project[] {
   return data;
@@ -116,14 +220,14 @@ const ProjectCard = ({ item }: { item: Project }) => {
             </div>
 
             <div className="rounded-lg border bg-muted/30 p-3">
-              <p className="text-xs text-muted-foreground">Prompt</p>
-              <p className="mt-1 text-lg font-semibold tabular-nums">{item.prompt}</p>
+              <p className="text-xs text-muted-foreground">Model</p>
+              <p className="mt-1 text-lg font-semibold tabular-nums">{item.model}</p>
             </div>
           </div>
 
-          <div className="rounded-lg border bg-muted/30 p-3">
-            <p className="text-xs text-muted-foreground">Quality</p>
-            <p className="mt-1 text-lg font-semibold tabular-nums">{item.accuracy}%</p>
+          <div className="rounded-lg border bg-muted/30 p-3 space-y-2">
+            <p className="text-xs text-muted-foreground">Last 30 days</p>
+            <UsageTable data={item.usage} onOpen={() => console.log('Open')} />
           </div>
         </CardContent>
 
@@ -140,38 +244,10 @@ const ProjectCard = ({ item }: { item: Project }) => {
 
 export function Projects() {
   return (
-    <div className="space-y-6 px-4 lg:px-6">
-      <div className="flex w-full justify-end">
-        <Button>Create project</Button>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Total projects</CardTitle>
-            <CardDescription>All active research spaces</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-semibold">12</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Avg quality</CardTitle>
-            <CardDescription>Across current project prompts</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-semibold">91%</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {data.map((item) => (
-          <ProjectCard item={item} key={item.id} />
-        ))}
-      </div>
+    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      {data.map((item) => (
+        <ProjectCard item={item} key={item.id} />
+      ))}
     </div>
   );
 }

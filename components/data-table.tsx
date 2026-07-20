@@ -34,13 +34,16 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   getRowStatus?: (row: TData) => RowStatus;
+  onRowClick?: (row: TData) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
+  hideHeader,
   data,
   getRowStatus,
-}: DataTableProps<TData, TValue>) {
+  onRowClick,
+}: { hideHeader?: boolean } & DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
@@ -50,9 +53,9 @@ export function DataTable<TData, TValue>({
   return (
     <div className="overflow-hidden rounded-md border">
       <Table>
-        <TableHeader>
+        <TableHeader className={cn(hideHeader && 'hidden')}>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
+            <TableRow key={headerGroup.id} onClick={() => onRowClick}>
               {headerGroup.headers.map((header) => (
                 <TableHead key={header.id}>
                   {header.isPlaceholder
@@ -71,7 +74,8 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className={cn(rowVariants({ status }))}
+                  className={cn(rowVariants({ status }), onRowClick && 'cursor-pointer')}
+                  onClick={() => onRowClick?.(row.original)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

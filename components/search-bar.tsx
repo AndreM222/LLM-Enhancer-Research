@@ -143,7 +143,7 @@ export function SearchBar() {
   function SearchIndicator({ command }: { command: string }) {
     switch (command) {
       case '>':
-        return <LucideIcons.Box className="text-orange-400" />;
+        return <LucideIcons.Box />;
 
       default:
         return <LucideIcons.SearchIcon />;
@@ -178,7 +178,11 @@ export function SearchBar() {
                 'Type for searching...'
               )
             }
-            searchIcon={<SearchIndicator command={command} />}
+            searchIcon={
+              <span className={command && 'text-white'}>
+                <SearchIndicator command={command} />
+              </span>
+            }
             value={search}
             onValueChange={handeCommands}
           />

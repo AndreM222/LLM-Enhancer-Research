@@ -12,9 +12,11 @@ import {
   Mail,
   MessagesSquare,
   Settings,
+  Store,
   Tags,
   User,
   Users,
+  Wallet,
 } from 'lucide-react';
 import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenu } from './ui/sidebar';
 import { NavUser } from './user-button';
@@ -139,10 +141,11 @@ const data = {
           ],
         },
         {
-          title: 'Activity',
-          description: 'Monitor prompt quality, correction impact, and model performance.',
-          url: '/activity',
-          icon: <Database />,
+          title: 'Marketplace',
+          description:
+            'Publish your model mode, tags, rules, and workflow as a reusable starting point for others to clone and customize.',
+          url: '/marketplace',
+          icon: <Store />,
           isActive: true,
         },
       ],
@@ -165,11 +168,26 @@ const data = {
           isActive: true,
         },
         {
+          title: 'Activity',
+          description: 'Monitor prompt quality, correction impact, and model performance.',
+          url: '/activity',
+          icon: <Database />,
+          isActive: true,
+        },
+        {
           title: 'Prompts',
           description:
             'Manage prompt versions generated from image detections and human corrections.',
           url: '/prompts',
           icon: <MessagesSquare />,
+          isActive: true,
+        },
+        {
+          title: 'Billing',
+          description:
+            'Review your current plan, payment method, invoice history, and usage limits in one place.',
+          url: '/billing',
+          icon: <Wallet />,
           isActive: true,
         },
       ],
