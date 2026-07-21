@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { AnimatePresence, motion } from 'motion/react';
 import {
-  ArrowLeft,
   ArrowUpDown,
   ChevronLeft,
   ChevronRight,
@@ -173,7 +172,6 @@ export default function Session() {
   const pathname = usePathname();
   const paths = pathname.split('/').filter(Boolean);
   const session = paths.pop();
-  const project = paths.pop();
 
   const activeImage = images.find((img) => img.id === activeImageId) ?? images[0];
   const detections = activeImage?.detections ?? [];
@@ -184,7 +182,8 @@ export default function Session() {
 
   const selectedCount = selectedId.length;
   const allSelected = detections.length > 0 && selectedId.length === detections.length;
-  const someSelected = selectedId.length > 0 && selectedId.length < detections.length;
+  const someSelected =
+    selectedId.length > 0 && selectedId.length === detections.length - hiddenId.length;
   const allHidden = detections.length > 0 && hiddenId.length === detections.length;
 
   const visibleDetections = useMemo(() => {
@@ -207,9 +206,7 @@ export default function Session() {
   const toggleSelected = (id: string) => {
     setSelectedByImage((prev) => {
       const current = prev[activeImageId] ?? [];
-      const next = current.includes(id)
-        ? current.filter((item) => item !== id)
-        : [...current, id];
+      const next = current.includes(id) ? current.filter((item) => item !== id) : [...current, id];
 
       return { ...prev, [activeImageId]: next };
     });
@@ -218,9 +215,16 @@ export default function Session() {
   const toggleHidden = (id: string) => {
     setHiddenByImage((prev) => {
       const current = prev[activeImageId] ?? [];
-      const next = current.includes(id)
-        ? current.filter((item) => item !== id)
-        : [...current, id];
+      const next = current.includes(id) ? current.filter((item) => item !== id) : [...current, id];
+
+      return { ...prev, [activeImageId]: next };
+    });
+
+    setSelectedByImage((prev) => {
+      const current = prev[activeImageId] ?? [];
+
+      const next = current.includes(id) ? current.filter((item) => item !== id) : [...current, id];
+      // const next = current.includes(id) ? current.filter((item) => item !== id) : [...current, id];
 
       return { ...prev, [activeImageId]: next };
     });
@@ -278,19 +282,10 @@ export default function Session() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-end justify-between">
-        <PageHeader
-          newTitle={session?.toUpperCase()}
-          newDescription={`${session?.toUpperCase()} session image detections`}
-        />
-
-        <Button variant="outline" size="sm" asChild>
-          <Link href={`/${project}`}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Return
-          </Link>
-        </Button>
-      </div>
+      <PageHeader
+        newTitle={session?.toUpperCase()}
+        newDescription={`${session?.toUpperCase()} session image detections`}
+      />
 
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="overflow-hidden flex h-full flex-col">

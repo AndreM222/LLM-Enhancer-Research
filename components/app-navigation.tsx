@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  ArrowLeft,
   Box,
   BriefcaseBusiness,
   ChartArea,
@@ -25,7 +26,7 @@ import { usePathname } from 'next/navigation';
 import { WorkspaceSwitcher } from './team-switcher';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import React from 'react';
 
@@ -236,6 +237,7 @@ export const PageHeader = ({
   className,
   iconBg,
   iconFg,
+  href,
 }: {
   newTitle?: string;
   newDescription?: string;
@@ -243,6 +245,7 @@ export const PageHeader = ({
   className?: string;
   iconBg?: string;
   iconFg?: string;
+  href?: string;
 }) => {
   let { title, description, icon } = useCurrentPage();
 
@@ -250,23 +253,44 @@ export const PageHeader = ({
   description = description || newDescription || '';
   icon = icon || newIcon || undefined;
 
+  const paths = usePathname().split('/').filter(Boolean);
+
+  let previous: string = '';
+  if (href) {
+    previous = href;
+  } else if (paths.length > 1) {
+    paths.pop();
+    previous = paths.join('/');
+  }
+
   if (title !== '')
     return (
-      <div className={`flex gap-2 ${className}`}>
-        {icon && (
-          <div
-            className="flex h-16 w-16 items-center justify-center size-6 rounded-2xl border"
-            style={{ backgroundColor: `${iconBg}20`, color: iconFg }}
-          >
-            {icon}
-          </div>
-        )}
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
-            <p className="text-muted-foreground">{description}</p>
+      <div className={`flex w-full justify-between ${className}`}>
+        <div className="flex gap-2">
+          {icon && (
+            <div
+              className="flex h-16 w-16 items-center justify-center size-6 rounded-2xl border"
+              style={{ backgroundColor: `${iconBg}20`, color: iconFg }}
+            >
+              {icon}
+            </div>
+          )}
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
+              <p className="text-muted-foreground">{description}</p>
+            </div>
           </div>
         </div>
+
+        {previous && (
+          <Button variant="outline" size="sm" className="mt-auto" asChild>
+            <Link href={`/${previous}`}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Return
+            </Link>
+          </Button>
+        )}
       </div>
     );
 
@@ -339,12 +363,12 @@ export default function SubNavigator() {
             href={item.url}
             className={cn(
               buttonVariants({ variant: 'outline' }),
-              'h-auto w-full justify-start rounded-xl border px-4 py-3 text-left transition-colors',
+              'h-auto w-full justify-start rounded-xl border p-2 text-left transition-colors',
               'border-primary/20 bg-primary/10 text-primary hover:bg-primary/10'
             )}
           >
             {item.icon && (
-              <div className="flex h-16 w-16 items-center justify-center size-6 rounded-2xl border">
+              <div className="flex min-h-12 min-w-12 items-center justify-center size-6 rounded-2xl border">
                 {item.icon}
               </div>
             )}

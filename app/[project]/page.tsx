@@ -200,6 +200,7 @@ export default function Project() {
           iconFg={selectedColor}
           newTitle={id?.toUpperCase()}
           newDescription={`${id?.toUpperCase()} project image detections`}
+          href="/"
         />
       </div>
 

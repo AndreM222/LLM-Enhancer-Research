@@ -1,10 +1,10 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import Link from 'next/link';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Trash } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
+import { ButtonGroup } from '../ui/button-group';
 
 export type Role = {
   id: string;
@@ -14,55 +14,63 @@ export type Role = {
   permissions: string[];
 };
 
-export const columns: ColumnDef<Role>[] = [
-  {
-    accessorKey: 'name',
-    header: 'Role',
-  },
-  {
-    accessorKey: 'description',
-    header: 'Description',
-    cell: ({ row }) => {
-      const description = row.getValue<string>('description');
-
-      return <div>{description ? description : <span className="font-bold">- - -</span>}</div>;
+export function rolesColumns(
+  onDelete: (id: string) => void,
+  onOpen: (id: string) => void
+): ColumnDef<Role>[] {
+  return [
+    {
+      accessorKey: 'name',
+      header: 'Role',
     },
-  },
-  {
-    accessorKey: 'isDefault',
-    header: 'Default',
-    cell: ({ row }) => {
-      const isDefault = row.getValue<boolean>('isDefault');
+    {
+      accessorKey: 'description',
+      header: 'Description',
+      cell: ({ row }) => {
+        const description = row.getValue<string>('description');
 
-      return (
-        <div>{isDefault ? <Badge>Default</Badge> : <span className="font-bold">- - -</span>}</div>
-      );
+        return <div>{description ? description : <span className="font-bold">- - -</span>}</div>;
+      },
     },
-  },
-  {
-    accessorKey: 'permissions',
-    header: 'Permissions',
-    cell: ({ row }) => {
-      const roles = row.getValue<string[]>('permissions');
+    {
+      accessorKey: 'isDefault',
+      header: 'Default',
+      cell: ({ row }) => {
+        const isDefault = row.getValue<boolean>('isDefault');
 
-      let total: number = roles.length;
-
-      return <div>{total}</div>;
+        return (
+          <div>{isDefault ? <Badge>Default</Badge> : <span className="font-bold">- - -</span>}</div>
+        );
+      },
     },
-  },
-  {
-    accessorKey: 'id',
-    header: '',
-    cell: ({ row }) => {
-      const roleId = row.getValue<string>('id');
+    {
+      accessorKey: 'permissions',
+      header: 'Permissions',
+      cell: ({ row }) => {
+        const roles = row.getValue<string[]>('permissions');
 
-      return (
-        <Button variant="outline">
-          <Link href={roleId}>
-            <ChevronRight />
-          </Link>
-        </Button>
-      );
+        let total: number = roles.length;
+
+        return <div>{total}</div>;
+      },
     },
-  },
-];
+    {
+      accessorKey: 'id',
+      header: '',
+      cell: ({ row }) => {
+        const roleId = row.getValue<string>('id');
+
+        return (
+          <ButtonGroup>
+            <Button size="sm" variant="destructive" onClick={() => onDelete(roleId)}>
+              <Trash />
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => onOpen(roleId)}>
+              <ChevronRight />
+            </Button>
+          </ButtonGroup>
+        );
+      },
+    },
+  ];
+}
