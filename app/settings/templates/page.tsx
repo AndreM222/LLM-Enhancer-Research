@@ -16,27 +16,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { getProjectTemplates } from '@/lib/mockApi';
 
-function getData(): Template[] {
-  return [
-    {
-      id: '1232',
-      name: 'Cars',
-      description: 'Analyzing cars',
-      total: 11,
-    },
-    {
-      id: '1235',
-      name: 'Drawings',
-      description: 'Analyzing strokes',
-      total: 9,
-    },
-  ];
-}
+const data: Template[] = getProjectTemplates();
 
 export default function Templates() {
-  const data = getData();
-
   return (
     <div className="space-y-6">
       <div className="flex w-full justify-end">
@@ -67,7 +51,7 @@ export default function Templates() {
 
       <CreateTemplateTable
         data={data}
-        onDuplicate={() => console.log("Duplicatr")}
+        onDuplicate={() => console.log('Duplicatr')}
         onDelete={() => console.log('Deleted')}
         onOpen={() => console.log('Opened')}
       />

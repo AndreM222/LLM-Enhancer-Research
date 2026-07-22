@@ -34,94 +34,12 @@ import { CreateDetectionTable } from '@/components/tables/detection-table';
 import { DetectionSession } from '@/components/tables/detection-columns';
 import LinkGraph from '@/components/linkGraph';
 
-const tagsList: TagGroup[] = [
-  {
-    id: '1232',
-    name: 'Japanese',
-    description: 'Japanese stuff',
-    total: 23,
-  },
-  {
-    id: '1235',
-    name: 'Scratches',
-    description: 'Scratches stuff',
-    total: 9,
-  },
-];
+import { getProjectTags, getProjectUsers, getProjectTemplates, getDetectionSessions } from '@/lib/mockApi';
 
-const usersList: User[] = [
-  {
-    id: '728ed52f',
-    name: 'David',
-    role: 'Japan',
-    status: 'SENT',
-    time: '2026-07-07T18:00:00.000Z',
-  },
-  {
-    id: '731ed57f',
-    name: 'Stephanie',
-    role: 'Scratches',
-    status: 'REJECTED',
-    time: '2026-07-07T17:30:00.000Z',
-  },
-  {
-    id: '728ed54f',
-    name: 'Jerry',
-    role: 'Scratches',
-    status: 'ACCEPTED',
-    time: '2026-07-07T16:45:00.000Z',
-  },
-];
-
-const templatesList: Template[] = [
-  {
-    id: '1232',
-    name: 'Cars',
-    description: 'Analyzing cars',
-    total: 11,
-  },
-  {
-    id: '1235',
-    name: 'Drawings',
-    description: 'Analyzing strokes',
-    total: 9,
-  },
-];
-
-const detectionList: DetectionSession[] = [
-  {
-    id: 'S-1042',
-    images: 18,
-    type: 'People detection',
-    detections: 64,
-    status: 'completed',
-    time: '2026-07-07 09:12',
-  },
-  {
-    id: 'S-1043',
-    images: 6,
-    type: 'Face detection',
-    detections: 11,
-    status: 'review',
-    time: '2026-07-07 10:05',
-  },
-  {
-    id: 'S-1044',
-    images: 24,
-    type: 'Vehicle detection',
-    detections: 38,
-    status: 'processing',
-    time: '2026-07-07 11:18',
-  },
-  {
-    id: 'S-1045',
-    images: 9,
-    type: 'Damage detection',
-    detections: 7,
-    status: 'failed',
-    time: '2026-07-07 11:43',
-  },
-];
+const tagsList: TagGroup[] = getProjectTags();
+const usersList: User[] = getProjectUsers();
+const templatesList: Template[] = getProjectTemplates();
+const detectionList: DetectionSession[] = getDetectionSessions();
 
 export default function Project() {
   const pathname = usePathname();

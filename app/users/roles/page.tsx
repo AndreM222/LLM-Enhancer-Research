@@ -18,45 +18,13 @@ import { RolesTable } from '@/components/tables/roles-table';
 import { Role } from '@/components/tables/roles-columns';
 import { Field } from '@/components/ui/field';
 import { ButtonGroup } from '@/components/ui/button-group';
+import { getRoles, getRolePermissions } from '@/lib/mockApi';
 
-function getData(): Role[] {
-  return [
-    {
-      id: '124123',
-      name: 'Admin',
-      description: 'Full access to the workspace.',
-      isDefault: false,
-      permissions: ['Manage users', 'Edit prompts', 'View analytics', 'Change settings'],
-    },
-    {
-      id: '124124',
-      name: 'Editor',
-      description: 'Can edit prompts and review corrections.',
-      isDefault: true,
-      permissions: ['Edit prompts', 'Review corrections', 'View analytics'],
-    },
-    {
-      id: '124125',
-      name: 'Viewer',
-      description: 'Read-only access to reports and dashboards.',
-      isDefault: false,
-      permissions: ['View analytics'],
-    },
-  ];
-}
-
-const permissions = [
-  'Manage users',
-  'Edit prompts',
-  'Review corrections',
-  'View analytics',
-  'Export data',
-  'Change settings',
-];
+const permissions = getRolePermissions();
+const data = getRoles();
 
 export default function RolesPage() {
   const [open, setOpen] = useState(false);
-  const data = getData();
 
   return (
     <div className="space-y-6">

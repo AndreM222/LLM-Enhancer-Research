@@ -12,42 +12,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { getLogs } from '@/lib/mockApi';
 
-function getData(): Log[] {
-  return [
-    {
-      id: '728ed52f',
-      type: 'GET',
-      request: '/api/server/connect',
-      status: 200,
-      time: new Date().toISOString(),
-    },
-    {
-      id: '728ed54f',
-      type: 'DELETE',
-      request: '/api/server/user',
-      status: 500,
-      time: new Date().toISOString(),
-    },
-    {
-      id: '728ed54f',
-      type: 'DELETE',
-      request: '/api/server/user',
-      status: 100,
-      time: new Date().toISOString(),
-    },
-    {
-      id: '728ed54f',
-      type: 'DELETE',
-      request: '/api/server/user',
-      status: 400,
-      time: new Date().toISOString(),
-    },
-  ];
-}
+const data: Log[] = getLogs();
 
 export default function Logs() {
-  const data = getData();
   return (
     <div className="space-y-6">
       <div className="flex space-x-1">

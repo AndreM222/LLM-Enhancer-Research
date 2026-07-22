@@ -54,6 +54,8 @@ type SessionImage = {
   detections: Detection[];
 };
 
+import { getSessionImages } from '@/lib/mockApi';
+
 type FilterValue = 'All' | 'Pallet' | 'Forklift' | 'Person';
 type SortBy = 'index' | 'confidence';
 type SortDir = 'asc' | 'desc';
@@ -61,99 +63,7 @@ type DeletePhase = 'idle' | 'fill' | 'flash' | 'remove';
 
 const FILTERS: FilterValue[] = ['All', 'Pallet', 'Forklift', 'Person'];
 
-const INITIAL_IMAGES: SessionImage[] = [
-  {
-    id: 'img-1',
-    title: 'Entrance view',
-    src: '/session-preview.jpg',
-    detections: [
-      {
-        id: '1',
-        index: 0,
-        label: 'Pallet',
-        confidence: 43,
-        box: { x: 12, y: 28, w: 34, h: 28 },
-      },
-      {
-        id: '2',
-        index: 1,
-        label: 'Pallet',
-        confidence: 47,
-        box: { x: 38, y: 12, w: 32, h: 24 },
-      },
-      {
-        id: '3',
-        index: 2,
-        label: 'Forklift',
-        confidence: 59,
-        box: { x: 64, y: 30, w: 26, h: 30 },
-      },
-      {
-        id: '4',
-        index: 3,
-        label: 'Person',
-        confidence: 77,
-        box: { x: 18, y: 18, w: 10, h: 18 },
-      },
-    ],
-  },
-  {
-    id: 'img-2',
-    title: 'Loading dock',
-    src: '/session-preview.jpg',
-    detections: [
-      {
-        id: '5',
-        index: 0,
-        label: 'Pallet',
-        confidence: 66,
-        box: { x: 16, y: 42, w: 28, h: 24 },
-      },
-      {
-        id: '6',
-        index: 1,
-        label: 'Forklift',
-        confidence: 82,
-        box: { x: 54, y: 25, w: 24, h: 28 },
-      },
-      {
-        id: '7',
-        index: 2,
-        label: 'Person',
-        confidence: 71,
-        box: { x: 22, y: 16, w: 9, h: 19 },
-      },
-    ],
-  },
-  {
-    id: 'img-3',
-    title: 'Storage aisle',
-    src: '/session-preview.jpg',
-    detections: [
-      {
-        id: '8',
-        index: 0,
-        label: 'Pallet',
-        confidence: 52,
-        box: { x: 11, y: 35, w: 30, h: 25 },
-      },
-      {
-        id: '9',
-        index: 1,
-        label: 'Pallet',
-        confidence: 61,
-        box: { x: 46, y: 22, w: 26, h: 23 },
-      },
-      {
-        id: '10',
-        index: 2,
-        label: 'Person',
-        confidence: 79,
-        box: { x: 71, y: 20, w: 9, h: 18 },
-      },
-    ],
-  },
-];
+const INITIAL_IMAGES: SessionImage[] = getSessionImages();
 
 export default function Session() {
   const [images, setImages] = useState(INITIAL_IMAGES);

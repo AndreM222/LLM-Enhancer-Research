@@ -29,6 +29,7 @@ import { cn } from '@/lib/utils';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import React from 'react';
+import { getAccountUser } from '@/lib/mockApi';
 
 export type NavItem = {
   title: string;
@@ -58,11 +59,6 @@ const data = {
       plan: 'Free',
     },
   ],
-  user: {
-    name: 'Jacke Myres',
-    email: 'Jacke@gmail.com',
-    avatar: 'https://github.com/shadcn.png',
-  },
   navigation: [
     {
       group: 'Platform',
@@ -309,7 +305,7 @@ export const AppSidebar = () => {
       <NavContent items={data.navigation} />
 
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={getAccountUser()} />
       </SidebarFooter>
     </Sidebar>
   );

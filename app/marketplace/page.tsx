@@ -8,88 +8,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { getMarketplaceTemplates, getMarketplaceFilters } from '@/lib/mockApi';
 
-type Template = {
-  id: string;
-  slug: string;
-  name: string;
-  creator: string;
-  description: string;
-  mode: string;
-  baseModel: string;
-  tags: string[];
-  rules: number;
-  rating: number;
-  users: string;
-  updated: string;
-  featured?: boolean;
-  previewImages?: string[];
-};
-
-const templates: Template[] = [
-  {
-    id: '1',
-    slug: 'warehouse-safety-qa',
-    name: 'Warehouse Safety QA',
-    creator: 'andre m.',
-    description: 'Detection-first review setup for pallet, forklift, and person workflows.',
-    mode: 'Detection',
-    baseModel: 'YOLOv8',
-    tags: ['warehouse', 'safety', 'ppe', 'review'],
-    rules: 14,
-    rating: 4.9,
-    users: '2.4k',
-    updated: '2 days ago',
-    featured: true,
-    previewImages: ['/session-preview.jpg', '/session-preview.jpg', '/session-preview.jpg'],
-  },
-  {
-    id: '2',
-    slug: 'retail-shelf-audit',
-    name: 'Retail Shelf Audit',
-    creator: 'maya labs',
-    description: 'Fast tagging flow for stockouts, shelf gaps, and product placement checks.',
-    mode: 'Classification',
-    baseModel: 'ConvNeXt',
-    tags: ['retail', 'audit', 'inventory'],
-    rules: 8,
-    rating: 4.7,
-    users: '1.1k',
-    updated: '5 days ago',
-    previewImages: ['/session-preview.jpg', '/session-preview.jpg'],
-  },
-  {
-    id: '3',
-    slug: 'construction-risk-scan',
-    name: 'Construction Risk Scan',
-    creator: 'field ops',
-    description: 'A reusable starting point for hazard labeling and compliance review.',
-    mode: 'Detection',
-    baseModel: 'RT-DETR',
-    tags: ['construction', 'hazard', 'compliance'],
-    rules: 11,
-    rating: 4.8,
-    users: '980',
-    updated: '1 week ago',
-  },
-  {
-    id: '4',
-    slug: 'medical-image-triage',
-    name: 'Medical Image Triage',
-    creator: 'northstar ai',
-    description: 'Clean triage pipeline for fast labeling and expert escalation.',
-    mode: 'Review',
-    baseModel: 'ViT',
-    tags: ['medical', 'triage', 'review'],
-    rules: 16,
-    rating: 4.6,
-    users: '620',
-    updated: '3 days ago',
-    previewImages: ['/session-preview.jpg'],
-  },
-];
-
-const filters = ['All', 'Featured', 'Detection', 'Classification', 'Review'];
+const templates = getMarketplaceTemplates();
+const filters = getMarketplaceFilters();
 
 export default function Marketplace() {
   const [query, setQuery] = useState('');

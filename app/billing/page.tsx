@@ -16,19 +16,10 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
+import { getInvoices, getPlanUsage } from '@/lib/mockApi';
 
-const invoices = [
-  { id: 'inv_001', date: 'Jul 2, 2026', amount: '$59.00', status: 'Paid' },
-  { id: 'inv_002', date: 'Jun 2, 2026', amount: '$59.00', status: 'Paid' },
-  { id: 'inv_003', date: 'May 2, 2026', amount: '$59.00', status: 'Paid' },
-  { id: 'inv_004', date: 'Apr 2, 2026', amount: '$59.00', status: 'Paid' },
-];
-
-const usage = [
-  { label: 'Models', value: 7, limit: 10, tone: 'bg-blue-500' },
-  { label: 'Templates', value: 18, limit: 25, tone: 'bg-violet-500' },
-  { label: 'Seats', value: 6, limit: 8, tone: 'bg-emerald-500' },
-];
+const invoices = getInvoices();
+const usage = getPlanUsage();
 
 export default function Billing() {
   const totalUsage = useMemo(

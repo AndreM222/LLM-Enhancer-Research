@@ -9,11 +9,9 @@ import { AccountBanner, pictureFallback } from '@/components/user-button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { X } from 'lucide-react';
 
-const user = {
-  name: 'Jacke Myres',
-  email: 'Jacke@gmail.com',
-  avatar: 'https://github.com/shadcn.png',
-};
+import { getAccountUser } from '@/lib/mockApi';
+
+const user = getAccountUser();
 
 export default function AccountSettingsPage() {
   const [preview, setPreview] = useState<string | null>(null);

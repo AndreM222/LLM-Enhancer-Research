@@ -10,10 +10,9 @@ import { X } from 'lucide-react';
 import { pictureFallback } from '@/components/user-button';
 import { WorkspaceBanner } from '@/components/workspace-banner';
 
-const workspace = {
-  name: 'Damage Visualizer',
-  logo: '',
-};
+import { getWorkspace } from '@/lib/mockApi';
+
+const workspace = getWorkspace();
 
 export default function GeneralSettingsPage() {
   const [preview, setPreview] = useState<string | null>(null);

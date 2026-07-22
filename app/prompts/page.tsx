@@ -9,25 +9,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { getPrompts } from '@/lib/mockApi';
 
-const prompts = [
-  {
-    id: 'p-001',
-    name: 'Car damage detector v4',
-    accuracy: '92%',
-    status: 'best',
-    updated: '2 hours ago',
-    description: 'Improved front-bumper and fender detection with fewer false positives.',
-  },
-  {
-    id: 'p-002',
-    name: 'Car damage detector v3',
-    accuracy: '88%',
-    status: 'previous',
-    updated: '1 day ago',
-    description: 'Good baseline, but misses small scratches on dark cars.',
-  },
-];
+const prompts = getPrompts();
 
 export default function Prompts() {
   return (

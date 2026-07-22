@@ -17,23 +17,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { getSharedModel } from '@/lib/mockApi';
 
-const model = {
-  name: 'Warehouse Safety QA',
-  slug: 'warehouse-safety-qa',
-  creator: 'andre m.',
-  description:
-    'Detection-first setup for pallet, forklift, and person workflows with reusable rules and tags.',
-  mode: 'Detection',
-  baseModel: 'YOLOv8',
-  rules: 14,
-  users: '2.4k',
-  rating: 4.9,
-  updated: '2 days ago',
-  version: 'v1.3',
-  tags: ['warehouse', 'safety', 'ppe', 'review'],
-  previewImages: ['/session-preview.jpg', '/session-preview.jpg', '/session-preview.jpg'],
-};
+const model = getSharedModel();
 
 export default function SharedModel() {
   const [selectedImage, setSelectedImage] = useState(0);

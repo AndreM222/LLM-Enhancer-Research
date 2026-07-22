@@ -15,35 +15,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { getUsers } from '@/lib/mockApi';
 
-function getData(): User[] {
-  return [
-    {
-      id: '728ed52f',
-      name: 'David',
-      role: 'Japan',
-      status: 'SENT',
-      time: '2026-07-07T18:00:00.000Z',
-    },
-    {
-      id: '731ed57f',
-      name: 'Stephanie',
-      role: 'Scratches',
-      status: 'REJECTED',
-      time: '2026-07-07T17:30:00.000Z',
-    },
-    {
-      id: '728ed54f',
-      name: 'Jerry',
-      role: 'Scratches',
-      status: 'ACCEPTED',
-      time: '2026-07-07T16:45:00.000Z',
-    },
-  ];
-}
+const data: User[] = getUsers();
 
 export default function Users() {
-  const data = getData();
   return (
     <div className="space-y-6">
       <div className="flex w-full justify-end">
