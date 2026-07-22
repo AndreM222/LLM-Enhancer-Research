@@ -35,28 +35,6 @@ export default function Tags() {
         <Button>Create Tag</Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Total tags</CardTitle>
-            <CardDescription>All tags in the workspace</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-semibold">9</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Active</CardTitle>
-            <CardDescription>Tags currently active</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-semibold">2</p>
-          </CardContent>
-        </Card>
-      </div>
-
       <Field>
         <ButtonGroup>
           <Input id="input-button-group" placeholder="Type to search..." />
@@ -66,6 +44,7 @@ export default function Tags() {
 
       <CreateTagGroupTable
         data={data}
+        onDuplicate={() => console.log("Duplicate")}
         onDelete={() => console.log('Deleted')}
         onOpen={() => console.log('Opened')}
       />

@@ -12,13 +12,18 @@ export function CreateTemplateTable({
   data,
   onDelete,
   onOpen,
+  onDuplicate,
 }: {
   data: Template[];
   onDelete: (id: string) => void;
   onOpen: (id: string) => void;
+  onDuplicate: (id: string) => void;
 }) {
-  const columns = useMemo(() => createTemplateColumns(onDelete, onOpen), [onDelete, onOpen]);
-  return <DataTable columns={columns} data={data} />;
+  const columns = useMemo(
+    () => createTemplateColumns(onDelete, onOpen, onDuplicate),
+    [onDelete, onOpen, onDuplicate]
+  );
+  return <DataTable columns={columns} data={data} onRowClick={(row) => onOpen(row.id)} />;
 }
 
 export function LinkTemplateTable({

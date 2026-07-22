@@ -11,6 +11,7 @@ import {
   ChevronRight,
   Eye,
   EyeOff,
+  GalleryVertical,
   ImageOff,
   Pencil,
   Trash2,
@@ -285,6 +286,7 @@ export default function Session() {
       <PageHeader
         newTitle={session?.toUpperCase()}
         newDescription={`${session?.toUpperCase()} session image detections`}
+        newIcon={<GalleryVertical />}
       />
 
       <div className="grid gap-4 md:grid-cols-2">

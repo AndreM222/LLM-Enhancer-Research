@@ -50,48 +50,6 @@ export default function Users() {
         <Button>Invite user</Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Total users</CardTitle>
-            <CardDescription>All accounts in the workspace</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-semibold">24</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Active</CardTitle>
-            <CardDescription>Users currently active</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-semibold">19</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Pending invites</CardTitle>
-            <CardDescription>Awaiting account acceptance</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-semibold">3</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Admins</CardTitle>
-            <CardDescription>Users with management access</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-semibold">2</p>
-          </CardContent>
-        </Card>
-      </div>
-
       <div className="flex space-x-1">
         <Select defaultValue="none">
           <SelectTrigger className="w-45">

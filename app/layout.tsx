@@ -48,7 +48,7 @@ export default function RootLayout({
               <SidebarInset className="flex flex-col min-h-0">
                 <header className="z-50 sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b px-4 justify-between backdrop-blur-md">
                   <div className="flex items-center gap-2 px-4">
-                    <SidebarTrigger className="-ml-1" />
+                    <SidebarTrigger className="-ml-2" />
                     <DynamicCrumbs />
                   </div>
                   <div className="flex space-x-2">

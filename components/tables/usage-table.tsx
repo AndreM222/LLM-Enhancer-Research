@@ -6,5 +6,7 @@ import { useMemo } from 'react';
 
 export function UsageTable({ data, onOpen }: { data: Usage[]; onOpen: (id: string) => void }) {
   const columns = useMemo(() => getUsageColumns(onOpen), [onOpen]);
-  return <DataTable columns={columns} data={data} hideHeader />;
+  return (
+    <DataTable columns={columns} data={data} onRowClick={(row) => onOpen(row.id)} hideHeader />
+  );
 }

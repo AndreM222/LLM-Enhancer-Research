@@ -90,15 +90,6 @@ export default function GeneralSettingsPage() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Name</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <Input id="workspace-name" placeholder={workspace.name} />
-        </CardContent>
-      </Card>
-
       <div className="flex justify-end">
         <Button>Save changes</Button>
       </div>

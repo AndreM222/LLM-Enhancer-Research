@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { ChevronRight, Trash, X } from 'lucide-react';
+import { ChevronRight, Copy, Trash, X } from 'lucide-react';
 import { Button } from '../ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 
@@ -14,7 +14,8 @@ export type Template = {
 
 export function createTemplateColumns(
   onDelete: (id: string) => void,
-  onOpen: (id: string) => void
+  onOpen: (id: string) => void,
+  onDuplicate: (id: string) => void
 ): ColumnDef<Template>[] {
   return [
     {
@@ -32,19 +33,25 @@ export function createTemplateColumns(
     {
       accessorKey: 'total',
       header: 'Total',
-      cell: ({ row }) => <div>{row.getValue<number>('total')}</div>,
     },
     {
       accessorKey: 'id',
       header: '',
       cell: ({ row }) => (
-        <ButtonGroup className="-mx-7">
+        <ButtonGroup className="-mx-8">
           <Button
             size="sm"
             variant="destructive"
             onClick={() => onDelete(row.getValue<string>('id'))}
           >
             <Trash />
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => onDuplicate(row.getValue<string>('id'))}
+          >
+            <Copy />
           </Button>
           <Button size="sm" variant="outline" onClick={() => onOpen(row.getValue<string>('id'))}>
             <ChevronRight />

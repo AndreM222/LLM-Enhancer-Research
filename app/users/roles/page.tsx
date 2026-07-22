@@ -128,38 +128,6 @@ export default function RolesPage() {
         </Dialog>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle>Total roles</CardTitle>
-            <CardDescription>All configured access roles</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-semibold">{data.length}</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Default role</CardTitle>
-            <CardDescription>Assigned to new invitations</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-semibold">Editor</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Full access</CardTitle>
-            <CardDescription>Roles with full permissions</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-semibold">1</p>
-          </CardContent>
-        </Card>
-      </div>
-
       <Field>
         <ButtonGroup>
           <Input id="input-button-group" placeholder="Type to search..." />
@@ -167,7 +135,11 @@ export default function RolesPage() {
         </ButtonGroup>
       </Field>
 
-      <RolesTable data={data} />
+      <RolesTable
+        data={data}
+        onDelete={() => console.log('delete')}
+        onOpen={() => console.log('open')}
+      />
     </div>
   );
 }

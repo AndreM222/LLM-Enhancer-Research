@@ -20,7 +20,14 @@ export function CreateUsersTable({
   onOpen: (id: string) => void;
 }) {
   const columns = useMemo(() => createUserColumns(onDelete, onOpen), [onDelete, onOpen]);
-  return <DataTable columns={columns} data={data} getRowStatus={getRowStatus} />;
+  return (
+    <DataTable
+      columns={columns}
+      data={data}
+      getRowStatus={getRowStatus}
+      onRowClick={(row) => onOpen(row.id)}
+    />
+  );
 }
 
 export function LinkUsersTable({

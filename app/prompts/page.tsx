@@ -32,52 +32,6 @@ const prompts = [
 export default function Prompts() {
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardHeader>
-            <CardDescription>Total prompts</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              12
-            </CardTitle>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardDescription>Best accuracy</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              92%
-            </CardTitle>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardDescription>Corrections</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              148
-            </CardTitle>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardDescription>Pending review</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              7
-            </CardTitle>
-          </CardContent>
-        </Card>
-      </div>
-
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {prompts.map((prompt) => (
           <Card key={prompt.id}>

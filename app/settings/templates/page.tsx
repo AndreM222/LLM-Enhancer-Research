@@ -43,28 +43,6 @@ export default function Templates() {
         <Button>Create Template</Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Total templates</CardTitle>
-            <CardDescription>All templates in the workspace</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-semibold">24</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Active</CardTitle>
-            <CardDescription>Templates currently active</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-semibold">19</p>
-          </CardContent>
-        </Card>
-      </div>
-
       <div className="flex space-x-1">
         <Select defaultValue="none">
           <SelectTrigger className="w-45">
@@ -89,6 +67,7 @@ export default function Templates() {
 
       <CreateTemplateTable
         data={data}
+        onDuplicate={() => console.log("Duplicatr")}
         onDelete={() => console.log('Deleted')}
         onOpen={() => console.log('Opened')}
       />

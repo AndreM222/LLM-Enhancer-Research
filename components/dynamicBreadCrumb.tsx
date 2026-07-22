@@ -44,7 +44,7 @@ export default function DynamicCrumbs() {
         </BreadcrumbItem>
         {tabs.map((item) => (
           <div className="flex items-center" key={item[1]}>
-            <BreadcrumbSeparator className="hidden md:block" />
+            <BreadcrumbSeparator className="hidden md:block pr-1" />
             <BreadcrumbItem>
               {item[1] ? (
                 <BreadcrumbLink asChild>

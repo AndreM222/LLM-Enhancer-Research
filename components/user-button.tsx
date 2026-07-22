@@ -19,6 +19,7 @@ import {
 import { LogOut, UserCircle, Wallet } from 'lucide-react';
 import { FaGear } from 'react-icons/fa6';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 const sizeConfig = {
   sm: { avatar: 'h-8 w-8', name: 'text-sm', email: 'text-xs' },
@@ -112,17 +113,23 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <UserCircle />
-                Account
+              <DropdownMenuItem asChild>
+                <Link href="/settings/account">
+                  <UserCircle />
+                  Account
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <FaGear />
-                Settings
+              <DropdownMenuItem asChild>
+                <Link href="/settings">
+                  <FaGear />
+                  Settings
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Wallet />
-                Billing
+              <DropdownMenuItem asChild>
+                <Link href="/billing">
+                  <Wallet />
+                  Billing
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
