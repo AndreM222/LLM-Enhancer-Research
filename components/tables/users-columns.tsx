@@ -11,6 +11,9 @@ export type User = {
   status: string;
   role: string;
   name: string;
+  username: string;
+  email: string;
+  avatarUrl: string;
   time: string;
 };
 

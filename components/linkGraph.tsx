@@ -198,7 +198,7 @@ export default function LinkGraph({ className = '' }) {
   return (
     <div
       ref={wrapRef}
-      className={`relative h-full w-full overflow-hidden rounded-3xl border ${className}`}
+      className={`relative h-full w-full overflow-hidden rounded-3xl border min-h-100 ${className}`}
     >
       <div className="absolute inset-0">
         <svg ref={svgRef} className="h-full w-full" style={{ background: 'var(--card)' }} />

@@ -4,8 +4,6 @@ import LinkGraph from '@/components/linkGraph';
 import { Template } from '@/components/tables/templates-columns';
 import { CreateTemplateTable } from '@/components/tables/templates-table';
 import { Button } from '@/components/ui/button';
-import { ButtonGroup } from '@/components/ui/button-group';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import {
@@ -23,11 +21,7 @@ const data: Template[] = getProjectTemplates();
 export default function Templates() {
   return (
     <div className="space-y-6">
-      <div className="flex w-full justify-end">
-        <Button>Create Template</Button>
-      </div>
-
-      <div className="flex space-x-1">
+      <div className="flex space-x-2">
         <Select defaultValue="none">
           <SelectTrigger className="w-45">
             <SelectValue />
@@ -42,11 +36,9 @@ export default function Templates() {
           </SelectContent>
         </Select>
         <Field>
-          <ButtonGroup>
-            <Input id="input-button-group" placeholder="Type to search..." />
-            <Button variant="outline">Search</Button>
-          </ButtonGroup>
+          <Input id="input-button-group" placeholder="Type to search..." />
         </Field>
+        <Button>Create Template</Button>
       </div>
 
       <CreateTemplateTable

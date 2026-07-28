@@ -20,7 +20,7 @@ export function createTemplateColumns(
   return [
     {
       accessorKey: 'name',
-      header: 'Template Name',
+      header: 'Layout',
     },
     {
       accessorKey: 'description',

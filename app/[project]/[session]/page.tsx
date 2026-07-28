@@ -324,56 +324,60 @@ export default function Session() {
               </Badge>
             </div>
 
-            <Card className="overflow-hidden">
-              <CardContent>
-                <ScrollArea>
-                  <div className="space-x-3 flex">
-                    {images.map((img) => {
-                      const isActive = img.id === activeImageId;
-                      const hasError = !!imgErrorById[img.id];
+            {images.length > 1 && (
+              <Card className="overflow-hidden">
+                <CardContent>
+                  <ScrollArea>
+                    <div className="space-x-3 flex">
+                      {images.map((img) => {
+                        const isActive = img.id === activeImageId;
+                        const hasError = !!imgErrorById[img.id];
 
-                      return (
-                        <button
-                          key={img.id}
-                          type="button"
-                          onClick={() => setActiveImageId(img.id)}
-                          className={cn(
-                            'group w-25 overflow-hidden rounded-2xl border text-left transition',
-                            isActive ? 'border-primary ring-2 ring-primary/20' : 'hover:bg-muted/50'
-                          )}
-                        >
-                          <div className="relative h-15 w-full bg-muted/30">
-                            {hasError ? (
-                              <div className="flex h-full items-center justify-center gap-2 text-xs text-muted-foreground">
-                                <ImageOff className="h-3 w-3" />
-                              </div>
-                            ) : (
-                              <Image
-                                src={img.src}
-                                alt={img.title}
-                                fill
-                                className="object-cover"
-                                onError={() =>
-                                  setImgErrorById((prev) => ({ ...prev, [img.id]: true }))
-                                }
-                              />
+                        return (
+                          <button
+                            key={img.id}
+                            type="button"
+                            onClick={() => setActiveImageId(img.id)}
+                            className={cn(
+                              'group w-25 overflow-hidden rounded-2xl border text-left transition',
+                              isActive
+                                ? 'border-primary ring-2 ring-primary/20'
+                                : 'hover:bg-muted/50'
                             )}
-                            <Badge variant="secondary" className="top-1 right-1 absolute">
-                              {img.detections.length}
-                            </Badge>
-                          </div>
+                          >
+                            <div className="relative h-15 w-full bg-muted/30">
+                              {hasError ? (
+                                <div className="flex h-full items-center justify-center gap-2 text-xs text-muted-foreground">
+                                  <ImageOff className="h-3 w-3" />
+                                </div>
+                              ) : (
+                                <Image
+                                  src={img.src}
+                                  alt={img.title}
+                                  fill
+                                  className="object-cover"
+                                  onError={() =>
+                                    setImgErrorById((prev) => ({ ...prev, [img.id]: true }))
+                                  }
+                                />
+                              )}
+                              <Badge variant="secondary" className="top-1 right-1 absolute">
+                                {img.detections.length}
+                              </Badge>
+                            </div>
 
-                          <div className="m-3 flex items-center justify-between gap-2 text-xs">
-                            <p className="font-medium">{img.title}</p>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <ScrollBar orientation="horizontal" />
-                </ScrollArea>
-              </CardContent>
-            </Card>
+                            <div className="m-3 flex items-center justify-between gap-2 text-xs">
+                              <p className="font-medium">{img.title}</p>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <ScrollBar orientation="horizontal" />
+                  </ScrollArea>
+                </CardContent>
+              </Card>
+            )}
 
             <div className="flex flex-wrap items-center gap-2">
               <motion.div whileTap={{ scale: 0.94 }}>

@@ -21,14 +21,9 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { cn } from '@/lib/utils';
 import { pictureFallback } from './user-button';
+import { Workspace } from '@/lib/mockApi';
 
 type BannerSize = keyof typeof sizeConfig;
-
-type Workspace = {
-  name: string;
-  logo: string;
-  summary?: string;
-};
 
 const sizeConfig = {
   sm: { avatar: 'h-8 w-8', name: 'text-sm', email: 'text-xs' },
@@ -79,7 +74,7 @@ export function WorkspaceSwitcher({ workspaces: workspaces }: { workspaces: Work
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{activeWorkspace.name}</span>
-                <span className="truncate text-xs">{activeWorkspace.summary}</span>
+                <span className="truncate text-xs text-gray-500">{activeWorkspace.plan}</span>
               </div>
               <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
@@ -99,13 +94,14 @@ export function WorkspaceSwitcher({ workspaces: workspaces }: { workspaces: Work
                 onClick={() => setActiveWorkspace(team)}
                 className="gap-2 p-2"
               >
-                <div className="flex size-6 items-center justify-center rounded-md border">
-                  <Avatar className={cn('m-[-7]')}>
-                    <AvatarImage src={team.logo} alt="shadcn" />
-                    <AvatarFallback>{pictureFallback(team.name)}</AvatarFallback>
-                  </Avatar>
+                <Avatar>
+                  <AvatarImage src={team.logo} alt="shadcn" />
+                  <AvatarFallback>{pictureFallback(team.name)}</AvatarFallback>
+                </Avatar>
+                <div>
+                  {team.name}
+                  <div className="truncate text-xs text-gray-500">{team.plan}</div>
                 </div>
-                {team.name}
                 <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
               </DropdownMenuItem>
             ))}

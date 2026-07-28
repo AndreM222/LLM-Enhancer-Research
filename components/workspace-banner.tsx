@@ -1,3 +1,4 @@
+import { Workspace } from '@/lib/mockApi';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { cn } from '@/lib/utils';
 
@@ -13,10 +14,7 @@ export function WorkspaceBanner({
   workspace,
   size = 'sm',
 }: {
-  workspace: {
-    name: string;
-    logo: string;
-  };
+  workspace: Workspace;
   size?: BannerSize;
 }) {
   const s = sizeConfig[size];
@@ -27,7 +25,10 @@ export function WorkspaceBanner({
         <AvatarImage src="" alt="shadcn" />
         <AvatarFallback className={cn(s.name)}>DV</AvatarFallback>
       </Avatar>
-      <span className={cn('truncate font-medium', s.name)}>{workspace.name}</span>
+      <div className="grid">
+        <span className={cn('truncate font-medium', s.name)}>{workspace.name}</span>
+        <span className={cn('truncate text-gray-500', s.name)}>{workspace.plan}</span>
+      </div>
     </div>
   );
 }

@@ -1,7 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -10,9 +17,9 @@ import { X } from 'lucide-react';
 import { pictureFallback } from '@/components/user-button';
 import { WorkspaceBanner } from '@/components/workspace-banner';
 
-import { getWorkspace } from '@/lib/mockApi';
+import { getWorkspace, Workspace } from '@/lib/mockApi';
 
-const workspace = getWorkspace();
+const workspace: Workspace = getWorkspace()[0];
 
 export default function GeneralSettingsPage() {
   const [preview, setPreview] = useState<string | null>(null);
@@ -87,6 +94,33 @@ export default function GeneralSettingsPage() {
         <CardContent className="space-y-4">
           <Input id="workspace-name" placeholder={workspace.name} />
         </CardContent>
+        <CardFooter>
+          <CardDescription>Please use 35 characters at maximum.</CardDescription>
+        </CardFooter>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Workspace URL</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <div className="flex w-full items-stretch overflow-hidden rounded-lg border">
+              <div className="flex items-center border-r bg-muted px-4 text-sm text-muted-foreground">
+                hexel.com/
+              </div>
+
+              <Input
+                className="flex-1 rounded-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                id="workspace-url"
+                placeholder={workspace.name.replace(' ', '-')}
+              />
+            </div>
+          </div>
+        </CardContent>
+        <CardFooter>
+          <CardDescription>Please use 48 characters at maximum.</CardDescription>
+        </CardFooter>
       </Card>
 
       <div className="flex justify-end">

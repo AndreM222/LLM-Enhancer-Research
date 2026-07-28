@@ -1,5 +1,4 @@
 import { ChartArea } from '@/components/charts';
-import PromptDiff from '@/components/promptDiff';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { FaFileExport } from 'react-icons/fa6';
@@ -64,17 +63,6 @@ export default function AnalyticsPage() {
             mobile: { label: 'Mobile', color: 'var(--chart-2)' },
           }}
         />
-      </div>
-
-      <PromptDiff />
-
-      <div className="grid gap-4 xl:grid-cols-2">
-        <div className="rounded-xl border p-5">
-          <h2 className="font-medium">Experiment notes</h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Store observations about false positives, edge cases, and model behavior.
-          </p>
-        </div>
       </div>
     </div>
   );

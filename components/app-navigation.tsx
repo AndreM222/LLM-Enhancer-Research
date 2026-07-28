@@ -2,10 +2,11 @@
 
 import {
   ArrowLeft,
+  Bell,
   Box,
   BriefcaseBusiness,
   ChartArea,
-  Database,
+  FlaskConical,
   Layers,
   LayoutTemplate,
   Lock,
@@ -29,7 +30,7 @@ import { cn } from '@/lib/utils';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import React from 'react';
-import { getAccountUser } from '@/lib/mockApi';
+import { getAccountUser, getWorkspace } from '@/lib/mockApi';
 
 export type NavItem = {
   title: string;
@@ -41,161 +42,151 @@ export type NavItem = {
   iconFg?: string;
 };
 
-const data = {
-  workspace: [
-    {
-      name: 'Acme Inc',
-      logo: '',
-      plan: 'Enterprise',
-    },
-    {
-      name: 'Acme Corp.',
-      logo: '',
-      plan: 'Startup',
-    },
-    {
-      name: 'Evil Corp.',
-      logo: '',
-      plan: 'Free',
-    },
-  ],
-  navigation: [
-    {
-      group: 'Platform',
-      tabs: [
-        {
-          title: 'Projects',
-          description: 'List of projects with unique setup for different cases.',
-          url: '/',
-          icon: <Box />,
-          isActive: true,
-        },
-        {
-          title: 'Users',
-          description: 'Configuration of users list and permissiones by roles.',
-          url: '/users',
-          icon: <Users />,
-          isActive: true,
-          items: [
-            {
-              title: 'Invitations',
-              description: 'Manage access, roles, invitations, and account actions.',
-              url: '/users/invitations',
-              icon: <Mail />,
-              isActive: true,
-            },
-            {
-              title: 'Roles',
-              description: 'Create roles, define permissions, and choose the default invite role.',
-              url: '/users/roles',
-              icon: <Lock />,
-              isActive: true,
-            },
-          ],
-        },
-        {
-          title: 'Settings',
-          description: 'Configuration of workspace and account.',
-          url: '/settings',
-          icon: <Settings />,
-          isActive: true,
-          items: [
-            {
-              title: 'General',
-              description: 'Configure defaults.',
-              url: '/settings/general',
-              icon: <Layers />,
-              isActive: true,
-            },
-            {
-              title: 'Workspace',
-              description: 'Configure workspace-wide behavior.',
-              url: '/settings/workspace',
-              icon: <BriefcaseBusiness />,
-              isActive: true,
-            },
-            {
-              title: 'Account',
-              description: 'Update your personal profile and security settings.',
-              url: '/settings/account',
-              icon: <User />,
-              isActive: true,
-            },
-            {
-              title: 'Templates',
-              description: 'Configure templates for project behavior.',
-              url: '/settings/templates',
-              icon: <LayoutTemplate />,
-              isActive: true,
-            },
-            {
-              title: 'Tags',
-              description: 'Configure tags for project behavior.',
-              url: '/settings/tags',
-              icon: <Tags />,
-              isActive: true,
-            },
-          ],
-        },
-        {
-          title: 'Marketplace',
-          description:
-            'Publish your model mode, tags, rules, and workflow as a reusable starting point for others to clone and customize.',
-          url: '/marketplace',
-          icon: <Store />,
-          isActive: true,
-        },
-      ],
-    },
-    {
-      group: 'Data',
-      tabs: [
-        {
-          title: 'Analytics',
-          description: 'Monitor prompt quality, correction impact, and model performance.',
-          url: '/analytics',
-          icon: <ChartArea />,
-          isActive: true,
-        },
-        {
-          title: 'Logs',
-          description: 'Monitor connection activity.',
-          url: '/logs',
-          icon: <Logs />,
-          isActive: true,
-        },
-        {
-          title: 'Activity',
-          description: 'Monitor prompt quality, correction impact, and model performance.',
-          url: '/activity',
-          icon: <Database />,
-          isActive: true,
-        },
-        {
-          title: 'Prompts',
-          description:
-            'Manage prompt versions generated from image detections and human corrections.',
-          url: '/prompts',
-          icon: <MessagesSquare />,
-          isActive: true,
-        },
-        {
-          title: 'Billing',
-          description:
-            'Review your current plan, payment method, invoice history, and usage limits in one place.',
-          url: '/billing',
-          icon: <Wallet />,
-          isActive: true,
-        },
-      ],
-    },
-  ],
-};
+const data = [
+  {
+    group: 'Platform',
+    tabs: [
+      {
+        title: 'Projects',
+        description: 'List of projects with unique setup for different cases.',
+        url: '/',
+        icon: <Box />,
+        isActive: true,
+      },
+      {
+        title: 'Users',
+        description: 'Configuration of users list and permissiones by roles.',
+        url: '/users',
+        icon: <Users />,
+        isActive: true,
+        items: [
+          {
+            title: 'Invitations',
+            description: 'Manage access, roles, invitations, and account actions.',
+            url: '/users/invitations',
+            icon: <Mail />,
+            isActive: true,
+          },
+          {
+            title: 'Roles',
+            description: 'Create roles, define permissions, and choose the default invite role.',
+            url: '/users/roles',
+            icon: <Lock />,
+            isActive: true,
+          },
+        ],
+      },
+      {
+        title: 'Settings',
+        description: 'Configuration of workspace and account.',
+        url: '/settings',
+        icon: <Settings />,
+        isActive: true,
+        items: [
+          {
+            title: 'General',
+            description: 'Configure defaults.',
+            url: '/settings/general',
+            icon: <Layers />,
+            isActive: true,
+          },
+          {
+            title: 'Workspace',
+            description: 'Configure workspace-wide behavior.',
+            url: '/settings/workspace',
+            icon: <BriefcaseBusiness />,
+            isActive: true,
+          },
+          {
+            title: 'Account',
+            description: 'Update your personal profile and security settings.',
+            url: '/settings/account',
+            icon: <User />,
+            isActive: true,
+          },
+          {
+            title: 'Notifications',
+            description: 'Configure notifications to keep yourself updated.',
+            url: '/settings/notifications',
+            icon: <Bell />,
+            isActive: true,
+          },
+          {
+            title: 'Layout',
+            description: 'Configure session layouts for project behavior.',
+            url: '/settings/layouts',
+            icon: <LayoutTemplate />,
+            isActive: true,
+          },
+          {
+            title: 'Tags',
+            description: 'Configure tags for project behavior.',
+            url: '/settings/tags',
+            icon: <Tags />,
+            isActive: true,
+          },
+        ],
+      },
+      {
+        title: 'Marketplace',
+        description:
+          'Publish your model mode, tags, rules, and workflow as a reusable starting point for others to clone and customize.',
+        url: '/marketplace',
+        icon: <Store />,
+        isActive: true,
+      },
+    ],
+  },
+  {
+    group: 'Data',
+    tabs: [
+      {
+        title: 'Analytics',
+        description: 'Monitor detection quality and the model performance overall.',
+        url: '/analytics',
+        icon: <ChartArea />,
+        isActive: true,
+      },
+      {
+        title: 'Logs',
+        description: 'Monitor connection activity.',
+        url: '/logs',
+        icon: <Logs />,
+        isActive: true,
+      },
+      {
+        title: 'Experiments',
+        url: '/experiments',
+        description: 'Monitor connection activity.',
+        icon: <FlaskConical />,
+        isActive: true,
+        items: [
+          {
+            title: 'Prompts',
+            description:
+              'Manage prompt versions generated from image detections and human corrections.',
+            url: '/experiments/prompts',
+            icon: <MessagesSquare />,
+            isActive: true,
+          },
+        ],
+      },
+      {
+        title: 'Billing',
+        description:
+          'Review your current plan, payment method, invoice history, and usage limits in one place.',
+        url: '/billing',
+        icon: <Wallet />,
+        isActive: true,
+      },
+    ],
+  },
+];
 
 function useCurrentPage() {
   const pathname = usePathname();
 
-  for (const group of data.navigation) {
+  for (const group of data) {
     for (const tab of group.tabs) {
       if (tab.items) {
         const subMatch = tab.items.find((item) => item.url === pathname);
@@ -298,11 +289,11 @@ export const AppSidebar = () => {
     <Sidebar variant="floating" collapsible="icon">
       <SidebarHeader>
         <SidebarMenu>
-          <WorkspaceSwitcher workspaces={data.workspace} />
+          <WorkspaceSwitcher workspaces={getWorkspace()} />
         </SidebarMenu>
       </SidebarHeader>
 
-      <NavContent items={data.navigation} />
+      <NavContent items={data} />
 
       <SidebarFooter>
         <NavUser user={getAccountUser()} />
@@ -320,7 +311,7 @@ export function getNavigationItems(): {
     tabs: NavItem[];
   }[] = [];
 
-  const navData = data.navigation;
+  const navData = data;
 
   // Sanatize
   navData.map((group) => {

@@ -22,6 +22,7 @@ import {
 import { cn } from '@/lib/utils';
 import { Kbd, KbdGroup } from './ui/kbd';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card';
+import Link from 'next/link';
 
 type notification = {
   id: number;
@@ -202,8 +203,14 @@ export default function Notifications() {
               ))}
             </div>
 
-            <Button variant="ghost" className="p-2 text-white/50 hover:bg-white/5 hover:text-white">
-              <Settings className="size-4" />
+            <Button
+              variant="ghost"
+              className="p-2 text-white/50 hover:bg-white/5 hover:text-white"
+              asChild
+            >
+              <Link href="/settings/notifications">
+                <Settings className="size-4" />
+              </Link>
             </Button>
           </div>
 

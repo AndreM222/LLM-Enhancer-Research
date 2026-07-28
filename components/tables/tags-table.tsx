@@ -2,8 +2,10 @@
 
 import { useMemo } from 'react';
 import {
+  createTagItemColumns,
   createTagsColumns,
   linkTagsColumns,
+  TagItem,
   type TagGroup,
 } from '@/components/tables/tags-columns';
 import { DataTable } from '@/components/data-table';
@@ -23,6 +25,19 @@ export function CreateTagGroupTable({
     () => createTagsColumns(onDelete, onDuplicate, onOpen),
     [onDelete, onDuplicate, onOpen]
   );
+  return <DataTable columns={columns} data={data} onRowClick={(row) => onOpen(row.id)} />;
+}
+
+export function CreateTagItemTable({
+  data,
+  onDelete,
+  onOpen,
+}: {
+  data: TagItem[];
+  onDelete: (id: string) => void;
+  onOpen: (id: string) => void;
+}) {
+  const columns = useMemo(() => createTagItemColumns(onDelete, onOpen), [onDelete, onOpen]);
   return <DataTable columns={columns} data={data} onRowClick={(row) => onOpen(row.id)} />;
 }
 

@@ -77,6 +77,12 @@ export type SessionImage = {
   detections: SessionDetection[];
 };
 
+export type Workspace = {
+  name: string;
+  logo: string;
+  plan: string;
+};
+
 export const getInvoices = (): Invoice[] => [
   { id: 'inv_001', date: 'Jul 2, 2026', amount: '$59.00', status: 'Paid' },
   { id: 'inv_002', date: 'Jun 2, 2026', amount: '$59.00', status: 'Paid' },
@@ -149,6 +155,9 @@ export const getUsers = (): User[] => [
     role: 'Japan',
     status: 'SENT',
     time: '2026-07-07T18:00:00.000Z',
+    username: 'David123',
+    email: 'david@gmail.com',
+    avatarUrl: '',
   },
   {
     id: '731ed57f',
@@ -156,6 +165,9 @@ export const getUsers = (): User[] => [
     role: 'Scratches',
     status: 'REJECTED',
     time: '2026-07-07T17:30:00.000Z',
+    username: 'Stephanie-Flower',
+    email: 'flower@gmail.com',
+    avatarUrl: '',
   },
   {
     id: '728ed54f',
@@ -163,6 +175,9 @@ export const getUsers = (): User[] => [
     role: 'Scratches',
     status: 'ACCEPTED',
     time: '2026-07-07T16:45:00.000Z',
+    username: 'jealing2',
+    email: 'jealing@gmail.com',
+    avatarUrl: '',
   },
 ];
 
@@ -276,6 +291,9 @@ export const getProjectUsers = (): User[] => [
     role: 'Japan',
     status: 'SENT',
     time: '2026-07-07T18:00:00.000Z',
+    username: 'David123',
+    email: 'david@gmail.com',
+    avatarUrl: '',
   },
   {
     id: '731ed57f',
@@ -283,6 +301,9 @@ export const getProjectUsers = (): User[] => [
     role: 'Scratches',
     status: 'REJECTED',
     time: '2026-07-07T17:30:00.000Z',
+    username: 'Stephanie-Flower',
+    email: 'flower@gmail.com',
+    avatarUrl: '',
   },
   {
     id: '728ed54f',
@@ -290,6 +311,9 @@ export const getProjectUsers = (): User[] => [
     role: 'Scratches',
     status: 'ACCEPTED',
     time: '2026-07-07T16:45:00.000Z',
+    username: 'jealing2',
+    email: 'jealing@gmail.com',
+    avatarUrl: '',
   },
 ];
 
@@ -383,10 +407,23 @@ export const getAccountUser = () => ({
   avatar: 'https://github.com/shadcn.png',
 });
 
-export const getWorkspace = () => ({
-  name: 'Damage Visualizer',
-  logo: '',
-});
+export const getWorkspace = (): Workspace[] => [
+  {
+    name: 'Acme Inc',
+    logo: '',
+    plan: 'Enterprise',
+  },
+  {
+    name: 'Acme Corp.',
+    logo: '',
+    plan: 'Startup',
+  },
+  {
+    name: 'Evil Corp.',
+    logo: '',
+    plan: 'Free',
+  },
+];
 
 export const getLogs = (): Log[] => [
   {

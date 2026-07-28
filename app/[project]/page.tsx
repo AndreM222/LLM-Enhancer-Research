@@ -29,12 +29,16 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Field } from '@/components/ui/field';
-import { ButtonGroup } from '@/components/ui/button-group';
 import { CreateDetectionTable } from '@/components/tables/detection-table';
 import { DetectionSession } from '@/components/tables/detection-columns';
 import LinkGraph from '@/components/linkGraph';
 
-import { getProjectTags, getProjectUsers, getProjectTemplates, getDetectionSessions } from '@/lib/mockApi';
+import {
+  getProjectTags,
+  getProjectUsers,
+  getProjectTemplates,
+  getDetectionSessions,
+} from '@/lib/mockApi';
 
 const tagsList: TagGroup[] = getProjectTags();
 const usersList: User[] = getProjectUsers();
@@ -111,16 +115,14 @@ export default function Project() {
 
   return (
     <div className="space-y-6">
-      <div className="flex gap-2">
-        <PageHeader
-          newIcon={<Selected />}
-          iconBg={selectedColor}
-          iconFg={selectedColor}
-          newTitle={id?.toUpperCase()}
-          newDescription={`${id?.toUpperCase()} project image detections`}
-          href="/"
-        />
-      </div>
+      <PageHeader
+        newIcon={<Selected />}
+        iconBg={selectedColor}
+        iconFg={selectedColor}
+        newTitle={id?.toUpperCase()}
+        newDescription={`${id?.toUpperCase()} project image detections`}
+        href="/"
+      />
 
       <Tabs defaultValue="processed" className="space-y-6">
         <TabsList>
@@ -130,7 +132,7 @@ export default function Project() {
 
         <TabsContent value="processed" className="space-y-4">
           <div className="space-y-6">
-            <div className="flex space-x-1">
+            <div className="flex space-x-2">
               <Select defaultValue="none">
                 <SelectTrigger className="w-45">
                   <SelectValue />
@@ -146,10 +148,7 @@ export default function Project() {
                 </SelectContent>
               </Select>
               <Field>
-                <ButtonGroup>
-                  <Input id="input-button-group" placeholder="Type to search..." />
-                  <Button variant="outline">Search</Button>
-                </ButtonGroup>
+                <Input id="input-button-group" placeholder="Type to search..." />
               </Field>
             </div>
             <CreateDetectionTable
@@ -481,7 +480,7 @@ export default function Project() {
               />
             </CardContent>
           </Card>
-          <LinkGraph className="relative min-h-150 w-full overflow-hidden rounded-3xl border" />
+          <LinkGraph />
         </TabsContent>
       </Tabs>
     </div>

@@ -1,7 +1,5 @@
 import { Log } from '@/components/tables/logs-columns';
 import { LogsTable } from '@/components/tables/logs-table';
-import { Button } from '@/components/ui/button';
-import { ButtonGroup } from '@/components/ui/button-group';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import {
@@ -19,7 +17,7 @@ const data: Log[] = getLogs();
 export default function Logs() {
   return (
     <div className="space-y-6">
-      <div className="flex space-x-1">
+      <div className="flex space-x-2">
         <Select defaultValue="none">
           <SelectTrigger className="w-45">
             <SelectValue />
@@ -34,10 +32,7 @@ export default function Logs() {
           </SelectContent>
         </Select>
         <Field>
-          <ButtonGroup>
-            <Input id="input-button-group" placeholder="Type to search..." />
-            <Button variant="outline">Search</Button>
-          </ButtonGroup>
+          <Input id="input-button-group" placeholder="Type to search..." />
         </Field>
       </div>
       <LogsTable data={data} />

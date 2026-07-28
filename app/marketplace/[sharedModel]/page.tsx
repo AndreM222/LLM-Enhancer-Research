@@ -1,23 +1,14 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import {
-  ArrowLeft,
-  ArrowRight,
-  CalendarDays,
-  Copy,
-  Download,
-  Star,
-  Tag,
-  Users,
-} from 'lucide-react';
-import Link from 'next/link';
+import { CalendarDays, Copy, Download, Package, Star, Tag, Users } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { getSharedModel } from '@/lib/mockApi';
+import { PageHeader } from '@/components/app-navigation';
 
 const model = getSharedModel();
 
@@ -31,16 +22,7 @@ export default function SharedModel() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3 text-sm text-muted-foreground">
-        <Button variant="outline" size="icon" asChild>
-          <Link href="/marketplace">
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
-        </Button>
-        <span>Marketplace</span>
-        <ArrowRight className="h-4 w-4" />
-        <span>{model.name}</span>
-      </div>
+      <PageHeader newTitle={model.name} newIcon={<Package />} newDescription={model.description} />
 
       <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
         <Card className="overflow-hidden">

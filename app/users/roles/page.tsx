@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -15,9 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { RolesTable } from '@/components/tables/roles-table';
-import { Role } from '@/components/tables/roles-columns';
 import { Field } from '@/components/ui/field';
-import { ButtonGroup } from '@/components/ui/button-group';
 import { getRoles, getRolePermissions } from '@/lib/mockApi';
 
 const permissions = getRolePermissions();
@@ -28,13 +25,17 @@ export default function RolesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex w-full justify-end">
+      <div className="flex w-full justify-end space-x-2">
+        <Field>
+          <Input id="input-button-group" placeholder="Type to search..." />
+        </Field>
+
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button>Create role</Button>
           </DialogTrigger>
 
-          <DialogContent className="max-w-2xl">
+          <DialogContent>
             <DialogHeader>
               <DialogTitle>Create role</DialogTitle>
               <DialogDescription>
@@ -95,13 +96,6 @@ export default function RolesPage() {
           </DialogContent>
         </Dialog>
       </div>
-
-      <Field>
-        <ButtonGroup>
-          <Input id="input-button-group" placeholder="Type to search..." />
-          <Button variant="outline">Search</Button>
-        </ButtonGroup>
-      </Field>
 
       <RolesTable
         data={data}

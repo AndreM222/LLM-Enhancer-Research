@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -86,6 +86,9 @@ export default function AccountSettingsPage() {
         <CardContent className="space-y-4">
           <Input id="name" placeholder="Andre Mossi" />
         </CardContent>
+        <CardFooter>
+          <CardDescription>Please use 35 characters at maximum.</CardDescription>
+        </CardFooter>
       </Card>
 
       <Card>

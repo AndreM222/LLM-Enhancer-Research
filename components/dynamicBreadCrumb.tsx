@@ -18,10 +18,10 @@ function paths({ pathName }: { pathName: string }): [string, string][] {
     .filter((item) => item !== '');
 
   let newPaths: [string, string][] = [];
-  let currPath: string = '/';
+  let currPath: string = '';
 
   tabs.map((item) => {
-    currPath += item;
+    currPath += `/${item}`;
     newPaths.push([item.charAt(0).toUpperCase() + item.slice(1), currPath]);
   });
 
@@ -40,7 +40,11 @@ export default function DynamicCrumbs() {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem className="hidden md:block">
-          <BreadcrumbLink href="/">Projects</BreadcrumbLink>
+          {tabs.length > 0 ? (
+            <BreadcrumbLink href="/">Projects</BreadcrumbLink>
+          ) : (
+            <BreadcrumbPage>Projects</BreadcrumbPage>
+          )}
         </BreadcrumbItem>
         {tabs.map((item) => (
           <div className="flex items-center" key={item[1]}>

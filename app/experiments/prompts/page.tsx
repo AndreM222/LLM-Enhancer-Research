@@ -1,3 +1,4 @@
+import PromptDiff from '@/components/promptDiff';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,6 +17,16 @@ const prompts = getPrompts();
 export default function Prompts() {
   return (
     <div className="space-y-6">
+      <PromptDiff />
+
+      <div className="grid gap-4 xl:grid-cols-2">
+        <div className="rounded-xl border p-5">
+          <h2 className="font-medium">Experiment notes</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Store observations about false positives, edge cases, and model behavior.
+          </p>
+        </div>
+      </div>
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {prompts.map((prompt) => (
           <Card key={prompt.id}>
