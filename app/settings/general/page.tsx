@@ -28,6 +28,7 @@ export default function GeneralSettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Language</CardTitle>
+          <CardDescription>How language is shown for your account.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <Select defaultValue="en">
@@ -78,6 +79,35 @@ export default function GeneralSettingsPage() {
               <span className="text-sm">System</span>
             </ToggleGroupItem>
           </ToggleGroup>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Time & locale</CardTitle>
+          <CardDescription>How dates and times are shown for your account.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Select defaultValue="system">
+            <SelectTrigger>
+              <SelectValue placeholder="Timezone" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="system">Use device timezone</SelectItem>
+              <SelectItem value="America/Chicago">Central (US)</SelectItem>
+              <SelectItem value="America/New_York">Eastern (US)</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select defaultValue="24h">
+            <SelectTrigger>
+              <SelectValue placeholder="Time format" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="24h">24‑hour</SelectItem>
+              <SelectItem value="12h">12‑hour (AM/PM)</SelectItem>
+            </SelectContent>
+          </Select>
         </CardContent>
       </Card>
 

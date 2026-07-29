@@ -1,7 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -115,6 +122,16 @@ export default function AccountSettingsPage() {
             <Label htmlFor="new-password">New password</Label>
             <Input id="new-password" type="password" placeholder="••••••••" />
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Delete Account</CardTitle>
+          <CardDescription>Reverse of this action is not possible.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Button variant="destructive">Delete Account</Button>
         </CardContent>
       </Card>
 
