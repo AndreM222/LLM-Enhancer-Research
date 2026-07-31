@@ -35,7 +35,7 @@ export default function RolesPage() {
             <Button>Create role</Button>
           </DialogTrigger>
 
-          <DialogContent>
+          <DialogContent className='sm:max-w-200'>
             <DialogHeader>
               <DialogTitle>Create role</DialogTitle>
               <DialogDescription>

@@ -20,6 +20,23 @@ export function getCorrectionColumns(onOpen: (id: string) => void): ColumnDef<Co
     {
       accessorKey: 'name',
       header: 'Label',
+      cell: ({ row }) => {
+        const { name, description } = row.original;
+
+        return (
+          <span className="flex gap-1 items-center">
+            {name}
+            {description && (
+              <Tooltip>
+                <TooltipTrigger>
+                  <Info className="size-3 text-gray-700" />
+                </TooltipTrigger>
+                <TooltipContent>{description}</TooltipContent>
+              </Tooltip>
+            )}
+          </span>
+        );
+      },
     },
     {
       accessorKey: 'detections',
@@ -33,7 +50,7 @@ export function getCorrectionColumns(onOpen: (id: string) => void): ColumnDef<Co
       accessorKey: 'description',
       header: 'Corrections rate',
       cell: ({ row }) => {
-        const { corrections, detections, description } = row.original;
+        const { corrections, detections } = row.original;
 
         const normalized: number = (corrections / detections) * 100;
 
@@ -47,15 +64,6 @@ export function getCorrectionColumns(onOpen: (id: string) => void): ColumnDef<Co
               gaugePrimaryColor={'var(--color-sky-600)'}
               value={normalized}
             />
-
-            {description ?? (
-              <Tooltip>
-                <TooltipTrigger>
-                  <Info className="size-3 text-gray-700" />
-                </TooltipTrigger>
-                <TooltipContent>{description}</TooltipContent>
-              </Tooltip>
-            )}
           </div>
         );
       },

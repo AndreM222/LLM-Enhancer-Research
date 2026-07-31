@@ -61,9 +61,9 @@ const data = [
         isActive: true,
         items: [
           {
-            title: 'Invitations',
-            description: 'Manage access, roles, invitations, and account actions.',
-            url: '/users/invitations',
+            title: 'Members',
+            description: 'Manage access, roles, members, and account actions.',
+            url: '/users/members',
             icon: <Mail />,
             isActive: true,
           },

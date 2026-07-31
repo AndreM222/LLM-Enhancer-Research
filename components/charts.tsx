@@ -27,14 +27,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-interface ChartAreaProps {
+type ChartAreaProps = {
   title: string;
-  description: string;
+  description?: string;
   chartConfig: ChartConfig;
-  chartData: Record<string, string | number>[];
+  chartData: Record<string, any>[];
   xAxisKey: string;
   dataKeys: string[];
-}
+  xAxisType?: 'date' | 'category'; // default 'date'
+};
 
 export function ChartArea({
   title,
@@ -91,10 +92,13 @@ export function ChartAreaInteractive({
   chartData,
   xAxisKey,
   dataKeys,
+  xAxisType = 'date',
 }: ChartAreaProps) {
   const [timeRange, setTimeRange] = React.useState<TimeRange>('90d');
 
   const filteredData = React.useMemo(() => {
+    if (xAxisType !== 'date') return chartData;
+
     const referenceDate = new Date('2024-06-30'); // TODO: make dynamic later
     let daysToSubtract = 90;
     if (timeRange === '30d') daysToSubtract = 30;
@@ -108,13 +112,15 @@ export function ChartAreaInteractive({
       const date = new Date(raw);
       return !Number.isNaN(date.getTime()) && date >= startDate;
     });
-  }, [chartData, xAxisKey, timeRange]);
+  }, [chartData, xAxisKey, timeRange, xAxisType]);
 
   const gradients = dataKeys.map((key) => {
     const colorVar = `var(--color-${key})`; // expected to be defined via ChartContainer config
     const id = `fill-${key}`;
     return { id, colorVar, key };
   });
+
+  const showTimeRange = xAxisType === 'date';
 
   return (
     <Card className="pt-0">
@@ -123,25 +129,27 @@ export function ChartAreaInteractive({
           <CardTitle>{title}</CardTitle>
           {description ? <CardDescription>{description}</CardDescription> : null}
         </div>
-        <Select value={timeRange} onValueChange={(v) => setTimeRange(v as TimeRange)}>
-          <SelectTrigger
-            className="hidden w-40 rounded-lg sm:ml-auto sm:flex"
-            aria-label="Select a value"
-          >
-            <SelectValue placeholder="Last 3 months" />
-          </SelectTrigger>
-          <SelectContent className="rounded-xl">
-            <SelectItem value="90d" className="rounded-lg">
-              Last 3 months
-            </SelectItem>
-            <SelectItem value="30d" className="rounded-lg">
-              Last 30 days
-            </SelectItem>
-            <SelectItem value="7d" className="rounded-lg">
-              Last 7 days
-            </SelectItem>
-          </SelectContent>
-        </Select>
+        {showTimeRange && (
+          <Select value={timeRange} onValueChange={(v) => setTimeRange(v as TimeRange)}>
+            <SelectTrigger
+              className="hidden w-40 rounded-lg sm:ml-auto sm:flex"
+              aria-label="Select a value"
+            >
+              <SelectValue placeholder="Last 3 months" />
+            </SelectTrigger>
+            <SelectContent className="rounded-xl">
+              <SelectItem value="90d" className="rounded-lg">
+                Last 3 months
+              </SelectItem>
+              <SelectItem value="30d" className="rounded-lg">
+                Last 30 days
+              </SelectItem>
+              <SelectItem value="7d" className="rounded-lg">
+                Last 7 days
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        )}
       </CardHeader>
 
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
@@ -164,6 +172,7 @@ export function ChartAreaInteractive({
               tickMargin={8}
               minTickGap={32}
               tickFormatter={(value) => {
+                if (xAxisType !== 'date') return String(value);
                 const date = new Date(value);
                 if (Number.isNaN(date.getTime())) return String(value);
                 return date.toLocaleDateString('en-US', {

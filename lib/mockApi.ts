@@ -1,10 +1,11 @@
 import { Role } from '@/components/tables/roles-columns';
 import { User } from '@/components/tables/users-columns';
-import { TagGroup } from '@/components/tables/tags-columns';
 import { Template } from '@/components/tables/templates-columns';
 import { DetectionSession } from '@/components/tables/detection-columns';
 import { Log } from '@/components/tables/logs-columns';
 import { Project } from '@/components/project-cards';
+import { TagGroupDetail } from '@/app/settings/tags/[tagGroup]/page';
+import { TagGroup } from '@/components/tables/tags-columns';
 
 export type Invoice = {
   id: string;
@@ -187,6 +188,34 @@ export const getMarketplaceFilters = (): string[] => [
   'Detection',
   'Classification',
   'Review',
+];
+
+export const getTags = (): TagGroupDetail[] => [
+  {
+    id: '123',
+    name: 'Office Supplies',
+    description: 'Detects clips, pencils, papers, and other office items.',
+    tags: [
+      {
+        id: 't1',
+        name: 'Clip',
+        description: 'Metal or plastic paper clips.',
+        color: '#ef4444',
+      },
+      {
+        id: 't2',
+        name: 'Pencil',
+        description: 'Standard wooden pencils.',
+        color: '#22c55e',
+      },
+      {
+        id: 't3',
+        name: 'Paper',
+        description: 'Loose sheets of paper.',
+        color: '#3b82f6',
+      },
+    ],
+  },
 ];
 
 export const getMarketplaceTemplates = (): MarketplaceTemplate[] => [

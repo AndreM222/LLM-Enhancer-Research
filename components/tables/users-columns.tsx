@@ -4,7 +4,10 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Badge } from '../ui/badge';
 import { ButtonGroup } from '../ui/button-group';
 import { Button } from '../ui/button';
-import { ChevronRight, Trash, X } from 'lucide-react';
+import { ChevronRight, Pause, RotateCcw, Trash, X } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { cn } from '@/lib/utils';
+import { pictureFallback } from '../user-button';
 
 export type User = {
   id: string;
@@ -17,7 +20,7 @@ export type User = {
   time: string;
 };
 
-export function createUserColumns(
+export function createInvitationColumns(
   onDelete: (id: string) => void,
   onOpen: (id: string) => void
 ): ColumnDef<User>[] {
@@ -42,8 +45,8 @@ export function createUserColumns(
       },
     },
     {
-      accessorKey: 'name',
-      header: 'Name',
+      accessorKey: 'email',
+      header: 'Email',
     },
     {
       accessorKey: 'role',
@@ -56,14 +59,78 @@ export function createUserColumns(
     {
       accessorKey: 'id',
       header: '',
+      cell: ({ row }) => {
+        const { id, status } = row.original;
+
+        return (
+          <ButtonGroup className="float-end">
+            <Button size="sm" variant="destructive" onClick={() => onDelete(id)}>
+              <Trash />
+            </Button>
+            {status.toUpperCase() !== 'ACCEPTED' && (
+              <Button size="sm" variant="outline" onClick={() => onDelete(id)}>
+                <RotateCcw />
+              </Button>
+            )}
+            <Button size="sm" variant="outline" onClick={() => onOpen(id)}>
+              <ChevronRight />
+            </Button>
+          </ButtonGroup>
+        );
+      },
+    },
+  ];
+}
+
+export function usersListColumns(
+  onDelete: (id: string) => void,
+  onOpen: (id: string) => void
+): ColumnDef<User>[] {
+  return [
+    {
+      accessorKey: 'name',
+      header: 'User',
+      cell: ({ row }) => {
+        const { name, email, avatarUrl } = row.original;
+        return (
+          <div className="flex gap-2 items-center">
+            <Avatar className={cn('rounded-full')}>
+              <AvatarImage src={avatarUrl} alt={name} />
+              <AvatarFallback className={cn('rounded-full')}>
+                {pictureFallback(name)}
+              </AvatarFallback>
+            </Avatar>
+            <div className="grid flex-1 text-left leading-tight">
+              <span className={'truncate font-medium'}>{name}</span>
+              <span className={'truncate text-muted-foreground'}>{email}</span>
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'role',
+      header: 'Role',
+      cell: ({ row }) => {
+        const { role } = row.original;
+
+        return <Badge variant="outline">{role}</Badge>;
+      },
+    },
+    {
+      accessorKey: 'id',
+      header: '',
       cell: ({ row }) => (
-        <ButtonGroup>
+        <ButtonGroup className="float-end">
           <Button
             size="sm"
             variant="destructive"
             onClick={() => onDelete(row.getValue<string>('id'))}
           >
             <Trash />
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => onDelete(row.getValue<string>('id'))}>
+            <Pause />
           </Button>
           <Button size="sm" variant="outline" onClick={() => onOpen(row.getValue<string>('id'))}>
             <ChevronRight />
@@ -114,7 +181,7 @@ export function linkUserColumns(
       accessorKey: 'id',
       header: '',
       cell: ({ row }) => (
-        <ButtonGroup>
+        <ButtonGroup className="float-end">
           <Button
             size="sm"
             variant="destructive"

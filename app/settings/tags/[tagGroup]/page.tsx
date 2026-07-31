@@ -19,6 +19,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { CreateTagItemTable } from '@/components/tables/tags-table';
 import { PageHeader } from '@/components/app-navigation';
+import { getTags } from '@/lib/mockApi';
 
 export type Tag = {
   id: string;
@@ -39,31 +40,7 @@ export default function TagGroupPage() {
   const id = pathname.split('/').filter(Boolean).pop() || '';
 
   // Replace this with real data fetch by id
-  const [group, setGroup] = useState<TagGroupDetail>({
-    id,
-    name: 'Office Supplies',
-    description: 'Detects clips, pencils, papers, and other office items.',
-    tags: [
-      {
-        id: 't1',
-        name: 'Clip',
-        description: 'Metal or plastic paper clips.',
-        color: '#ef4444',
-      },
-      {
-        id: 't2',
-        name: 'Pencil',
-        description: 'Standard wooden pencils.',
-        color: '#22c55e',
-      },
-      {
-        id: 't3',
-        name: 'Paper',
-        description: 'Loose sheets of paper.',
-        color: '#3b82f6',
-      },
-    ],
-  });
+  const [group, setGroup] = useState<TagGroupDetail>(getTags()[0]);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [tagName, setTagName] = useState('');

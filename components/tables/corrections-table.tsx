@@ -12,7 +12,5 @@ export function CorrectionsTable({
   onOpen: (id: string) => void;
 }) {
   const columns = useMemo(() => getCorrectionColumns(onOpen), [onOpen]);
-  return (
-    <DataTable columns={columns} data={data} onRowClick={(row) => onOpen(row.id)} />
-  );
+  return <DataTable columns={columns} data={data} onRowClick={(row) => onOpen(row.id)} />;
 }

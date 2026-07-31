@@ -29,7 +29,7 @@ export function getUsageColumns(onOpen: (id: string) => void): ColumnDef<Usage>[
         return (
           <CircularProgress
             variant="animated"
-            size={15}
+            size={16}
             strokeWidth={11}
             gaugePrimaryColor={'var(--color-sky-600)'}
             value={normalized}

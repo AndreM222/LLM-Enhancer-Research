@@ -1,6 +1,6 @@
 'use client';
 
-import { createUserColumns, linkUserColumns, type User } from '@/components/tables/users-columns';
+import { createInvitationColumns, linkUserColumns, usersListColumns, type User } from '@/components/tables/users-columns';
 import { DataTable, type RowStatus } from '@/components/data-table';
 import { useMemo } from 'react';
 
@@ -10,7 +10,7 @@ function getRowStatus(user: User): RowStatus {
   return 'default';
 }
 
-export function CreateUsersTable({
+export function CreateInvitationTable({
   data,
   onDelete,
   onOpen,
@@ -19,12 +19,31 @@ export function CreateUsersTable({
   onDelete: (id: string) => void;
   onOpen: (id: string) => void;
 }) {
-  const columns = useMemo(() => createUserColumns(onDelete, onOpen), [onDelete, onOpen]);
+  const columns = useMemo(() => createInvitationColumns(onDelete, onOpen), [onDelete, onOpen]);
   return (
     <DataTable
       columns={columns}
       data={data}
       getRowStatus={getRowStatus}
+      onRowClick={(row) => onOpen(row.id)}
+    />
+  );
+}
+
+export function UsersListTable({
+  data,
+  onDelete,
+  onOpen,
+}: {
+  data: User[];
+  onDelete: (id: string) => void;
+  onOpen: (id: string) => void;
+}) {
+  const columns = useMemo(() => usersListColumns(onDelete, onOpen), [onDelete, onOpen]);
+  return (
+    <DataTable
+      columns={columns}
+      data={data}
       onRowClick={(row) => onOpen(row.id)}
     />
   );

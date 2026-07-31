@@ -8,6 +8,7 @@ import { CorrectionsTable } from '@/components/tables/corrections-table';
 import { UsageTable } from '@/components/tables/usage-table';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { getTags } from '@/lib/mockApi';
 import { FaFileExport } from 'react-icons/fa6';
 
 type MetricProps = {
@@ -18,25 +19,25 @@ type MetricProps = {
 
 const correctionsData: Correction[] = [
   {
-    id: '124',
-    name: 'Pallet',
+    id: getTags()[0].tags[0].id,
+    name: getTags()[0].tags[0].name,
     detections: 3120,
     corrections: 1184,
-    description: '',
+    description: getTags()[0].tags[0].description,
   },
   {
-    id: '12577',
-    name: ' Forklift',
+    id: getTags()[0].tags[1].id,
+    name: getTags()[0].tags[1].name,
     detections: 980,
     corrections: 210,
-    description: '',
+    description: getTags()[0].tags[1].description,
   },
   {
-    id: '12246',
-    name: 'Person',
+    id: getTags()[0].tags[2].id,
+    name: getTags()[0].tags[2].name,
     detections: 1540,
     corrections: 432,
-    description: '',
+    description: getTags()[0].tags[2].description,
   },
 ];
 
@@ -53,7 +54,6 @@ export default function AnalyticsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between gap-4">
         <ProjectSwitcher projects={projects} />
         <Button variant="outline" title="Export analytics">
@@ -62,7 +62,6 @@ export default function AnalyticsPage() {
         </Button>
       </div>
 
-      {/* Overview metrics */}
       <Card>
         <CardHeader className="flex items-center justify-between pb-3">
           <div>
@@ -88,29 +87,26 @@ export default function AnalyticsPage() {
         </CardContent>
       </Card>
 
-      {/* Main interactive multi-metric chart */}
       <ChartAreaInteractive
         title="Sessions, detections, and correction rate"
-        description="Trend over the last 30 days."
+        description="Comparison of correction per detections."
         xAxisKey="day"
-        dataKeys={['sessions', 'detections', 'correctionRate']}
+        xAxisType="date"
+        dataKeys={['detections', 'corrections']}
         chartData={[
-          { day: '2026-07-01', sessions: 42, detections: 730, correctionRate: 0.36 },
-          { day: '2026-07-02', sessions: 38, detections: 640, correctionRate: 0.33 },
-          { day: '2026-07-03', sessions: 51, detections: 810, correctionRate: 0.4 },
-          { day: '2026-07-04', sessions: 47, detections: 765, correctionRate: 0.35 },
-          { day: '2026-07-05', sessions: 39, detections: 702, correctionRate: 0.32 },
+          { day: '2026-07-01', detections: 730, corrections: 500 },
+          { day: '2026-07-02', detections: 640, corrections: 439 },
+          { day: '2026-07-03', detections: 810, corrections: 700 },
+          { day: '2026-07-04', detections: 765, corrections: 30 },
+          { day: '2026-07-05', detections: 702, corrections: 40 },
         ]}
         chartConfig={{
-          sessions: { label: 'Sessions', color: 'var(--chart-1)' },
-          detections: { label: 'Detections', color: 'var(--chart-2)' },
-          correctionRate: { label: 'Correction rate', color: 'var(--chart-3)' },
+          detections: { label: 'Detections', color: 'var(--chart-1)' },
+          corrections: { label: 'Corrections', color: 'var(--chart-2)' },
         }}
       />
 
-      {/* Breakdown cards: table + secondary chart */}
       <div className="grid gap-4 xl:grid-cols-2">
-        {/* Corrections by label table */}
         <Card>
           <CardHeader>
             <CardTitle>Corrections by label</CardTitle>
@@ -121,16 +117,34 @@ export default function AnalyticsPage() {
           </CardContent>
         </Card>
 
-        {/* Sessions by environment chart */}
         <ChartAreaInteractive
-          title="Sessions by environment"
+          title="Detection by sessions"
           description="Where most detections are happening."
           xAxisKey="environment"
+          xAxisType="category"
           dataKeys={['sessions']}
           chartData={[
             { environment: 'Loading dock', sessions: 108 },
-            { environment: 'Entrance', sessions: 79 },
+            { environment: 'Entrance', sessions: 74 },
             { environment: 'Storage aisle', sessions: 63 },
+          ]}
+          chartConfig={{
+            sessions: { label: 'Sessions', color: 'var(--chart-1)' },
+          }}
+        />
+
+        <ChartAreaInteractive
+          title="Sessions created"
+          description="Total sessions being created."
+          xAxisKey="day"
+          xAxisType="date"
+          dataKeys={['sessions']}
+          chartData={[
+            { day: '2026-07-01', sessions: 42 },
+            { day: '2026-07-02', sessions: 38 },
+            { day: '2026-07-03', sessions: 51 },
+            { day: '2026-07-04', sessions: 47 },
+            { day: '2026-07-05', sessions: 39 },
           ]}
           chartConfig={{
             sessions: { label: 'Sessions', color: 'var(--chart-1)' },
