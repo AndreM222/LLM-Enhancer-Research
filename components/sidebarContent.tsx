@@ -15,24 +15,9 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
+import { NavItem } from './app-navigation';
 
-function Groups({
-  items,
-}: {
-  items: {
-    title: string;
-    summary?: string;
-    url: string;
-    icon: React.ReactNode;
-    isActive?: boolean;
-    items?: {
-      title: string;
-      summary?: string;
-      url: string;
-      icon?: React.ReactNode;
-    }[];
-  }[];
-}) {
+function Groups({ items }: { items: NavItem[] }) {
   return (
     <SidebarMenu>
       {items.map((item) => (
@@ -81,17 +66,7 @@ export function NavContent({
   items: {
     group: string;
     isActive?: boolean;
-    tabs: {
-      title: string;
-      url: string;
-      icon: React.ReactNode;
-      isActive?: boolean;
-      items?: {
-        title: string;
-        url: string;
-        icon?: React.ReactNode;
-      }[];
-    }[];
+    tabs: NavItem[];
   }[];
 }) {
   return (

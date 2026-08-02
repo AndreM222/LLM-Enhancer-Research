@@ -81,7 +81,7 @@ export function createDetectionColumns(
         const path = usePathname().split('/').pop();
 
         return (
-          <ButtonGroup>
+          <ButtonGroup className="float-end">
             <Button
               size="sm"
               variant="destructive"

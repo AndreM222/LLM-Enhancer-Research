@@ -6,24 +6,23 @@ import {
   Box,
   BriefcaseBusiness,
   ChartArea,
+  CirclePile,
   FlaskConical,
   Layers,
   LayoutTemplate,
-  Lock,
   Logs,
-  Mail,
   MessagesSquare,
   Settings,
+  SquareActivity,
   Store,
   Tags,
   User,
-  Users,
   Wallet,
 } from 'lucide-react';
 import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenu } from './ui/sidebar';
 import { NavUser } from './user-button';
 import { NavContent } from './sidebarContent';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { WorkspaceSwitcher } from './team-switcher';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -31,18 +30,24 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import React from 'react';
 import { getAccountUser, getWorkspace } from '@/lib/mockApi';
+import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
 
 export type NavItem = {
   title: string;
-  description: string;
   url: string;
-  icon: React.JSX.Element;
+  description?: string;
+  icon?: React.JSX.Element;
   isActive: boolean;
   iconBg?: string;
   iconFg?: string;
+  subItems?: NavItem[];
+  items?: NavItem[];
 };
 
-const data = [
+const navList: {
+  group: string;
+  tabs: NavItem[];
+}[] = [
   {
     group: 'Platform',
     tabs: [
@@ -52,29 +57,6 @@ const data = [
         url: '/',
         icon: <Box />,
         isActive: true,
-      },
-      {
-        title: 'Users',
-        description: 'Configuration of users list and permissiones by roles.',
-        url: '/users',
-        icon: <Users />,
-        isActive: true,
-        items: [
-          {
-            title: 'Members',
-            description: 'Manage access, roles, members, and account actions.',
-            url: '/users/members',
-            icon: <Mail />,
-            isActive: true,
-          },
-          {
-            title: 'Roles',
-            description: 'Create roles, define permissions, and choose the default invite role.',
-            url: '/users/roles',
-            icon: <Lock />,
-            isActive: true,
-          },
-        ],
       },
       {
         title: 'Settings',
@@ -103,6 +85,22 @@ const data = [
             url: '/settings/account',
             icon: <User />,
             isActive: true,
+          },
+          {
+            title: 'Members',
+            description: 'Manage access, roles, members, and account actions.',
+            url: '/settings/members',
+            icon: <CirclePile />,
+            isActive: true,
+            subItems: [
+              { title: 'Team Members', url: '/settings/members', isActive: true },
+              {
+                title: 'Pending Invitations',
+                url: '/settings/members/invitations',
+                isActive: true,
+              },
+              { title: 'Roles', url: '/settings/members/roles', isActive: true },
+            ],
           },
           {
             title: 'Notifications',
@@ -148,8 +146,15 @@ const data = [
         isActive: true,
       },
       {
-        title: 'Logs',
+        title: 'Activity',
         description: 'Monitor connection activity.',
+        url: '/activity',
+        icon: <SquareActivity />,
+        isActive: true,
+      },
+      {
+        title: 'Logs',
+        description: 'See the history of changed made withing this account.',
         url: '/logs',
         icon: <Logs />,
         isActive: true,
@@ -184,17 +189,35 @@ const data = [
 ];
 
 function useCurrentPage() {
-  const pathname = usePathname();
+  const pathname: string = usePathname();
+  const paths: string[] = pathname.split('/');
+  paths.pop();
+  let prevpath: string = paths.join('/');
 
-  for (const group of data) {
+  for (const group of navList) {
     for (const tab of group.tabs) {
       if (tab.items) {
-        const subMatch = tab.items.find((item) => item.url === pathname);
+        let subMatch = tab.items.find((item) => item.url === pathname);
         if (subMatch) {
           return {
             title: subMatch.title,
             description: subMatch.description,
             icon: subMatch.icon,
+            subItems: subMatch.subItems,
+          };
+        }
+
+        subMatch = tab.items.find((item) => item.url === prevpath);
+        if (
+          subMatch &&
+          subMatch.subItems &&
+          subMatch.subItems.find((item) => item.url === pathname)
+        ) {
+          return {
+            title: subMatch.title,
+            description: subMatch.description,
+            icon: subMatch.icon,
+            subItems: subMatch.subItems,
           };
         }
       }
@@ -204,6 +227,20 @@ function useCurrentPage() {
           description: tab.description,
           items: tab.items,
           icon: tab.icon,
+          subItems: tab.subItems,
+        };
+      }
+
+      if (
+        tab.url === pathname &&
+        tab?.subItems &&
+        tab?.subItems?.find((item) => item.url === prevpath)
+      ) {
+        return {
+          title: tab.title,
+          description: tab.description,
+          icon: tab.icon,
+          subItems: tab.subItems,
         };
       }
     }
@@ -218,65 +255,92 @@ export function PageItems() {
 }
 
 export const PageHeader = ({
-  newTitle,
-  newDescription,
-  newIcon,
+  setTitle,
+  setDescription,
+  setIcon,
   className,
   iconBg,
   iconFg,
-  href,
+  useIndex = false,
+  setSubItem,
 }: {
-  newTitle?: string;
-  newDescription?: string;
-  newIcon?: React.JSX.Element;
+  setTitle?: string;
+  setDescription?: string;
+  setIcon?: React.JSX.Element;
   className?: string;
   iconBg?: string;
   iconFg?: string;
-  href?: string;
+  useIndex?: boolean;
+  setSubItem?: NavItem[];
 }) => {
-  let { title, description, icon } = useCurrentPage();
+  if (!setTitle) {
+    let { title, description, icon, subItems } = useCurrentPage();
 
-  title = title || newTitle || '';
-  description = description || newDescription || '';
-  icon = icon || newIcon || undefined;
-
-  const paths = usePathname().split('/').filter(Boolean);
-
-  let previous: string = '';
-  if (href) {
-    previous = href;
-  } else if (paths.length > 1) {
-    paths.pop();
-    previous = paths.join('/');
+    setSubItem = setSubItem || subItems || undefined;
+    setTitle = setTitle || title || '';
+    setDescription = setDescription || description || '';
+    setIcon = setIcon || icon || undefined;
   }
 
-  if (title !== '')
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const activeTab =
+    setSubItem?.find((tab) => tab.url === pathname)?.title ?? setSubItem?.[0]?.title;
+
+  let previous: string = '';
+
+  const paths = pathname.split('/');
+  if (setSubItem && activeTab !== setSubItem[0].title) paths.pop();
+  paths.pop();
+  previous = paths.join('/');
+
+  if (setTitle !== '')
     return (
-      <div className={`flex w-full justify-between ${className}`}>
-        <div className="flex gap-2">
-          {icon && (
-            <div
-              className="flex h-16 w-16 items-center justify-center size-6 rounded-2xl border"
-              style={{ backgroundColor: `${iconBg}20`, color: iconFg }}
-            >
-              {icon}
-            </div>
-          )}
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
-              <p className="text-muted-foreground">{description}</p>
+      <div className="w-full space-y-6">
+        <div className={`flex w-full justify-between ${className}`}>
+          <div className="flex gap-2">
+            {setIcon && (
+              <div
+                className="flex h-16 w-16 items-center justify-center size-6 rounded-2xl border"
+                style={{ backgroundColor: `${iconBg}20`, color: iconFg }}
+              >
+                {setIcon}
+              </div>
+            )}
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h1 className="text-3xl font-semibold tracking-tight">{setTitle}</h1>
+                <p className="text-muted-foreground">{setDescription}</p>
+              </div>
             </div>
           </div>
-        </div>
 
-        {previous && (
-          <Button variant="outline" size="sm" className="mt-auto" asChild>
-            <Link href={`/${previous}`}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Return
-            </Link>
-          </Button>
+          {(previous || useIndex) && (
+            <Button variant="outline" size="sm" className="mt-auto" asChild>
+              <Link href={previous || '/'}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Return
+              </Link>
+            </Button>
+          )}
+        </div>
+        {setSubItem && (
+          <Tabs
+            value={activeTab}
+            onValueChange={(value) => {
+              const tab = setSubItem.find((t) => t.title === value);
+              if (tab) router.push(tab.url);
+            }}
+          >
+            <TabsList>
+              {setSubItem.map((tab) => (
+                <TabsTrigger key={tab.title} value={tab.title}>
+                  {tab.title}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
         )}
       </div>
     );
@@ -293,7 +357,7 @@ export const AppSidebar = () => {
         </SidebarMenu>
       </SidebarHeader>
 
-      <NavContent items={data} />
+      <NavContent items={navList} />
 
       <SidebarFooter>
         <NavUser user={getAccountUser()} />
@@ -311,7 +375,7 @@ export function getNavigationItems(): {
     tabs: NavItem[];
   }[] = [];
 
-  const navData = data;
+  const navData = navList;
 
   // Sanatize
   navData.map((group) => {

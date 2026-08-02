@@ -22,7 +22,7 @@ export default function SharedModel() {
 
   return (
     <div className="space-y-6">
-      <PageHeader newTitle={model.name} newIcon={<Package />} newDescription={model.description} />
+      <PageHeader setTitle={model.name} setIcon={<Package />} setDescription={model.description} />
 
       <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
         <Card className="overflow-hidden">

@@ -18,7 +18,7 @@ import { getProjectTemplates } from '@/lib/mockApi';
 
 const data: Template[] = getProjectTemplates();
 
-export default function Templates() {
+export default function Layouts() {
   return (
     <div className="space-y-6">
       <div className="flex space-x-2">

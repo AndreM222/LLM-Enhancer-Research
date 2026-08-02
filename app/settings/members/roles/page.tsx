@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { Field } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { getRoles, getRolePermissions } from '@/lib/mockApi';
 import {
   Dialog,
   DialogContent,
@@ -10,17 +12,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { RolesTable } from '@/components/tables/roles-table';
-import { Field } from '@/components/ui/field';
-import { getRoles, getRolePermissions } from '@/lib/mockApi';
 
 const permissions = getRolePermissions();
-const data = getRoles();
+const roleData = getRoles();
 
-export default function RolesPage() {
+export default function Members() {
   const [open, setOpen] = useState(false);
 
   return (
@@ -35,7 +35,7 @@ export default function RolesPage() {
             <Button>Create role</Button>
           </DialogTrigger>
 
-          <DialogContent className='sm:max-w-200'>
+          <DialogContent className="sm:max-w-200">
             <DialogHeader>
               <DialogTitle>Create role</DialogTitle>
               <DialogDescription>
@@ -98,7 +98,7 @@ export default function RolesPage() {
       </div>
 
       <RolesTable
-        data={data}
+        data={roleData}
         onDelete={() => console.log('delete')}
         onOpen={() => console.log('open')}
       />

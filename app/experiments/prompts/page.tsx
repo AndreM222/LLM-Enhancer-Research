@@ -1,3 +1,7 @@
+'use client'
+
+import { getProjects } from '@/components/project-cards';
+import { ProjectSwitcher } from '@/components/project-switcher';
 import PromptDiff from '@/components/promptDiff';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -11,22 +15,25 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { getPrompts } from '@/lib/mockApi';
+import { FaFileExport } from 'react-icons/fa6';
 
 const prompts = getPrompts();
 
 export default function Prompts() {
+  const projects = getProjects();
+
   return (
     <div className="space-y-6">
+      <div className="flex items-center justify-between gap-4">
+        <ProjectSwitcher projects={projects} />
+        <Button variant="outline" title="Export analytics">
+          <FaFileExport className="mr-2 h-4 w-4" />
+          Export
+        </Button>
+      </div>
+
       <PromptDiff />
 
-      <div className="grid gap-4 xl:grid-cols-2">
-        <div className="rounded-xl border p-5">
-          <h2 className="font-medium">Experiment notes</h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Store observations about false positives, edge cases, and model behavior.
-          </p>
-        </div>
-      </div>
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {prompts.map((prompt) => (
           <Card key={prompt.id}>

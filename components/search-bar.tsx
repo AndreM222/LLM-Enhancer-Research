@@ -14,13 +14,13 @@ import {
   CommandSeparator,
 } from '@/components/ui/command';
 import { InputGroup, InputGroupAddon } from './ui/input-group';
-import { Kbd } from './ui/kbd';
+import { Kbd, KbdGroup } from './ui/kbd';
 import { getNavigationItems, NavItem } from './app-navigation';
 import { useRouter } from 'next/navigation';
 import { getProjects } from './project-cards';
 import * as LucideIcons from 'lucide-react';
 
-const SEARCHBAR_KEYBOARD_SHORTCUT = '/';
+const SEARCHBAR_KEYBOARD_SHORTCUT = 'k';
 const CLEAN_COMMAND_SHORTCUT = 'Backspace';
 
 const FILTER_COMMANDS = ['>', '/'];
@@ -98,7 +98,7 @@ export function SearchBar() {
 
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (!open && event.key === SEARCHBAR_KEYBOARD_SHORTCUT) {
+      if (!open && event.key === SEARCHBAR_KEYBOARD_SHORTCUT && (event.metaKey || event.ctrlKey)) {
         event.preventDefault();
         setOpen(true);
         return;
@@ -158,7 +158,14 @@ export function SearchBar() {
             <LucideIcons.SearchIcon />
           </InputGroupAddon>
           <InputGroupAddon align="inline-start" className="mr-10">
-            Type <Kbd>/</Kbd> to search
+            Type{' '}
+            <KbdGroup>
+              <Kbd>
+                <LucideIcons.Command />{' '}
+              </Kbd>
+              <Kbd>K</Kbd>
+            </KbdGroup>
+            to search
           </InputGroupAddon>
         </InputGroup>
       </Button>

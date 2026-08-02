@@ -67,7 +67,7 @@ export default function TagGroupPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader newTitle={id} newDescription={`${id} group tags`} newIcon={<Tag />} />
+      <PageHeader setTitle={id} setDescription={`${id} group tags`} setIcon={<Tag />} />
 
       <div className="flex items-center gap-2">
         <Field>

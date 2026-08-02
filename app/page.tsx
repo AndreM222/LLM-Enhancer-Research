@@ -13,7 +13,7 @@ import {
 
 export default function Home() {
   return (
-    <div className="space-y-6 px-4 lg:px-6">
+    <div className="space-y-6">
       <div className="flex space-x-2">
         <Select defaultValue="none">
           <SelectTrigger className="w-45">

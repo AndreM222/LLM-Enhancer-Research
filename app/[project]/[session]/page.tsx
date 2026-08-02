@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   ArrowUpDown,
@@ -11,7 +11,6 @@ import {
   ChevronRight,
   Eye,
   EyeOff,
-  GalleryVertical,
   ImageOff,
   Pencil,
   Trash2,
@@ -36,7 +35,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import { PageHeader } from '@/components/app-navigation';
+import {} from '@/components/app-navigation';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 type Detection = {
@@ -74,20 +73,16 @@ export default function Session() {
   const [editMode, setEditMode] = useState(false);
   const [deletePhaseById, setDeletePhaseById] = useState<Record<string, DeletePhase>>({});
 
-  // Per-image UI state (fixed selection/hiding logic)
   const [hiddenByImage, setHiddenByImage] = useState<Record<string, string[]>>({});
   const [selectedByImage, setSelectedByImage] = useState<Record<string, string[]>>({});
 
   const [imgErrorById, setImgErrorById] = useState<Record<string, boolean>>({});
 
-  const pathname = usePathname();
-  const paths = pathname.split('/').filter(Boolean);
-  const session = paths.pop();
+  const { session } = useParams<{ session: string }>();
 
   const activeImage = images.find((img) => img.id === activeImageId) ?? images[0];
   const detections = activeImage?.detections ?? [];
 
-  // Derive current image's hidden/selected arrays
   const hiddenId = hiddenByImage[activeImageId] ?? [];
   const selectedId = selectedByImage[activeImageId] ?? [];
 
@@ -193,12 +188,6 @@ export default function Session() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        newTitle={session?.toUpperCase()}
-        newDescription={`${session?.toUpperCase()} session image detections`}
-        newIcon={<GalleryVertical />}
-      />
-
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="overflow-hidden flex h-full flex-col">
           <CardHeader>

@@ -274,7 +274,7 @@ function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<t
           <Kbd>
             <Command />
           </Kbd>{' '}
-          <Kbd>b</Kbd>
+          <Kbd>B</Kbd>
         </KbdGroup>
       </HoverCardContent>
     </HoverCard>

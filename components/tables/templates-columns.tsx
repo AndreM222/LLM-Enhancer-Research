@@ -38,7 +38,7 @@ export function createTemplateColumns(
       accessorKey: 'id',
       header: '',
       cell: ({ row }) => (
-        <ButtonGroup className="-mx-8">
+        <ButtonGroup className="float-end">
           <Button
             size="sm"
             variant="destructive"
@@ -88,7 +88,7 @@ export function linkTemplateColumns(
       accessorKey: 'id',
       header: '',
       cell: ({ row }) => (
-        <ButtonGroup className="-mx-7">
+        <ButtonGroup className="float-end">
           <Button
             size="sm"
             variant="destructive"

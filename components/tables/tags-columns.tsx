@@ -49,7 +49,7 @@ export function createTagItemColumns(
       accessorKey: 'id',
       header: '',
       cell: ({ row }) => (
-        <ButtonGroup className="-mx-7">
+        <ButtonGroup className="float-end">
           <Button
             size="sm"
             variant="destructive"
@@ -94,7 +94,7 @@ export function createTagsColumns(
       accessorKey: 'id',
       header: '',
       cell: ({ row }) => (
-        <ButtonGroup className="-mx-7">
+        <ButtonGroup className="float-end">
           <Button
             size="sm"
             variant="destructive"
@@ -146,7 +146,7 @@ export function linkTagsColumns(
       accessorKey: 'id',
       header: '',
       cell: ({ row }) => (
-        <ButtonGroup className="-mx-7">
+        <ButtonGroup className="float-end">
           <Button
             size="sm"
             variant="destructive"
