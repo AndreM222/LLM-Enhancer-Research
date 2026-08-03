@@ -4,6 +4,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProjectSwitcher } from '@/components/project-switcher';
 import { getProjects } from '@/components/project-cards';
+import { Button } from '@/components/ui/button';
+import { FaFileExport } from 'react-icons/fa6';
 
 const TABS = [
   { value: 'global', label: 'Global Activity', href: '/global-data' },
@@ -21,6 +23,10 @@ export default function ActivityLayout({ children }: { children: React.ReactNode
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
         <ProjectSwitcher projects={projects} />
+        <Button variant="outline" title="Export analytics">
+          <FaFileExport className="mr-2 h-4 w-4" />
+          Export
+        </Button>
       </div>
 
       <Tabs

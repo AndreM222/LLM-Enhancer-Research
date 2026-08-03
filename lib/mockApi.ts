@@ -6,6 +6,7 @@ import { Log } from '@/components/tables/logs-columns';
 import { Project } from '@/components/project-cards';
 import { TagGroupDetail } from '@/app/settings/tags/[tagGroup]/page';
 import { TagGroup } from '@/components/tables/tags-columns';
+import { ServerActivity } from '@/components/tables/global-columns';
 
 export type Invoice = {
   id: string;
@@ -396,6 +397,19 @@ export const getProjectTemplates = (): Template[] => [
     name: 'Drawings',
     description: 'Analyzing strokes',
     total: 9,
+  },
+];
+
+export const getProjectServers = (): ServerActivity[] => [
+  {
+    id: 'us-east-1',
+    region: 'United States East',
+    status: 'healthy' as const,
+    requests: 3891,
+    dataTransferred: '9.4 MB',
+    avgResponseMs: 142,
+    lat: 39.0,
+    lon: -77.5,
   },
 ];
 

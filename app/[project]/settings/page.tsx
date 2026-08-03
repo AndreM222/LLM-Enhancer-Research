@@ -18,11 +18,19 @@ import { LinkTemplateTable } from '@/components/tables/templates-table';
 import { Template } from '@/components/tables/templates-columns';
 import LinkGraph from '@/components/linkGraph';
 
-import { getProjectTags, getProjectUsers, getProjectTemplates } from '@/lib/mockApi';
+import {
+  getProjectTags,
+  getProjectUsers,
+  getProjectTemplates,
+  getProjectServers,
+} from '@/lib/mockApi';
+import { LinkServerTable } from '@/components/tables/global-table';
+import { ServerActivity } from '@/components/tables/global-columns';
 
 const tagsList: TagGroup[] = getProjectTags();
 const usersList: User[] = getProjectUsers();
 const templatesList: Template[] = getProjectTemplates();
+const serversList: ServerActivity[] = getProjectServers();
 
 export default function Project() {
   const [openIcon, setOpenIcon] = useState(false);
@@ -44,6 +52,11 @@ export default function Project() {
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   const [templates, setTemplates] = useState<Template[]>(templatesList ?? []);
 
+  const [queryServer, setQueryServer] = useState('');
+  const [openServers, setOpenServers] = useState(false);
+  const [selectedServer, setSelectedServer] = useState<ServerActivity | null>(null);
+  const [servers, setServers] = useState<ServerActivity[]>(serversList ?? []);
+
   const Selected = LucideIcons[selectedIcon] as React.ComponentType<{ className?: string }>;
 
   const filteredTags = useMemo(() => {
@@ -63,6 +76,12 @@ export default function Project() {
     if (!q) return templatesList;
     return templatesList.filter((template) => template.name.toLowerCase().includes(q));
   }, [queryTemplate]);
+
+  const filteredServer = useMemo(() => {
+    const q = queryServer.trim().toLowerCase();
+    if (!q) return serversList;
+    return serversList.filter((template) => template.region.toLowerCase().includes(q));
+  }, [queryServer]);
 
   const addTag = () => {
     if (!selectedTagGroup) return;
@@ -88,6 +107,14 @@ export default function Project() {
     setTemplates((prev) => [...prev, selectedTemplate]);
     setSelectedTemplate(null);
     setQueryTemplate('');
+  };
+
+  const addServer = () => {
+    if (!selectedServer) return;
+    if (servers.includes(selectedServer)) return;
+    setServers((prev) => [...prev, selectedServer]);
+    setSelectedServer(null);
+    setQueryServer('');
   };
 
   return (
@@ -398,6 +425,91 @@ export default function Project() {
             data={templates}
             onDelete={(id) => {
               setTemplates((prev) => prev.filter((t) => t.id !== id));
+            }}
+            onOpen={() => console.log('opened')}
+          />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Servers</CardTitle>
+          <CardDescription>
+            Add servers for regions this project to run on for speed.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Label>Search and add server</Label>
+
+          <div className="flex gap-2">
+            <Popover open={openServers} onOpenChange={setOpenServers}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={openServers}
+                  className="h-10 flex-1 justify-between gap-2"
+                >
+                  <span className="truncate">
+                    {selectedServer?.region ?? 'Type to search servers...'}
+                  </span>
+                  <LucideIcons.ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+
+              <PopoverContent className="w-(--radix-popper-anchor-width) p-0" align="start">
+                <div className="border-b p-2">
+                  <Input
+                    value={queryServer}
+                    onChange={(e) => setQueryServer(e.target.value)}
+                    placeholder="Search servers..."
+                    autoFocus
+                  />
+                </div>
+
+                <div className="max-h-64 overflow-auto p-1">
+                  {filteredServer.length === 0 ? (
+                    <div className="px-3 py-6 text-sm text-muted-foreground">No servers found.</div>
+                  ) : (
+                    filteredServer.map((server) => (
+                      <button
+                        key={server.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedServer(server);
+                          setQueryServer(server.region);
+                          setOpenServers(false);
+                        }}
+                        className={cn(
+                          'flex w-full items-center rounded-md px-3 py-2 text-left text-sm hover:bg-muted',
+                          selectedServer?.id === server.id && 'bg-muted'
+                        )}
+                      >
+                        <LucideIcons.Check
+                          className={cn(
+                            'mr-2 h-4 w-4 shrink-0',
+                            selectedServer?.id === server.id ? 'opacity-100' : 'opacity-0'
+                          )}
+                        />
+                        <div className="flex flex-col">
+                          <span>{server.region}</span>
+                        </div>
+                      </button>
+                    ))
+                  )}
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            <Button onClick={addServer} disabled={!selectedServer} className="shrink-0 h-auto">
+              <LucideIcons.Plus /> Add
+            </Button>
+          </div>
+
+          <LinkServerTable
+            data={servers}
+            onDelete={(id) => {
+              setServers((prev) => prev.filter((t) => t.id !== id));
             }}
             onOpen={() => console.log('opened')}
           />
