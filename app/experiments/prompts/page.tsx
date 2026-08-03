@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { getProjects } from '@/components/project-cards';
 import { ProjectSwitcher } from '@/components/project-switcher';

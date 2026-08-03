@@ -61,7 +61,7 @@ export function rolesColumns(
         const roleId = row.getValue<string>('id');
 
         return (
-          <ButtonGroup>
+          <ButtonGroup className="float-end">
             <Button size="sm" variant="destructive" onClick={() => onDelete(roleId)}>
               <Trash />
             </Button>

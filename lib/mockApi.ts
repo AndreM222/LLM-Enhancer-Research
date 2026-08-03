@@ -84,6 +84,44 @@ export type Workspace = {
   plan: string;
 };
 
+export function getGlobalActivity() {
+  return {
+    summary: [
+      { label: 'Requests', value: '4k', delta: '541.89%', trend: [2, 4, 12, 5, 3, 4, 3] },
+      { label: 'Bandwidth', value: '10.66 MB', delta: '681.34%', trend: [1, 3, 9, 4, 2, 3, 2] },
+      { label: 'Sessions', value: '0', trend: [0, 0, 0, 0, 0, 0, 0] },
+      { label: 'Detections', value: '0', trend: [0, 0, 0, 0, 0, 0, 0] },
+    ],
+    countries: [
+      { name: 'France', requests: 2950, bandwidth: '8.22 MB' },
+      { name: 'Singapore', requests: 521, bandwidth: '1.22 MB' },
+      { name: 'United States of America', requests: 189, bandwidth: '372.07 kB' },
+      { name: 'Netherlands', requests: 125, bandwidth: '242.9 kB' },
+      { name: 'United Kingdom', requests: 74, bandwidth: '171.18 kB' },
+      { name: 'India', requests: 32, bandwidth: '77.64 kB' },
+      { name: 'Germany', requests: 23, bandwidth: '53.87 kB' },
+      { name: 'Taiwan', requests: 18, bandwidth: '90.21 kB' },
+      { name: 'Turkey', requests: 16, bandwidth: '38.88 kB' },
+      { name: 'Canada', requests: 13, bandwidth: '26.44 kB' },
+    ],
+  };
+}
+
+export function getServerActivity() {
+  return [
+    {
+      id: 'us-east-1',
+      region: 'United States East',
+      status: 'healthy' as const,
+      requests: 3891,
+      dataTransferred: '9.4 MB',
+      avgResponseMs: 142,
+      lat: 39.0,
+      lon: -77.5,
+    },
+  ];
+}
+
 export const getInvoices = (): Invoice[] => [
   { id: 'inv_001', date: 'Jul 2, 2026', amount: '$59.00', status: 'Paid' },
   { id: 'inv_002', date: 'Jun 2, 2026', amount: '$59.00', status: 'Paid' },

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import {
   ReactFlow,
   Background,
@@ -20,6 +20,7 @@ import { ServiceNode } from './service-node';
 import { ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
+import { cn } from '@/lib/utils';
 
 const nodeTypes = { service: ServiceNode };
 
@@ -75,7 +76,9 @@ export function edgeInput(
 export default function ActivityCanvas({
   initialNodes,
   initialEdges,
-}: {
+  className,
+  ...props
+}: React.ComponentProps<'div'> & {
   initialNodes: Node[];
   initialEdges: Edge[];
 }) {
@@ -89,7 +92,7 @@ export default function ActivityCanvas({
   );
 
   return (
-    <div className="h-full w-full">
+    <div className={cn('h-full w-full', className)} {...props}>
       <ReactFlow
         nodes={nodes}
         edges={edges}

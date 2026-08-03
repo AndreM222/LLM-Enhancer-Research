@@ -7,6 +7,7 @@ import {
   BriefcaseBusiness,
   ChartArea,
   CirclePile,
+  Earth,
   FlaskConical,
   Layers,
   LayoutTemplate,
@@ -123,6 +124,14 @@ const navList: {
             icon: <Tags />,
             isActive: true,
           },
+          {
+            title: 'Billing',
+            description:
+              'Review your current plan, payment method, invoice history, and usage limits in one place.',
+            url: '/billing',
+            icon: <Wallet />,
+            isActive: true,
+          },
         ],
       },
       {
@@ -153,6 +162,13 @@ const navList: {
         isActive: true,
       },
       {
+        title: 'Global Data',
+        description: 'Monitor worlwide activity per country.',
+        url: '/global-data',
+        icon: <Earth />,
+        isActive: true,
+      },
+      {
         title: 'Logs',
         description: 'See the history of changed made withing this account.',
         url: '/logs',
@@ -162,7 +178,7 @@ const navList: {
       {
         title: 'Experiments',
         url: '/experiments',
-        description: 'Monitor connection activity.',
+        description: 'Monitor experiments activity.',
         icon: <FlaskConical />,
         isActive: true,
         items: [
@@ -175,14 +191,6 @@ const navList: {
             isActive: true,
           },
         ],
-      },
-      {
-        title: 'Billing',
-        description:
-          'Review your current plan, payment method, invoice history, and usage limits in one place.',
-        url: '/billing',
-        icon: <Wallet />,
-        isActive: true,
       },
     ],
   },
