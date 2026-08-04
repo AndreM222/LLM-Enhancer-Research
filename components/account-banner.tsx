@@ -43,6 +43,29 @@ export function pictureFallback(name: string): string {
   return fallback;
 }
 
+export function AccountPicture({
+  name,
+  avatar,
+  size = 'sm',
+  className,
+  ...props
+}: React.ComponentProps<'div'> & {
+  name: string;
+  avatar: string;
+  size?: BannerSize;
+}) {
+  const s = sizeConfig[size];
+
+  return (
+    <Avatar className={cn('rounded-full', s.avatar, className)} {...props}>
+      <AvatarImage src={avatar} alt={name} />
+      <AvatarFallback className={cn('rounded-full', s.name)}>
+        {pictureFallback(name)}
+      </AvatarFallback>
+    </Avatar>
+  );
+}
+
 export function AccountBanner({
   user,
   size = 'sm',
@@ -54,12 +77,7 @@ export function AccountBanner({
 
   return (
     <div className="flex gap-2 items-center">
-      <Avatar className={cn('rounded-full', s.avatar)}>
-        <AvatarImage src={user.avatar} alt={user.name} />
-        <AvatarFallback className={cn('rounded-full', s.name)}>
-          {pictureFallback(user.name)}
-        </AvatarFallback>
-      </Avatar>
+      <AccountPicture name={user.name} avatar={user.avatar} size={size} />
       <div className="grid flex-1 text-left leading-tight">
         <span className={cn('truncate font-medium', s.name)}>{user.name}</span>
         <span className={cn('truncate text-muted-foreground', s.email)}>{user.email}</span>
@@ -98,18 +116,7 @@ export function NavUser({
             sideOffset={4}
           >
             <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">
-                    {pictureFallback(user.name)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
-                  <span className="truncate text-xs text-muted-foreground">{user.email}</span>
-                </div>
-              </div>
+              <AccountBanner user={user} />
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>

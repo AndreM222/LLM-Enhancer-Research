@@ -2,39 +2,39 @@
 
 import { useMemo } from 'react';
 import {
-  createTemplateColumns,
-  linkTemplateColumns,
-  type Template,
-} from '@/components/tables/templates-columns';
+  createLayoutsColumns,
+  linkLayoutColumns,
+  type Layout,
+} from '@/components/tables/layouts-columns';
 import { DataTable } from '@/components/data-table';
 
-export function CreateTemplateTable({
+export function CreateLayoutsTable({
   data,
   onDelete,
   onOpen,
   onDuplicate,
 }: {
-  data: Template[];
+  data: Layout[];
   onDelete: (id: string) => void;
   onOpen: (id: string) => void;
   onDuplicate: (id: string) => void;
 }) {
   const columns = useMemo(
-    () => createTemplateColumns(onDelete, onOpen, onDuplicate),
+    () => createLayoutsColumns(onDelete, onOpen, onDuplicate),
     [onDelete, onOpen, onDuplicate]
   );
   return <DataTable columns={columns} data={data} onRowClick={(row) => onOpen(row.id)} />;
 }
 
-export function LinkTemplateTable({
+export function LinkLayoutsTable({
   data,
   onDelete,
   onOpen,
 }: {
-  data: Template[];
+  data: Layout[];
   onDelete: (id: string) => void;
   onOpen: (id: string) => void;
 }) {
-  const columns = useMemo(() => linkTemplateColumns(onDelete, onOpen), [onDelete, onOpen]);
+  const columns = useMemo(() => linkLayoutColumns(onDelete, onOpen), [onDelete, onOpen]);
   return <DataTable columns={columns} data={data} />;
 }

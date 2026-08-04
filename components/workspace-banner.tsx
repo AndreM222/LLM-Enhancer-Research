@@ -1,6 +1,6 @@
 import { Workspace } from '@/lib/mockApi';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { cn } from '@/lib/utils';
+import { AccountPicture } from './account-banner';
 
 type BannerSize = keyof typeof sizeConfig;
 
@@ -21,10 +21,7 @@ export function WorkspaceBanner({
 
   return (
     <div className="flex items-center gap-3">
-      <Avatar className={cn('m-[-7]', s.avatar)}>
-        <AvatarImage src="" alt="shadcn" />
-        <AvatarFallback className={cn(s.name)}>DV</AvatarFallback>
-      </Avatar>
+      <AccountPicture name={workspace.name} avatar={workspace.logo} size="lg" />
       <div className="grid">
         <span className={cn('truncate font-medium', s.name)}>{workspace.name}</span>
         <span className={cn('truncate text-gray-500', s.name)}>{workspace.plan}</span>

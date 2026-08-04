@@ -1,9 +1,14 @@
 'use client';
 
 import { DataTable, type RowStatus } from '@/components/data-table';
-import { type DetectionSession, createDetectionColumns } from './detection-columns';
+import {
+  type DetectionSession,
+  createDetectionColumns,
+  linkedDetectionColumns,
+} from './detection-columns';
 import { useMemo } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { Project } from '../project-cards';
 
 function getRowStatus(session: DetectionSession): RowStatus {
   if (session.status === 'failed') return 'error';
@@ -28,6 +33,28 @@ export function CreateDetectionTable({
       columns={columns}
       data={data}
       getRowStatus={getRowStatus}
+      onRowClick={(row) => router.push(`${pathname}/${row.id}`)}
+    />
+  );
+}
+
+export function LinkDetectionTable({
+  data,
+  onDelete,
+  onOpen,
+}: {
+  data: Project[];
+  onDelete: (id: string) => void;
+  onOpen: (id: string) => void;
+}) {
+  const columns = useMemo(() => linkedDetectionColumns(onDelete), [onDelete]);
+  const router = useRouter();
+  const pathname = usePathname();
+
+  return (
+    <DataTable
+      columns={columns}
+      data={data}
       onRowClick={(row) => router.push(`${pathname}/${row.id}`)}
     />
   );

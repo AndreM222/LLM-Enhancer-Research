@@ -30,6 +30,8 @@ export type Project = {
 };
 
 import { getProjectCards } from '@/lib/mockApi';
+import React from 'react';
+import { cn } from '@/lib/utils';
 
 const data: Project[] = getProjectCards();
 
@@ -37,9 +39,25 @@ export function getProjects(): Project[] {
   return data;
 }
 
+export const ProjectIcon = ({
+  icon,
+  color,
+  className,
+}: React.ComponentProps<'div'> & { icon: IconName; color: string }) => {
+  const Selected = LucideIcons[icon] as React.ComponentType<{ className?: string }>;
+
+  return (
+    <div
+      className={cn('flex h-12 w-12 items-center justify-center rounded-2xl border', className)}
+      style={{ backgroundColor: `${color}20`, color: color }}
+    >
+      <Selected />
+    </div>
+  );
+};
+
 const ProjectCard = ({ item }: { item: Project }) => {
   const currState = item.state === 'online';
-  const Selected = LucideIcons[item.icon] as React.ComponentType<{ className?: string }>;
 
   return (
     <Link href={`./${item.id}`} className="group block">
@@ -48,12 +66,7 @@ const ProjectCard = ({ item }: { item: Project }) => {
           <div className="flex items-start justify-between gap-3">
             <div>
               <div className="flex gap-2 items-center">
-                <div
-                  className="flex h-12 w-12 items-center justify-center rounded-2xl border"
-                  style={{ backgroundColor: `${item.color}20`, color: item.color }}
-                >
-                  <Selected />
-                </div>
+                <ProjectIcon color={item.color} icon={item.icon} />
 
                 <CardTitle className="text-xl">{item.title}</CardTitle>
               </div>

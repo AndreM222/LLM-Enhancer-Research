@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import * as LucideIcons from 'lucide-react';
+import { ProjectIcon } from '../project-cards';
 
 export type IconName = keyof typeof LucideIcons;
 
@@ -59,8 +60,6 @@ export function ProjectIconDialog({
     return ICONS.filter((icon) => icon.toLowerCase().includes(q));
   }, [search]);
 
-  const Selected = LucideIcons[selectedIcon] as React.ComponentType<{ className?: string }>;
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-3xl">
@@ -88,12 +87,7 @@ export function ProjectIconDialog({
             </div>
 
             <div className="flex items-center gap-3 rounded-xl border bg-muted/30 px-4 py-3">
-              <div
-                className="flex h-12 w-12 items-center justify-center rounded-xl"
-                style={{ backgroundColor: `${selectedColor}20`, color: selectedColor }}
-              >
-                <Selected className="h-6 w-6" />
-              </div>
+              <ProjectIcon icon={selectedIcon} color={selectedColor} className="" />
               <div>
                 <p className="text-sm font-medium">{selectedIcon}</p>
                 <p className="text-xs text-muted-foreground">{selectedColor}</p>

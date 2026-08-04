@@ -12,8 +12,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { AccountBanner, pictureFallback } from '@/components/user-button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { AccountBanner, AccountPicture } from '@/components/account-banner';
 import { X } from 'lucide-react';
 
 import { getAccountUser } from '@/lib/mockApi';
@@ -39,10 +38,7 @@ export default function AccountSettingsPage() {
 
         <CardContent className="space-y-4">
           <div className="flex items-center gap-4">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={currentAvatar} alt={user.name} />
-              <AvatarFallback>{pictureFallback(user.name)}</AvatarFallback>
-            </Avatar>
+            <AccountPicture name={user.name} avatar={currentAvatar} size="sm" />
 
             <div className="space-y-1">
               <p className="text-xs text-muted-foreground">

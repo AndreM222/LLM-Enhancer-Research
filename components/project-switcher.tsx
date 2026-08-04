@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import * as LucidIcons from 'lucide-react';
 
 import {
   DropdownMenu,
@@ -20,8 +19,9 @@ import {
 } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { cn } from '@/lib/utils';
-import { pictureFallback } from './user-button';
-import { Project } from './project-cards';
+import { pictureFallback } from './account-banner';
+import { Project, ProjectIcon } from './project-cards';
+import { ChevronsUpDown, Plus } from 'lucide-react';
 
 type BannerSize = keyof typeof sizeConfig;
 
@@ -53,7 +53,6 @@ const truncateText = (str: string, limit: number): string => {
 export function ProjectSwitcher({ projects: projects }: { projects: Project[] }) {
   const { isMobile } = useSidebar();
   const [activeProject, setActiveProject] = React.useState(projects[0]);
-  const Selected = LucidIcons[activeProject.icon] as React.ComponentType<{ className?: string }>;
 
   if (!activeProject) {
     return null;
@@ -68,19 +67,18 @@ export function ProjectSwitcher({ projects: projects }: { projects: Project[] })
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div
-                className="flex h-10 w-10 items-center justify-center rounded-xl border"
-                style={{ backgroundColor: `${activeProject.color}20`, color: activeProject.color }}
-              >
-                <Selected />
-              </div>
+              <ProjectIcon
+                icon={activeProject.icon}
+                color={activeProject.color}
+                className="h-10 w-10 rounded-xl"
+              />
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{activeProject.title}</span>
                 <span className="truncate text-xs text-gray-500">
                   {truncateText(activeProject.description, 30)}
                 </span>
               </div>
-              <LucidIcons.ChevronsUpDown className="ml-auto" />
+              <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -93,25 +91,17 @@ export function ProjectSwitcher({ projects: projects }: { projects: Project[] })
               Projects
             </DropdownMenuLabel>
             {projects.map((team, index) => {
-              const Listed = LucidIcons[team.icon] as React.ComponentType<{
-                className?: string;
-              }>;
-
               return (
                 <DropdownMenuItem
                   key={team.title}
                   onClick={() => setActiveProject(team)}
                   className="gap-2 p-2"
                 >
-                  <div
-                    className="flex h-10 w-10 items-center justify-center rounded-xl border"
-                    style={{
-                      backgroundColor: `${team.color}20`,
-                      color: team.color,
-                    }}
-                  >
-                    <Listed />
-                  </div>
+                  <ProjectIcon
+                    icon={team.icon}
+                    color={team.color}
+                    className="rounded-xl h-10 w-10"
+                  />
                   <div>
                     {team.title}
                     <div className="truncate text-xs text-gray-500">
@@ -125,7 +115,7 @@ export function ProjectSwitcher({ projects: projects }: { projects: Project[] })
             <DropdownMenuSeparator />
             <DropdownMenuItem className="gap-2 p-2">
               <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
-                <LucidIcons.Plus className="size-4" />
+                <Plus className="size-4" />
               </div>
               <div className="font-medium text-muted-foreground">New Project</div>
             </DropdownMenuItem>

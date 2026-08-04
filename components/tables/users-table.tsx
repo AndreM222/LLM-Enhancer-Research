@@ -58,5 +58,5 @@ export function LinkUsersTable({
   onOpen: (id: string) => void;
 }) {
   const columns = useMemo(() => linkUserColumns(onDelete, onOpen), [onDelete, onOpen]);
-  return <DataTable columns={columns} data={data} getRowStatus={getRowStatus} />;
+  return <DataTable columns={columns} data={data} />;
 }

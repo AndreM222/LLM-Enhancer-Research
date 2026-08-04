@@ -7,32 +7,36 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { IconName, ProjectIconDialog } from '@/components/dialogs/project-icon';
 import { useMemo, useState } from 'react';
-import * as LucideIcons from 'lucide-react';
 import { LinkTagGroupTable } from '@/components/tables/tags-table';
 import { TagGroup } from '@/components/tables/tags-columns';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { User } from '@/components/tables/users-columns';
 import { LinkUsersTable } from '@/components/tables/users-table';
-import { LinkTemplateTable } from '@/components/tables/templates-table';
-import { Template } from '@/components/tables/templates-columns';
+import { LinkLayoutsTable } from '@/components/tables/layouts-table';
+import { Layout } from '@/components/tables/layouts-columns';
 import LinkGraph from '@/components/linkGraph';
 
 import {
   getProjectTags,
   getProjectUsers,
-  getProjectTemplates,
+  getProjectLayouts,
   getProjectServers,
 } from '@/lib/mockApi';
 import { LinkServerTable } from '@/components/tables/global-table';
-import { ServerActivity } from '@/components/tables/global-columns';
+import { ServerActivity, ServerIndicator } from '@/components/tables/global-columns';
+import { getProjects, Project, ProjectIcon } from '@/components/project-cards';
+import { Check, ChevronDown, Plus } from 'lucide-react';
+import { LinkDetectionTable } from '@/components/tables/detection-table';
+import Flag from 'react-world-flags';
 
 const tagsList: TagGroup[] = getProjectTags();
 const usersList: User[] = getProjectUsers();
-const templatesList: Template[] = getProjectTemplates();
+const layoutList: Layout[] = getProjectLayouts();
 const serversList: ServerActivity[] = getProjectServers();
+const projectsList: Project[] = getProjects();
 
-export default function Project() {
+export default function ProjectSettings() {
   const [openIcon, setOpenIcon] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState<IconName>('Folder');
   const [selectedColor, setSelectedColor] = useState('#7c3aed');
@@ -48,16 +52,19 @@ export default function Project() {
   const [users, setUsers] = useState<User[]>(usersList ?? []);
 
   const [queryTemplate, setQueryTemplate] = useState('');
-  const [openTemplates, setOpenTemplates] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
-  const [templates, setTemplates] = useState<Template[]>(templatesList ?? []);
+  const [openLayouts, setOpenLayouts] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<Layout | null>(null);
+  const [layouts, setLayouts] = useState<Layout[]>(layoutList ?? []);
 
   const [queryServer, setQueryServer] = useState('');
   const [openServers, setOpenServers] = useState(false);
   const [selectedServer, setSelectedServer] = useState<ServerActivity | null>(null);
   const [servers, setServers] = useState<ServerActivity[]>(serversList ?? []);
 
-  const Selected = LucideIcons[selectedIcon] as React.ComponentType<{ className?: string }>;
+  const [queryProjectLink, setQueryProjectLink] = useState('');
+  const [openProjectLinks, setOpenProjectLinks] = useState(false);
+  const [selectedProjectLink, setSelectedProjectLink] = useState<Project | null>(null);
+  const [projectLinks, setProjectLinks] = useState<Project[]>(projectsList ?? []);
 
   const filteredTags = useMemo(() => {
     const q = queryTag.trim().toLowerCase();
@@ -73,8 +80,8 @@ export default function Project() {
 
   const filteredTemplate = useMemo(() => {
     const q = queryTemplate.trim().toLowerCase();
-    if (!q) return templatesList;
-    return templatesList.filter((template) => template.name.toLowerCase().includes(q));
+    if (!q) return layoutList;
+    return layoutList.filter((template) => template.name.toLowerCase().includes(q));
   }, [queryTemplate]);
 
   const filteredServer = useMemo(() => {
@@ -82,6 +89,12 @@ export default function Project() {
     if (!q) return serversList;
     return serversList.filter((template) => template.region.toLowerCase().includes(q));
   }, [queryServer]);
+
+  const filteredProjectLink = useMemo(() => {
+    const q = queryProjectLink.trim().toLowerCase();
+    if (!q) return projectsList;
+    return projectsList.filter((template) => template.title.toLowerCase().includes(q));
+  }, [queryProjectLink]);
 
   const addTag = () => {
     if (!selectedTagGroup) return;
@@ -103,8 +116,8 @@ export default function Project() {
 
   const addTemplate = () => {
     if (!selectedTemplate) return;
-    if (templates.includes(selectedTemplate)) return;
-    setTemplates((prev) => [...prev, selectedTemplate]);
+    if (layouts.includes(selectedTemplate)) return;
+    setLayouts((prev) => [...prev, selectedTemplate]);
     setSelectedTemplate(null);
     setQueryTemplate('');
   };
@@ -115,6 +128,14 @@ export default function Project() {
     setServers((prev) => [...prev, selectedServer]);
     setSelectedServer(null);
     setQueryServer('');
+  };
+
+  const addProject = () => {
+    if (!selectedProjectLink) return;
+    if (projectLinks.includes(selectedProjectLink)) return;
+    setProjectLinks((prev) => [...prev, selectedProjectLink]);
+    setSelectedProjectLink(null);
+    setQueryProjectLink('');
   };
 
   return (
@@ -129,12 +150,7 @@ export default function Project() {
 
         <CardContent className="space-y-6">
           <div className="flex items-center gap-4">
-            <div
-              className="flex h-16 w-16 items-center justify-center rounded-2xl border"
-              style={{ backgroundColor: `${selectedColor}20`, color: selectedColor }}
-            >
-              <Selected />
-            </div>
+            <ProjectIcon icon={selectedIcon} color={selectedColor} className="h-16 w-16" />
 
             <div className="space-y-1">
               <p className="font-medium">Current icon: Folder</p>
@@ -195,7 +211,7 @@ export default function Project() {
                   <span className="truncate">
                     {selectedUser?.name ?? 'Type to search users...'}
                   </span>
-                  <LucideIcons.ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
+                  <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
 
@@ -227,7 +243,7 @@ export default function Project() {
                           selectedUser?.id === user.id && 'bg-muted'
                         )}
                       >
-                        <LucideIcons.Check
+                        <Check
                           className={cn(
                             'mr-2 h-4 w-4 shrink-0',
                             selectedUser?.id === user.id ? 'opacity-100' : 'opacity-0'
@@ -245,12 +261,12 @@ export default function Project() {
             </Popover>
 
             <Button onClick={addUser} disabled={!selectedUser} className="shrink-0 h-auto">
-              <LucideIcons.Plus /> Add
+              <Plus /> Add
             </Button>
           </div>
 
           <LinkUsersTable
-            data={users}
+            data={usersList}
             onDelete={(id) => {
               setUsers((prev) => prev.filter((t) => t.id !== id));
             }}
@@ -279,7 +295,7 @@ export default function Project() {
                   <span className="truncate">
                     {selectedTagGroup?.name ?? 'Type to search tags...'}
                   </span>
-                  <LucideIcons.ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
+                  <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
 
@@ -311,7 +327,7 @@ export default function Project() {
                           selectedTagGroup?.id === tag.id && 'bg-muted'
                         )}
                       >
-                        <LucideIcons.Check
+                        <Check
                           className={cn(
                             'mr-2 h-4 w-4 shrink-0',
                             selectedTagGroup?.id === tag.id ? 'opacity-100' : 'opacity-0'
@@ -329,12 +345,12 @@ export default function Project() {
             </Popover>
 
             <Button onClick={addTag} disabled={!selectedTagGroup} className="shrink-0 h-auto">
-              <LucideIcons.Plus /> Add
+              <Plus /> Add
             </Button>
           </div>
 
           <LinkTagGroupTable
-            data={tags}
+            data={tagsList}
             onDelete={(id) => {
               setTags((prev) => prev.filter((t) => t.id !== id));
             }}
@@ -345,25 +361,25 @@ export default function Project() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Templates</CardTitle>
-          <CardDescription>Add templates that modify how this project behaves.</CardDescription>
+          <CardTitle>Layouts</CardTitle>
+          <CardDescription>Add layouts that modify how this project behaves.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Label>Search and add templates</Label>
+          <Label>Search and add layouts</Label>
 
           <div className="flex gap-2">
-            <Popover open={openTemplates} onOpenChange={setOpenTemplates}>
+            <Popover open={openLayouts} onOpenChange={setOpenLayouts}>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
                   role="combobox"
-                  aria-expanded={openTemplates}
+                  aria-expanded={openLayouts}
                   className="h-10 flex-1 justify-between gap-2"
                 >
                   <span className="truncate">
-                    {selectedTemplate?.name ?? 'Type to search templates...'}
+                    {selectedTemplate?.name ?? 'Type to search layouts...'}
                   </span>
-                  <LucideIcons.ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
+                  <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
 
@@ -372,16 +388,14 @@ export default function Project() {
                   <Input
                     value={queryTemplate}
                     onChange={(e) => setQueryTemplate(e.target.value)}
-                    placeholder="Search templates..."
+                    placeholder="Search layouts..."
                     autoFocus
                   />
                 </div>
 
                 <div className="max-h-64 overflow-auto p-1">
                   {filteredTemplate.length === 0 ? (
-                    <div className="px-3 py-6 text-sm text-muted-foreground">
-                      No templates found.
-                    </div>
+                    <div className="px-3 py-6 text-sm text-muted-foreground">No layouts found.</div>
                   ) : (
                     filteredTemplate.map((template) => (
                       <button
@@ -390,14 +404,14 @@ export default function Project() {
                         onClick={() => {
                           setSelectedTemplate(template);
                           setQueryTemplate(template.name);
-                          setOpenTemplates(false);
+                          setOpenLayouts(false);
                         }}
                         className={cn(
                           'flex w-full items-center rounded-md px-3 py-2 text-left text-sm hover:bg-muted',
                           selectedTemplate?.id === template.id && 'bg-muted'
                         )}
                       >
-                        <LucideIcons.Check
+                        <Check
                           className={cn(
                             'mr-2 h-4 w-4 shrink-0',
                             selectedTemplate?.id === template.id ? 'opacity-100' : 'opacity-0'
@@ -417,14 +431,14 @@ export default function Project() {
             </Popover>
 
             <Button onClick={addTemplate} disabled={!selectedTemplate} className="shrink-0 h-auto">
-              <LucideIcons.Plus /> Add
+              <Plus /> Add
             </Button>
           </div>
 
-          <LinkTemplateTable
-            data={templates}
+          <LinkLayoutsTable
+            data={layoutList}
             onDelete={(id) => {
-              setTemplates((prev) => prev.filter((t) => t.id !== id));
+              setLayouts((prev) => prev.filter((t) => t.id !== id));
             }}
             onOpen={() => console.log('opened')}
           />
@@ -453,7 +467,7 @@ export default function Project() {
                   <span className="truncate">
                     {selectedServer?.region ?? 'Type to search servers...'}
                   </span>
-                  <LucideIcons.ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
+                  <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
 
@@ -485,14 +499,21 @@ export default function Project() {
                           selectedServer?.id === server.id && 'bg-muted'
                         )}
                       >
-                        <LucideIcons.Check
+                        <Check
                           className={cn(
                             'mr-2 h-4 w-4 shrink-0',
                             selectedServer?.id === server.id ? 'opacity-100' : 'opacity-0'
                           )}
                         />
                         <div className="flex flex-col">
-                          <span>{server.region}</span>
+                          <span className="flex items-center gap-1">
+                            <Flag code={server.countryCode} className="w-4 h-4" />
+                            {server.region}
+                          </span>
+
+                          <span>
+                            <ServerIndicator status={server.status} />
+                          </span>
                         </div>
                       </button>
                     ))
@@ -502,14 +523,113 @@ export default function Project() {
             </Popover>
 
             <Button onClick={addServer} disabled={!selectedServer} className="shrink-0 h-auto">
-              <LucideIcons.Plus /> Add
+              <Plus /> Add
             </Button>
           </div>
 
           <LinkServerTable
-            data={servers}
+            data={serversList}
             onDelete={(id) => {
               setServers((prev) => prev.filter((t) => t.id !== id));
+            }}
+            onOpen={() => console.log('opened')}
+          />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Linked Projects</CardTitle>
+          <CardDescription>Add projects to link images.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Label>Search and add projects</Label>
+
+          <div className="flex gap-2">
+            <Popover open={openProjectLinks} onOpenChange={setOpenProjectLinks}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={openProjectLinks}
+                  className="h-10 flex-1 justify-between gap-2"
+                >
+                  <span className="truncate">
+                    {selectedProjectLink?.title ?? 'Type to search projects...'}
+                  </span>
+                  <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+
+              <PopoverContent className="w-(--radix-popper-anchor-width) p-0" align="start">
+                <div className="border-b p-2">
+                  <Input
+                    value={queryProjectLink}
+                    onChange={(e) => setQueryProjectLink(e.target.value)}
+                    placeholder="Search projects..."
+                    autoFocus
+                  />
+                </div>
+
+                <div className="max-h-64 overflow-auto p-1">
+                  {filteredProjectLink.length === 0 ? (
+                    <div className="px-3 py-6 text-sm text-muted-foreground">
+                      No projects found.
+                    </div>
+                  ) : (
+                    filteredProjectLink.map((project) => (
+                      <button
+                        key={project.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedProjectLink(project);
+                          setQueryProjectLink(project.title);
+                          setOpenProjectLinks(false);
+                        }}
+                        className={cn(
+                          'flex w-full items-center rounded-md px-3 py-2 text-left text-sm hover:bg-muted',
+                          selectedProjectLink?.id === project.id && 'bg-muted'
+                        )}
+                      >
+                        <Check
+                          className={cn(
+                            'mr-2 h-4 w-4 shrink-0',
+                            selectedProjectLink?.id === project.id ? 'opacity-100' : 'opacity-0'
+                          )}
+                        />
+                        <div className="flex flex-col">
+                          <span className="flex items-center gap-1">
+                            <ProjectIcon
+                              icon={project.icon}
+                              color={project.color}
+                              className="w-7 h-7 rounded-md"
+                            />
+                            {project.title}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {project.description}
+                          </span>
+                        </div>
+                      </button>
+                    ))
+                  )}
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            <Button
+              onClick={addProject}
+              disabled={!selectedProjectLink}
+              className="shrink-0 h-auto"
+            >
+              <Plus /> Add
+            </Button>
+          </div>
+
+          <LinkDetectionTable
+            data={projectsList}
+            onDelete={(id) => {
+              setProjectLinks((prev) => prev.filter((t) => t.id !== id));
             }}
             onOpen={() => console.log('opened')}
           />

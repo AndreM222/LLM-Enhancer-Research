@@ -5,18 +5,18 @@ import { ChevronRight, Copy, Trash, X } from 'lucide-react';
 import { Button } from '../ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 
-export type Template = {
+export type Layout = {
   id: string;
   name: string;
   description: string;
   total: number;
 };
 
-export function createTemplateColumns(
+export function createLayoutsColumns(
   onDelete: (id: string) => void,
   onOpen: (id: string) => void,
   onDuplicate: (id: string) => void
-): ColumnDef<Template>[] {
+): ColumnDef<Layout>[] {
   return [
     {
       accessorKey: 'name',
@@ -62,14 +62,14 @@ export function createTemplateColumns(
   ];
 }
 
-export function linkTemplateColumns(
+export function linkLayoutColumns(
   onDelete: (id: string) => void,
   onOpen: (id: string) => void
-): ColumnDef<Template>[] {
+): ColumnDef<Layout>[] {
   return [
     {
       accessorKey: 'name',
-      header: 'Template Name',
+      header: 'Layout',
     },
     {
       accessorKey: 'description',

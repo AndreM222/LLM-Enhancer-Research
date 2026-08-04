@@ -12,9 +12,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { X } from 'lucide-react';
-import { pictureFallback } from '@/components/user-button';
+import { AccountPicture } from '@/components/account-banner';
 import { WorkspaceBanner } from '@/components/workspace-banner';
 
 import { getWorkspace, Workspace } from '@/lib/mockApi';
@@ -40,10 +39,7 @@ export default function GeneralSettingsPage() {
 
         <CardContent className="space-y-4">
           <div className="flex items-center gap-4">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={currentWorkspace} alt={workspace.name} />
-              <AvatarFallback>{pictureFallback(workspace.name)}</AvatarFallback>
-            </Avatar>
+            <AccountPicture name={workspace.name} avatar={currentWorkspace} size="sm" />
 
             <div className="space-y-1">
               <p className="text-xs text-muted-foreground">

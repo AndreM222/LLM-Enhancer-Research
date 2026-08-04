@@ -21,7 +21,7 @@ import {
   Wallet,
 } from 'lucide-react';
 import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenu } from './ui/sidebar';
-import { NavUser } from './user-button';
+import { NavUser } from './account-banner';
 import { NavContent } from './sidebarContent';
 import { usePathname, useRouter } from 'next/navigation';
 import { WorkspaceSwitcher } from './team-switcher';

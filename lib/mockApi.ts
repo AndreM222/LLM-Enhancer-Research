@@ -1,6 +1,6 @@
 import { Role } from '@/components/tables/roles-columns';
 import { User } from '@/components/tables/users-columns';
-import { Template } from '@/components/tables/templates-columns';
+import { Layout } from '@/components/tables/layouts-columns';
 import { DetectionSession } from '@/components/tables/detection-columns';
 import { Log } from '@/components/tables/logs-columns';
 import { Project } from '@/components/project-cards';
@@ -197,7 +197,7 @@ export const getUsers = (): User[] => [
     time: '2026-07-07T18:00:00.000Z',
     username: 'David123',
     email: 'david@gmail.com',
-    avatarUrl: '',
+    avatar: '',
   },
   {
     id: '731ed57f',
@@ -207,7 +207,7 @@ export const getUsers = (): User[] => [
     time: '2026-07-07T17:30:00.000Z',
     username: 'Stephanie-Flower',
     email: 'flower@gmail.com',
-    avatarUrl: '',
+    avatar: '',
   },
   {
     id: '728ed54f',
@@ -217,7 +217,7 @@ export const getUsers = (): User[] => [
     time: '2026-07-07T16:45:00.000Z',
     username: 'jealing2',
     email: 'jealing@gmail.com',
-    avatarUrl: '',
+    avatar: '',
   },
 ];
 
@@ -361,7 +361,7 @@ export const getProjectUsers = (): User[] => [
     time: '2026-07-07T18:00:00.000Z',
     username: 'David123',
     email: 'david@gmail.com',
-    avatarUrl: '',
+    avatar: '',
   },
   {
     id: '731ed57f',
@@ -371,7 +371,7 @@ export const getProjectUsers = (): User[] => [
     time: '2026-07-07T17:30:00.000Z',
     username: 'Stephanie-Flower',
     email: 'flower@gmail.com',
-    avatarUrl: '',
+    avatar: '',
   },
   {
     id: '728ed54f',
@@ -381,11 +381,11 @@ export const getProjectUsers = (): User[] => [
     time: '2026-07-07T16:45:00.000Z',
     username: 'jealing2',
     email: 'jealing@gmail.com',
-    avatarUrl: '',
+    avatar: '',
   },
 ];
 
-export const getProjectTemplates = (): Template[] => [
+export const getProjectLayouts = (): Layout[] => [
   {
     id: '1232',
     name: 'Cars',
@@ -404,7 +404,8 @@ export const getProjectServers = (): ServerActivity[] => [
   {
     id: 'us-east-1',
     region: 'United States East',
-    status: 'healthy' as const,
+    countryCode: 'US',
+    status: 'healthy',
     requests: 3891,
     dataTransferred: '9.4 MB',
     avgResponseMs: 142,

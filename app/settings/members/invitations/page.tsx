@@ -24,12 +24,12 @@ const mockUsers: DialogMockUser[] = userData.map((user) => ({
   name: user.name,
   username: user.username,
   email: user.email,
-  avatarUrl: user.avatarUrl,
+  avatarUrl: user.avatar,
   role: (user.role as UserRole) ?? 'MEMBER',
 }));
 
 export default function Members() {
-  const [users, setUsers] = useState<User[]>(userData);
+  const [users, setUsers] = useState<User[]>([userData[0]]);
 
   const handleInvite = (payload: DialogMockUser | { emailOrUsername: string; role: UserRole }) => {
     console.log('Invite payload:', payload);

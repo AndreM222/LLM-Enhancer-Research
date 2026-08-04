@@ -1,8 +1,8 @@
 'use client';
 
 import LinkGraph from '@/components/linkGraph';
-import { Template } from '@/components/tables/templates-columns';
-import { CreateTemplateTable } from '@/components/tables/templates-table';
+import { Layout } from '@/components/tables/layouts-columns';
+import { CreateLayoutsTable } from '@/components/tables/layouts-table';
 import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
@@ -14,9 +14,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { getProjectTemplates } from '@/lib/mockApi';
+import { getProjectLayouts } from '@/lib/mockApi';
 
-const data: Template[] = getProjectTemplates();
+const data: Layout[] = getProjectLayouts();
 
 export default function Layouts() {
   return (
@@ -38,12 +38,12 @@ export default function Layouts() {
         <Field>
           <Input id="input-button-group" placeholder="Type to search..." />
         </Field>
-        <Button>Create Template</Button>
+        <Button>Create Layout</Button>
       </div>
 
-      <CreateTemplateTable
+      <CreateLayoutsTable
         data={data}
-        onDuplicate={() => console.log('Duplicatr')}
+        onDuplicate={() => console.log('Duplicate')}
         onDelete={() => console.log('Deleted')}
         onOpen={() => console.log('Opened')}
       />

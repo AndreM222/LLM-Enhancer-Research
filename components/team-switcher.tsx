@@ -18,38 +18,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { cn } from '@/lib/utils';
-import { pictureFallback } from './user-button';
+import { AccountPicture } from './account-banner';
 import { Workspace } from '@/lib/mockApi';
-
-type BannerSize = keyof typeof sizeConfig;
-
-const sizeConfig = {
-  sm: { avatar: 'h-8 w-8', name: 'text-sm', email: 'text-xs' },
-  md: { avatar: 'h-12 w-12', name: 'text-base', email: 'text-sm' },
-  lg: { avatar: 'h-16 w-16', name: 'text-xl', email: 'text-base' },
-} as const;
-
-export function WorkspaceBanner({
-  workspace,
-  size = 'sm',
-}: {
-  workspace: Workspace;
-  size?: BannerSize;
-}) {
-  const s = sizeConfig[size];
-
-  return (
-    <div className="flex items-center gap-3">
-      <Avatar className={cn('m-[-7]', s.avatar)}>
-        <AvatarImage src="" alt="shadcn" />
-        <AvatarFallback className={cn(s.name)}>{pictureFallback(workspace.name)}</AvatarFallback>
-      </Avatar>
-      <span className={cn('truncate font-medium', s.name)}>{workspace.name}</span>
-    </div>
-  );
-}
 
 export function WorkspaceSwitcher({ workspaces: workspaces }: { workspaces: Workspace[] }) {
   const { isMobile } = useSidebar();
@@ -68,10 +38,7 @@ export function WorkspaceSwitcher({ workspaces: workspaces }: { workspaces: Work
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="rounded-md">
-                <AvatarImage src={activeWorkspace.logo} alt="shadcn" />
-                <AvatarFallback>{pictureFallback(activeWorkspace.name)}</AvatarFallback>
-              </Avatar>
+              <AccountPicture name={activeWorkspace.name} avatar={activeWorkspace.logo} size="sm" />
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{activeWorkspace.name}</span>
                 <span className="truncate text-xs text-gray-500">{activeWorkspace.plan}</span>
@@ -94,10 +61,7 @@ export function WorkspaceSwitcher({ workspaces: workspaces }: { workspaces: Work
                 onClick={() => setActiveWorkspace(team)}
                 className="gap-2 p-2"
               >
-                <Avatar>
-                  <AvatarImage src={team.logo} alt="shadcn" />
-                  <AvatarFallback>{pictureFallback(team.name)}</AvatarFallback>
-                </Avatar>
+                <AccountPicture name={team.name} avatar={team.logo} size="sm" />
                 <div>
                   {team.name}
                   <div className="truncate text-xs text-gray-500">{team.plan}</div>
