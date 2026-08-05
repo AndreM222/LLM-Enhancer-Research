@@ -1,12 +1,11 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { ComposableMap, Geographies, Geography } from 'react-simple-maps';
 import { ArrowUpRight } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
 import { getGlobalActivity } from '@/lib/mockApi';
-import { Button } from '@/components/ui/button';
 import { GlobalActivityTable } from '@/components/tables/global-table';
 
 const GEO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
@@ -33,13 +32,9 @@ function MiniTrend({ data }: { data: number[] }) {
 
 export default function GlobalActivityPage() {
   const { summary, countries } = getGlobalActivity();
-  const [page, setPage] = useState(0);
-  const pageSize = 10;
 
   const maxRequests = useMemo(() => Math.max(...countries.map((c) => c.requests)), [countries]);
   const byCountryName = useMemo(() => new Map(countries.map((c) => [c.name, c])), [countries]);
-
-  const pageItems = countries.slice(page * pageSize, page * pageSize + pageSize);
 
   return (
     <div className="space-y-6">
@@ -108,28 +103,7 @@ export default function GlobalActivityPage() {
             <CardDescription>Where detection traffic is coming from.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <GlobalActivityTable data={pageItems} />
-
-            <div className="flex items-center justify-between text-sm text-muted-foreground">
-              <Button
-                disabled={page === 0}
-                onClick={() => setPage((p) => Math.max(0, p - 1))}
-                variant="outline"
-              >
-                Previous
-              </Button>
-              <span>
-                {page * pageSize + 1}–{Math.min((page + 1) * pageSize, countries.length)} of{' '}
-                {countries.length}
-              </span>
-              <Button
-                disabled={(page + 1) * pageSize >= countries.length}
-                onClick={() => setPage((p) => p + 1)}
-                variant="outline"
-              >
-                Next
-              </Button>
-            </div>
+            <GlobalActivityTable data={[countries[0]]} pageSize={10} />
           </CardContent>
         </Card>
       </div>

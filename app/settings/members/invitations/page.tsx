@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { UserRole, MockUser as DialogMockUser } from '@/components/dialogs/invite-user-dialog';
 import { CreateInvitationTable } from '@/components/tables/users-table';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
@@ -16,26 +15,29 @@ import {
 import { getUsers } from '@/lib/mockApi';
 import { InviteUserDialog } from '@/components/dialogs/invite-user-dialog';
 import { User } from '@/components/tables/users-columns';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const userData: User[] = getUsers();
 
-const mockUsers: DialogMockUser[] = userData.map((user) => ({
+const mockUsers: User[] = userData.map((user) => ({
   id: user.id,
+  status: user.status,
   name: user.name,
   username: user.username,
   email: user.email,
-  avatarUrl: user.avatar,
-  role: (user.role as UserRole) ?? 'MEMBER',
+  avatar: user.avatar,
+  time: user.time,
+  role: (user.role as string) ?? 'MEMBER',
 }));
 
 export default function Members() {
   const [users, setUsers] = useState<User[]>([userData[0]]);
 
-  const handleInvite = (payload: DialogMockUser | { emailOrUsername: string; role: UserRole }) => {
+  const handleInvite = (payload: User | { emailOrUsername: string; role: string }) => {
     console.log('Invite payload:', payload);
   };
 
-  const handleEditRole = (user: DialogMockUser, newRole: UserRole) => {
+  const handleEditRole = (user: User, newRole: string) => {
     console.log('Edit role:', user, '->', newRole);
     setUsers((prev) =>
       prev.map((currUser) =>
@@ -48,37 +50,45 @@ export default function Members() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2">
-        <Select defaultValue="none">
-          <SelectTrigger className="w-45">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent position="popper">
-            <SelectGroup>
-              <SelectItem value="none">Select Status</SelectItem>
-              <SelectItem value="ACCEPTED">Accepted</SelectItem>
-              <SelectItem value="REJECTED">Rejected</SelectItem>
-              <SelectItem value="SENT">Sent</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+      <Card>
+        <CardHeader>
+          <CardTitle>Users</CardTitle>
+          <CardDescription>List of users with permission to interact.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Select defaultValue="none">
+              <SelectTrigger className="w-45">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent position="popper">
+                <SelectGroup>
+                  <SelectItem value="none">Select Status</SelectItem>
+                  <SelectItem value="ACCEPTED">Accepted</SelectItem>
+                  <SelectItem value="REJECTED">Rejected</SelectItem>
+                  <SelectItem value="SENT">Sent</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
 
-        <Field>
-          <Input id="input-button-group" placeholder="Type to search..." />
-        </Field>
+            <Field>
+              <Input id="input-button-group" placeholder="Type to search..." />
+            </Field>
 
-        <InviteUserDialog
-          existingUsers={mockUsers}
-          onInvite={handleInvite}
-          onEditRole={handleEditRole}
-        />
-      </div>
+            <InviteUserDialog
+              existingUsers={mockUsers}
+              onInvite={handleInvite}
+              onEditRole={handleEditRole}
+            />
+          </div>
 
-      <CreateInvitationTable
-        data={users}
-        onDelete={() => console.log('Deleted')}
-        onOpen={() => console.log('Opened')}
-      />
+          <CreateInvitationTable
+            data={users}
+            onDelete={() => console.log('Deleted')}
+            onOpen={() => console.log('Opened')}
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 }

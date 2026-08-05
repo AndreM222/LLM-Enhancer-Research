@@ -144,7 +144,6 @@ export function InviteUserDialog({ existingUsers, onInvite, onEditRole, trigger 
                 )}
                 <div className="flex gap-1 items-center">
                   <UserPlus className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                  <span className="text-red-500">*</span>
                 </div>
               </Button>
             </PopoverTrigger>
@@ -189,9 +188,7 @@ export function InviteUserDialog({ existingUsers, onInvite, onEditRole, trigger 
           </Popover>
 
           <div className="grid gap-2">
-            <label className="text-sm font-medium">
-              Role <span className="text-red-500">*</span>
-            </label>
+            <label className="text-sm font-medium">Role</label>
             <Select value={role} onValueChange={(v) => setRole(v as string)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select role" />
@@ -209,10 +206,7 @@ export function InviteUserDialog({ existingUsers, onInvite, onEditRole, trigger 
           <Button variant="outline" onClick={() => setOpen(false)}>
             Cancel
           </Button>
-          <Button
-            onClick={handleSubmit}
-            disabled={!selectedUser && !isValidEmail}
-          >
+          <Button onClick={handleSubmit} disabled={!selectedUser && !isValidEmail}>
             {isExistingUser && onEditRole
               ? 'Save role'
               : selectedUser

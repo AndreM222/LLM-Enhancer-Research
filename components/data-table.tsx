@@ -12,6 +12,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Button } from './ui/button';
+import { useMemo, useState } from 'react';
 
 const rowVariants = cva('transition-colors', {
   variants: {
@@ -43,19 +45,37 @@ export function DataTable<TData, TValue>({
   data,
   getRowStatus,
   onRowClick,
-}: { hideHeader?: boolean } & DataTableProps<TData, TValue>) {
+  pageSize,
+  showPaging,
+}: { hideHeader?: boolean; pageSize?: number; showPaging?: boolean } & DataTableProps<
+  TData,
+  TValue
+>) {
+  const [page, setPage] = useState(0);
+
+  const pageItems = useMemo(
+    () => (pageSize ? data.slice(page * pageSize, page * pageSize + pageSize) : data),
+    [data, page, pageSize]
+  );
+
   const table = useReactTable({
-    data,
+    data: pageItems,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
+
+  const fillerCount = pageSize
+    ? pageItems.length > 0
+      ? pageSize - pageItems.length
+      : pageSize - 1
+    : 0;
 
   return (
     <div className="overflow-hidden rounded-md border">
       <Table>
         <TableHeader className={cn(hideHeader && 'hidden')}>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} onClick={() => onRowClick}>
+            <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <TableHead key={header.id}>
                   {header.isPlaceholder
@@ -67,14 +87,14 @@ export function DataTable<TData, TValue>({
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => {
+          <>
+            {table.getRowModel().rows.map((row) => {
               const status = getRowStatus?.(row.original);
               return (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className={cn(rowVariants({ status }), onRowClick && 'cursor-pointer')}
+                  className={cn(rowVariants({ status }), onRowClick && 'cursor-pointer', 'h-9')}
                   onClick={() => onRowClick?.(row.original)}
                 >
                   {row.getVisibleCells().map((cell) => (
@@ -84,16 +104,45 @@ export function DataTable<TData, TValue>({
                   ))}
                 </TableRow>
               );
-            })
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
-              </TableCell>
-            </TableRow>
-          )}
+            })}
+            {!table.getRowModel().rows?.length && (
+              <TableRow className="border-b-0">
+                <TableCell colSpan={columns.length} className="h-9 text-center">
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+            {Array.from({ length: fillerCount }).map((_, i) => (
+              <TableRow key={`filler-${i}`} className="h-9 pointer-events-none border-b-0">
+                <TableCell colSpan={columns.length} />
+              </TableRow>
+            ))}
+          </>
         </TableBody>
       </Table>
+      {showPaging && pageSize && (
+        <div className="flex items-center justify-between border-t px-4 py-3 text-sm text-muted-foreground">
+          <Button
+            disabled={page === 0}
+            onClick={() => setPage((p) => Math.max(0, p - 1))}
+            variant="outline"
+            size="sm"
+          >
+            Previous
+          </Button>
+          <span>
+            {page * pageSize + 1}–{Math.min((page + 1) * pageSize, data.length)} of {data.length}
+          </span>
+          <Button
+            disabled={(page + 1) * pageSize >= data.length}
+            onClick={() => setPage((p) => p + 1)}
+            variant="outline"
+            size="sm"
+          >
+            Next
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

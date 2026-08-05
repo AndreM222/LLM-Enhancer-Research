@@ -10,8 +10,16 @@ import {
 } from './global-columns';
 import { useMemo } from 'react';
 
-export function GlobalActivityTable({ data }: { data: GlobeActivity[] }) {
-  return <DataTable columns={getGlobalActivityColumns} data={data} />;
+export function GlobalActivityTable({
+  data,
+  pageSize,
+}: {
+  data: GlobeActivity[];
+  pageSize: number;
+}) {
+  return (
+    <DataTable columns={getGlobalActivityColumns} data={data} pageSize={pageSize} showPaging />
+  );
 }
 
 export function ServerActivityTable({ data }: { data: ServerActivity[] }) {
