@@ -10,13 +10,14 @@ import { cn } from '@/lib/utils';
 export type GlobeActivity = {
   name: string;
   requests: number;
+  countryCode: string;
   bandwidth: string;
 };
 
 export type ServerActivity = {
   id: string;
   region: string;
-  countryCode: string; // ISO alpha-2, e.g. 'US', 'JP' — set explicitly, not parsed from id
+  countryCode: string;
   status: 'healthy' | 'degraded' | 'down';
   requests: number;
   dataTransferred: string;
@@ -58,6 +59,14 @@ export const getGlobalActivityColumns: ColumnDef<GlobeActivity>[] = [
   {
     accessorKey: 'name',
     header: 'Country',
+    cell: ({ row }) => {
+      const { name, countryCode } = row.original;
+      return (
+        <span className="gap-2 flex">
+          <Flag className="h-4 w-4" code={countryCode} /> {name}
+        </span>
+      );
+    },
   },
   {
     accessorKey: 'requests',
@@ -71,12 +80,24 @@ export const getGlobalActivityColumns: ColumnDef<GlobeActivity>[] = [
 
 export const getServerActivityColumns: ColumnDef<ServerActivity>[] = [
   {
+    id: 'region',
     accessorKey: 'region',
     header: 'Region',
+    cell: ({ row }) => {
+      const { region, countryCode } = row.original;
+      return (
+        <div className="flex items-center gap-2">
+          <Flag code={countryCode} style={{ width: 20, height: 15, borderRadius: 2 }} />
+          <span className="font-medium">{region}</span>
+        </div>
+      );
+    },
   },
   {
+    id: 'status',
     accessorKey: 'status',
     header: 'Status',
+    cell: ({ row }) => <ServerIndicator status={row.original.status} />,
   },
   {
     accessorKey: 'requests',
@@ -118,10 +139,16 @@ export function linkServerColumns(
       cell: ({ row }) => <ServerIndicator status={row.original.status} />,
     },
     {
-      id: 'avgResponseMs',
+      accessorKey: 'requests',
+      header: 'Requests',
+    },
+    {
+      accessorKey: 'dataTransferred',
+      header: 'Data transferred',
+    },
+    {
       accessorKey: 'avgResponseMs',
-      header: 'Avg. response',
-      cell: ({ row }) => `${row.original.avgResponseMs} ms`,
+      header: 'Avg. response time',
     },
     {
       id: 'actions',

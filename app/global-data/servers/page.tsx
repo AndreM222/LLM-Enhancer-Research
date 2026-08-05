@@ -1,6 +1,6 @@
 'use client';
 
-import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps';
+import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from 'react-simple-maps';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { getServerActivity } from '@/lib/mockApi';
 import { ServerActivityTable } from '@/components/tables/global-table';
@@ -12,7 +12,7 @@ export default function ServerActivityPage() {
   const maxRequests = Math.max(...servers.map((s) => s.requests));
 
   return (
-    <div className="space-y-4">
+    <div className="grid gap-4 lg:grid-cols-[1.3fr_1fr]">
       <Card className="overflow-hidden">
         <CardHeader>
           <CardTitle>Server locations</CardTitle>
@@ -22,44 +22,48 @@ export default function ServerActivityPage() {
         </CardHeader>
         <CardContent className="p-0">
           <div className="h-105 w-full bg-muted/20">
-            <ComposableMap projectionConfig={{ scale: 140 }}>
-              <Geographies geography={GEO_URL}>
-                {({ geographies }) =>
-                  geographies.map((geo) => (
-                    <Geography
-                      key={geo.rsmKey}
-                      geography={geo}
-                      style={{
-                        default: {
-                          fill: 'var(--muted)',
-                          stroke: 'var(--border)',
-                          strokeWidth: 0.4,
-                          outline: 'none',
-                        },
-                      }}
-                    />
-                  ))
-                }
-              </Geographies>
+            <ComposableMap
+              projectionConfig={{ scale: 130 }}
+              style={{ width: '100%', height: '100%' }}
+            >
+              <ZoomableGroup center={[0, 20]} zoom={2}>
+                <Geographies geography={GEO_URL}>
+                  {({ geographies }) =>
+                    geographies.map((geo) => (
+                      <Geography
+                        key={geo.rsmKey}
+                        geography={geo}
+                        style={{
+                          default: {
+                            fill: 'var(--muted)',
+                            stroke: 'var(--border)',
+                            strokeWidth: 0.4,
+                            outline: 'none',
+                          },
+                        }}
+                      />
+                    ))
+                  }
+                </Geographies>
 
-              {servers.map((server) => {
-                const intensity = server.requests / maxRequests;
-                const radius = 6 + intensity * 10;
-
-                return (
-                  <Marker key={server.id} coordinates={[server.lon, server.lat]}>
-                    <circle r={radius} fill="var(--chart-1)" fillOpacity={0.2} />
-                    <circle r={4} fill="var(--chart-1)" />
-                    <text
-                      textAnchor="middle"
-                      y={-radius - 6}
-                      className="fill-foreground text-[10px] font-medium"
-                    >
-                      {server.region}
-                    </text>
-                  </Marker>
-                );
-              })}
+                {servers.map((server) => {
+                  const intensity = server.requests / maxRequests;
+                  const radius = 6 + intensity * 10;
+                  return (
+                    <Marker key={server.id} coordinates={[server.lon, server.lat]}>
+                      <circle r={radius} fill="var(--chart-1)" fillOpacity={0.2} />
+                      <circle r={4} fill="var(--chart-1)" />
+                      <text
+                        textAnchor="middle"
+                        y={-radius - 6}
+                        className="fill-foreground text-[10px] font-medium"
+                      >
+                        {server.region}
+                      </text>
+                    </Marker>
+                  );
+                })}
+              </ZoomableGroup>
             </ComposableMap>
           </div>
         </CardContent>
@@ -71,7 +75,7 @@ export default function ServerActivityPage() {
           <CardDescription>Add regions as demand shows up in Global Activity.</CardDescription>
         </CardHeader>
         <CardContent>
-          <ServerActivityTable data={servers} />
+          <ServerActivityTable data={servers} pageSize={10} />
         </CardContent>
       </Card>
     </div>

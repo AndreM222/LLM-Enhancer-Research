@@ -94,24 +94,30 @@ export function getGlobalActivity() {
       { label: 'Detections', value: '0', trend: [0, 0, 0, 0, 0, 0, 0] },
     ],
     countries: [
-      { name: 'France', requests: 2950, bandwidth: '8.22 MB' },
-      { name: 'Singapore', requests: 521, bandwidth: '1.22 MB' },
-      { name: 'United States of America', requests: 189, bandwidth: '372.07 kB' },
-      { name: 'Netherlands', requests: 125, bandwidth: '242.9 kB' },
-      { name: 'United Kingdom', requests: 74, bandwidth: '171.18 kB' },
-      { name: 'India', requests: 32, bandwidth: '77.64 kB' },
-      { name: 'Germany', requests: 23, bandwidth: '53.87 kB' },
-      { name: 'Taiwan', requests: 18, bandwidth: '90.21 kB' },
-      { name: 'Turkey', requests: 16, bandwidth: '38.88 kB' },
-      { name: 'Canada', requests: 13, bandwidth: '26.44 kB' },
+      { name: 'France', requests: 2950, bandwidth: '8.22 MB', countryCode: 'FR' },
+      { name: 'Singapore', requests: 521, bandwidth: '1.22 MB', countryCode: 'SG' },
+      {
+        name: 'United States of America',
+        requests: 189,
+        bandwidth: '372.07 kB',
+        countryCode: 'US',
+      },
+      { name: 'Netherlands', requests: 125, bandwidth: '242.9 kB', countryCode: 'NL' },
+      { name: 'United Kingdom', requests: 74, bandwidth: '171.18 kB', countryCode: 'GB' },
+      { name: 'India', requests: 32, bandwidth: '77.64 kB', countryCode: 'IN' },
+      { name: 'Germany', requests: 23, bandwidth: '53.87 kB', countryCode: 'DE' },
+      { name: 'Taiwan', requests: 18, bandwidth: '90.21 kB', countryCode: 'TW' },
+      { name: 'Turkey', requests: 16, bandwidth: '38.88 kB', countryCode: 'TR' },
+      { name: 'Canada', requests: 13, bandwidth: '26.44 kB', countryCode: 'CA' },
     ],
   };
 }
 
-export function getServerActivity() {
+export function getServerActivity(): ServerActivity[] {
   return [
     {
       id: 'us-east-1',
+      countryCode: 'US',
       region: 'United States East',
       status: 'healthy' as const,
       requests: 3891,

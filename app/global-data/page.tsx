@@ -103,7 +103,7 @@ export default function GlobalActivityPage() {
             <CardDescription>Where detection traffic is coming from.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <GlobalActivityTable data={[countries[0]]} pageSize={10} />
+            <GlobalActivityTable data={countries} pageSize={10} />
           </CardContent>
         </Card>
       </div>
