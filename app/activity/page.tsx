@@ -151,7 +151,7 @@ export default function Activity() {
           Export
         </Button>
       </div>
-      <ActivityCanvas initialEdges={initialEdges} initialNodes={initialNodes} />
+      <ActivityCanvas initialEdges={initialEdges} initialNodes={initialNodes} className="h-180" />
     </div>
   );
 }

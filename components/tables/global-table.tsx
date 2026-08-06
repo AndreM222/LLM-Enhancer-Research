@@ -22,8 +22,16 @@ export function GlobalActivityTable({
   );
 }
 
-export function ServerActivityTable({ data, pageSize }: { data: ServerActivity[], pageSize: number }) {
-  return <DataTable columns={getServerActivityColumns} data={data} pageSize={pageSize} showPaging />;
+export function ServerActivityTable({
+  data,
+  pageSize,
+}: {
+  data: ServerActivity[];
+  pageSize: number;
+}) {
+  return (
+    <DataTable columns={getServerActivityColumns} data={data} pageSize={pageSize} showPaging />
+  );
 }
 
 export function LinkServerTable({

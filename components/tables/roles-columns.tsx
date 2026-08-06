@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { ChevronRight, Trash } from 'lucide-react';
+import { ChevronRight, Pen, Trash } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { ButtonGroup } from '../ui/button-group';
@@ -16,7 +16,7 @@ export type Role = {
 
 export function rolesColumns(
   onDelete: (id: string) => void,
-  onOpen: (id: string) => void
+  onEdit: (id: string) => void
 ): ColumnDef<Role>[] {
   return [
     {
@@ -65,8 +65,8 @@ export function rolesColumns(
             <Button size="sm" variant="destructive" onClick={() => onDelete(roleId)}>
               <Trash />
             </Button>
-            <Button size="sm" variant="outline" onClick={() => onOpen(roleId)}>
-              <ChevronRight />
+            <Button size="sm" variant="outline" onClick={() => onEdit(roleId)}>
+              <Pen />
             </Button>
           </ButtonGroup>
         );

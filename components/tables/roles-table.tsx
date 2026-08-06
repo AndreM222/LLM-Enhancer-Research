@@ -6,13 +6,24 @@ import { useMemo } from 'react';
 
 export function RolesTable({
   data,
+  pageSize,
   onDelete,
-  onOpen,
+  onEdit,
 }: {
   data: Role[];
+  pageSize: number;
   onDelete: (id: string) => void;
-  onOpen: (id: string) => void;
+  onEdit: (id: string) => void;
 }) {
-  const columns = useMemo(() => rolesColumns(onDelete, onOpen), [onDelete, onOpen]);
-  return <DataTable columns={columns} data={data} onRowClick={(row) => onOpen(row.id)} />;
+  const columns = useMemo(() => rolesColumns(onDelete, onEdit), [onDelete, onEdit]);
+  return (
+    <DataTable
+      columns={columns}
+      data={data}
+      onRowClick={(row) => onEdit(row.id)}
+      pageSize={pageSize}
+      showPaging
+      height={11}
+    />
+  );
 }

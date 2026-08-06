@@ -52,8 +52,8 @@ export default function Members() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Users</CardTitle>
-          <CardDescription>List of users with permission to interact.</CardDescription>
+          <CardTitle>Invitations list</CardTitle>
+          <CardDescription>Send others invitations to workspace.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-2">
@@ -83,7 +83,9 @@ export default function Members() {
           </div>
 
           <CreateInvitationTable
+            pageSize={15}
             data={users}
+            onResend={() => console.log('Resend')}
             onDelete={() => console.log('Deleted')}
             onOpen={() => console.log('Opened')}
           />

@@ -3,7 +3,6 @@
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   ArrowUpDown,
@@ -77,8 +76,6 @@ export default function Session() {
   const [selectedByImage, setSelectedByImage] = useState<Record<string, string[]>>({});
 
   const [imgErrorById, setImgErrorById] = useState<Record<string, boolean>>({});
-
-  const { session } = useParams<{ session: string }>();
 
   const activeImage = images.find((img) => img.id === activeImageId) ?? images[0];
   const detections = activeImage?.detections ?? [];

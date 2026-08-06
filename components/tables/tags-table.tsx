@@ -12,11 +12,13 @@ import { DataTable } from '@/components/data-table';
 
 export function CreateTagGroupTable({
   data,
+  pageSize,
   onDelete,
   onOpen,
   onDuplicate,
 }: {
   data: TagGroup[];
+  pageSize: number;
   onDelete: (id: string) => void;
   onOpen: (id: string) => void;
   onDuplicate: (id: string) => void;
@@ -25,31 +27,62 @@ export function CreateTagGroupTable({
     () => createTagsColumns(onDelete, onDuplicate, onOpen),
     [onDelete, onDuplicate, onOpen]
   );
-  return <DataTable columns={columns} data={data} onRowClick={(row) => onOpen(row.id)} />;
+  return (
+    <DataTable
+      columns={columns}
+      data={data}
+      onRowClick={(row) => onOpen(row.id)}
+      pageSize={pageSize}
+      showPaging
+      height={11}
+    />
+  );
 }
 
 export function CreateTagItemTable({
   data,
+  pageSize,
   onDelete,
-  onOpen,
+  onEdit,
 }: {
   data: TagItem[];
+  pageSize: number;
   onDelete: (id: string) => void;
-  onOpen: (id: string) => void;
+  onEdit: (id: string) => void;
 }) {
-  const columns = useMemo(() => createTagItemColumns(onDelete, onOpen), [onDelete, onOpen]);
-  return <DataTable columns={columns} data={data} onRowClick={(row) => onOpen(row.id)} />;
+  const columns = useMemo(() => createTagItemColumns(onDelete, onEdit), [onDelete, onEdit]);
+  return (
+    <DataTable
+      columns={columns}
+      data={data}
+      onRowClick={(row) => onEdit(row.id)}
+      pageSize={pageSize}
+      showPaging
+      height={11}
+    />
+  );
 }
 
 export function LinkTagGroupTable({
   data,
+  pageSize,
   onDelete,
   onOpen,
 }: {
   data: TagGroup[];
+  pageSize: number;
   onDelete: (id: string) => void;
   onOpen: (id: string) => void;
 }) {
   const columns = useMemo(() => linkTagsColumns(onDelete, onOpen), [onDelete, onOpen]);
-  return <DataTable columns={columns} data={data} onRowClick={(row) => onOpen(row.id)} />;
+  return (
+    <DataTable
+      columns={columns}
+      data={data}
+      onRowClick={(row) => onOpen(row.id)}
+      pageSize={pageSize}
+      showPaging
+      height={11}
+    />
+  );
 }

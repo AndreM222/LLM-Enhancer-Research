@@ -4,7 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Badge } from '../ui/badge';
 import { ButtonGroup } from '../ui/button-group';
 import { Button } from '../ui/button';
-import { ChevronRight, Pause, RotateCcw, Trash, X } from 'lucide-react';
+import { ChevronRight, Pause, Pen, Play, RotateCcw, Trash, X } from 'lucide-react';
 import { AccountPicture } from '../account-banner';
 
 export type User = {
@@ -20,7 +20,8 @@ export type User = {
 
 export function createInvitationColumns(
   onDelete: (id: string) => void,
-  onOpen: (id: string) => void
+  onOpen: (id: string) => void,
+  onResend: (id: string) => void
 ): ColumnDef<User>[] {
   return [
     {
@@ -66,7 +67,7 @@ export function createInvitationColumns(
               <Trash />
             </Button>
             {status.toUpperCase() !== 'ACCEPTED' && (
-              <Button size="sm" variant="outline" onClick={() => onDelete(id)}>
+              <Button size="sm" variant="outline" onClick={() => onResend(id)}>
                 <RotateCcw />
               </Button>
             )}
@@ -81,8 +82,10 @@ export function createInvitationColumns(
 }
 
 export function usersListColumns(
+  isSuspended: boolean,
   onDelete: (id: string) => void,
-  onOpen: (id: string) => void
+  onOpen: (id: string) => void,
+  onSuspended: (id: string) => void
 ): ColumnDef<User>[] {
   return [
     {
@@ -122,11 +125,15 @@ export function usersListColumns(
           >
             <Trash />
           </Button>
-          <Button size="sm" variant="outline" onClick={() => onDelete(row.getValue<string>('id'))}>
-            <Pause />
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => onSuspended(row.getValue<string>('id'))}
+          >
+            {isSuspended ? <Play /> : <Pause />}
           </Button>
           <Button size="sm" variant="outline" onClick={() => onOpen(row.getValue<string>('id'))}>
-            <ChevronRight />
+            <Pen />
           </Button>
         </ButtonGroup>
       ),

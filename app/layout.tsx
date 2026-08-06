@@ -8,6 +8,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import DynamicCrumbs from '@/components/dynamicBreadCrumb';
 import { SearchBar } from '@/components/search-bar';
 import Notifications from '@/components/notifications';
+import { Toaster } from 'sonner';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -56,9 +57,12 @@ export default function RootLayout({
                     <Notifications />
                   </div>
                 </header>
-                <div className="flex-1 min-h-0 overflow-y-auto flex flex-col p-6 gap-6">
-                  <PageHeader />
-                  {children}
+                <div className="flex-1 min-h-0 overflow-y-auto p-6">
+                  <div className="mx-auto flex w-full flex-col gap-6">
+                    <PageHeader />
+                    {children}
+                    <Toaster />
+                  </div>
                 </div>
               </SidebarInset>
             </SidebarProvider>

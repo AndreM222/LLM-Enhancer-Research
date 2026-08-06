@@ -43,14 +43,17 @@ export function DataTable<TData, TValue>({
   columns,
   hideHeader,
   data,
+  height = 9,
   getRowStatus,
   onRowClick,
   pageSize,
   showPaging,
-}: { hideHeader?: boolean; pageSize?: number; showPaging?: boolean } & DataTableProps<
-  TData,
-  TValue
->) {
+}: {
+  hideHeader?: boolean;
+  pageSize?: number;
+  showPaging?: boolean;
+  height?: number;
+} & DataTableProps<TData, TValue>) {
   const [page, setPage] = useState(0);
 
   const pageItems = useMemo(
@@ -94,7 +97,11 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className={cn(rowVariants({ status }), onRowClick && 'cursor-pointer', 'h-9')}
+                  className={cn(
+                    rowVariants({ status }),
+                    onRowClick && 'cursor-pointer',
+                    `h-${height}`
+                  )}
                   onClick={() => onRowClick?.(row.original)}
                 >
                   {row.getVisibleCells().map((cell) => (
@@ -107,13 +114,16 @@ export function DataTable<TData, TValue>({
             })}
             {!table.getRowModel().rows?.length && (
               <TableRow className="border-b-0">
-                <TableCell colSpan={columns.length} className="h-9 text-center">
+                <TableCell colSpan={columns.length} className={`h-${height} text-center`}>
                   No results.
                 </TableCell>
               </TableRow>
             )}
             {Array.from({ length: fillerCount }).map((_, i) => (
-              <TableRow key={`filler-${i}`} className="h-9 pointer-events-none border-b-0">
+              <TableRow
+                key={`filler-${i}`}
+                className={`h-${height} pointer-events-none border-b-0`}
+              >
                 <TableCell colSpan={columns.length} />
               </TableRow>
             ))}
