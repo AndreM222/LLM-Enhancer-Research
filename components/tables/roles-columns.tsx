@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { ChevronRight, Pen, Trash } from 'lucide-react';
+import { Pen, Trash } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { ButtonGroup } from '../ui/button-group';

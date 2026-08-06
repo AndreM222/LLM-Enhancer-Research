@@ -160,9 +160,7 @@ function RoleDialog({
             <Button variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSave}>
-              {mode === 'create' ? 'Save role' : 'Update role'}
-            </Button>
+            <Button onClick={handleSave}>{mode === 'create' ? 'Save role' : 'Update role'}</Button>
           </div>
         </div>
       </DialogContent>
@@ -186,9 +184,7 @@ export default function Members() {
     const q = search.trim().toLowerCase();
     if (!q) return roles;
     return roles.filter(
-      (r) =>
-        r.name.toLowerCase().includes(q) ||
-        r.description.toLowerCase().includes(q)
+      (r) => r.name.toLowerCase().includes(q) || r.description.toLowerCase().includes(q)
     );
   }, [roles, search]);
 
@@ -278,8 +274,8 @@ export default function Members() {
             <AlertDialogTitle>Delete role?</AlertDialogTitle>
             <AlertDialogDescription>
               This will permanently delete the role{' '}
-              <b>{roles.find((r) => r.id === deletingId)?.name}</b> and remove it from all
-              users. This action cannot be undone.
+              <b>{roles.find((r) => r.id === deletingId)?.name}</b> and remove it from all users.
+              This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -31,6 +31,7 @@ import {
 } from '@/components/ui/select';
 import { AccountBanner } from '../account-banner';
 import { User } from '../tables/users-columns';
+import { getRoles } from '@/lib/mockApi';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -41,19 +42,21 @@ type Props = {
   trigger?: React.ReactNode;
 };
 
+const roles = getRoles();
+
 export function InviteUserDialog({ existingUsers, onInvite, onEditRole, trigger }: Props) {
   const [open, setOpen] = useState(false);
   const [openCombobox, setOpenCombobox] = useState(false);
   const [query, setQuery] = useState('');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [role, setRole] = useState<string>('MEMBER');
+  const [role, setRole] = useState<string>(roles.at(0)?.name || '');
 
   // Reset state when dialog opens/closes
   useEffect(() => {
     if (!open) {
       setQuery('');
       setSelectedUser(null);
-      setRole('MEMBER');
+      setRole(roles.at(0)?.name || '');
     }
   }, [open]);
 
@@ -189,14 +192,24 @@ export function InviteUserDialog({ existingUsers, onInvite, onEditRole, trigger 
 
           <div className="grid gap-2">
             <label className="text-sm font-medium">Role</label>
+
             <Select value={role} onValueChange={(v) => setRole(v as string)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select role" />
+              <SelectTrigger className="py-6">
+                <SelectValue placeholder="Select a role" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ADMIN">Admin</SelectItem>
-                <SelectItem value="MEMBER">Member</SelectItem>
-                <SelectItem value="VIEWER">Viewer</SelectItem>
+                {roles.map((role) => (
+                  <SelectItem key={role.id} value={role.name}>
+                    <div className="flex flex-col justify-start">
+                      <span className="mr-auto">{role.name}</span>
+                      {role.description && (
+                        <span className="mr-auto text-xs text-muted-foreground">
+                          {role.description}
+                        </span>
+                      )}
+                    </div>
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>

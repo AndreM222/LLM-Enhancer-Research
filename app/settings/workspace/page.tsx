@@ -202,8 +202,8 @@ export default function GeneralSettingsPage() {
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This will permanently delete <b>{workspace.name}</b>'s workspace and all associated
-                  data. This action cannot be undone.
+                  This will permanently delete <b>{workspace.name}</b>'s workspace and all
+                  associated data. This action cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>

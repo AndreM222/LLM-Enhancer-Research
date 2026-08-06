@@ -60,7 +60,10 @@ export function UsersListTable({
   onEdit: (id: string) => void;
   onSuspended: (id: string) => void;
 }) {
-  const columns = useMemo(() => usersListColumns(isSuspended, onDelete, onEdit, onSuspended), [isSuspended, onDelete, onEdit, onSuspended]);
+  const columns = useMemo(
+    () => usersListColumns(isSuspended, onDelete, onEdit, onSuspended),
+    [isSuspended, onDelete, onEdit, onSuspended]
+  );
   return (
     <DataTable
       columns={columns}

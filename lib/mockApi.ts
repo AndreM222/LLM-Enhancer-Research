@@ -198,7 +198,7 @@ export const getUsers = (): User[] => [
   {
     id: '728ed52f',
     name: 'David',
-    role: 'Japan',
+    role: getRoles()[0].name,
     status: 'SENT',
     time: '2026-07-07T18:00:00.000Z',
     username: 'David123',
@@ -208,7 +208,7 @@ export const getUsers = (): User[] => [
   {
     id: '731ed57f',
     name: 'Stephanie',
-    role: 'Scratches',
+    role: getRoles()[1].name,
     status: 'REJECTED',
     time: '2026-07-07T17:30:00.000Z',
     username: 'Stephanie-Flower',
@@ -218,7 +218,7 @@ export const getUsers = (): User[] => [
   {
     id: '728ed54f',
     name: 'Jerry',
-    role: 'Scratches',
+    role: getRoles()[2].name,
     status: 'ACCEPTED',
     time: '2026-07-07T16:45:00.000Z',
     username: 'jealing2',
