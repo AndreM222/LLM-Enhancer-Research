@@ -262,6 +262,53 @@ export function PageItems() {
   return items;
 }
 
+type PageHeaderSize = 'sm' | 'md' | 'lg';
+
+const headerSizeStyles: Record<
+  PageHeaderSize,
+  {
+    wrapper: string;
+    content: string;
+    title: string;
+    description: string;
+    icon: string;
+    iconInner: string;
+    gap: string;
+    tabs: string;
+  }
+> = {
+  sm: {
+    wrapper: 'space-y-4',
+    content: 'gap-3',
+    title: 'text-xl font-semibold tracking-tight',
+    description: 'text-xs text-muted-foreground',
+    icon: 'h-10 w-10 rounded-lg',
+    iconInner: 'h-4 w-4 m-auto',
+    gap: 'gap-2',
+    tabs: 'text-xs',
+  },
+  md: {
+    wrapper: 'space-y-5',
+    content: 'gap-3',
+    title: 'text-2xl font-semibold tracking-tight',
+    description: 'text-sm text-muted-foreground',
+    icon: 'h-11 w-11 rounded-xl',
+    iconInner: 'h-5 w-5',
+    gap: 'gap-3',
+    tabs: 'text-sm',
+  },
+  lg: {
+    wrapper: 'space-y-6',
+    content: 'gap-4',
+    title: 'text-3xl font-semibold tracking-tight',
+    description: 'text-base text-muted-foreground',
+    icon: 'h-16 w-16 rounded-2xl',
+    iconInner: 'h-6 w-6',
+    gap: 'gap-3',
+    tabs: 'text-sm',
+  },
+};
+
 export const PageHeader = ({
   setTitle,
   setDescription,
@@ -269,91 +316,113 @@ export const PageHeader = ({
   className,
   iconBg,
   iconFg,
+  iconClassName,
   useIndex = false,
   setSubItem,
+  size = 'lg',
 }: {
   setTitle?: string;
   setDescription?: string;
   setIcon?: React.JSX.Element;
   className?: string;
+  iconClassName?: string;
   iconBg?: string;
   iconFg?: string;
   useIndex?: boolean;
   setSubItem?: NavItem[];
+  size?: PageHeaderSize;
 }) => {
-  if (!setTitle) {
-    let { title, description, icon, subItems } = useCurrentPage();
-
-    setSubItem = setSubItem || subItems || undefined;
-    setTitle = setTitle || title || '';
-    setDescription = setDescription || description || '';
-    setIcon = setIcon || icon || undefined;
-  }
-
+  const currentPage = useCurrentPage();
   const pathname = usePathname();
   const router = useRouter();
 
-  const activeTab =
-    setSubItem?.find((tab) => tab.url === pathname)?.title ?? setSubItem?.[0]?.title;
+  const title = setTitle ?? currentPage.title ?? '';
+  const description = setDescription ?? currentPage.description ?? '';
+  const icon = setIcon ?? currentPage.icon;
+  const subItems = setSubItem ?? currentPage.subItems ?? undefined;
 
-  let previous: string = '';
+  const styles = headerSizeStyles[size];
 
-  const paths = pathname.split('/');
-  if (setSubItem && activeTab !== setSubItem[0].title) paths.pop();
+  if (!title) {
+    return <div className="-m-3" />;
+  }
+
+  const activeTab = subItems?.find((tab) => tab.url === pathname)?.title ?? subItems?.[0]?.title;
+
+  const paths = pathname.split('/').filter(Boolean);
+
+  if (subItems && activeTab !== subItems[0]?.title) {
+    paths.pop();
+  }
+
   paths.pop();
-  previous = paths.join('/');
 
-  if (setTitle !== '')
-    return (
-      <div className="w-full space-y-6">
-        <div className={`flex w-full justify-between ${className}`}>
-          <div className="flex gap-2">
-            {setIcon && (
-              <div
-                className="flex h-16 w-16 items-center justify-center size-6 rounded-2xl border"
-                style={{ backgroundColor: `${iconBg}20`, color: iconFg }}
+  const previous = `/${paths.join('/')}`.replace('//', '/') || '/';
+  const showReturnButton = Boolean(previous !== '/' || useIndex);
+
+  return (
+    <div className={cn('w-full', styles.wrapper)}>
+      <div className={cn('flex w-full items-start justify-between', styles.content, className)}>
+        <div className={cn('flex min-w-0 items-start', styles.gap)}>
+          {icon && (
+            <div
+              className={cn(
+                'flex shrink-0 items-center justify-center border',
+                styles.icon,
+                iconClassName
+              )}
+              style={{
+                backgroundColor: iconBg ? `${iconBg}20` : undefined,
+                color: iconFg,
+              }}
+            >
+              <span
+                className={cn('flex items-center justify-center h-full w-full', styles.iconInner)}
               >
-                {setIcon}
-              </div>
-            )}
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h1 className="text-3xl font-semibold tracking-tight">{setTitle}</h1>
-                <p className="text-muted-foreground">{setDescription}</p>
-              </div>
+                {icon}
+              </span>
             </div>
-          </div>
-
-          {(previous || useIndex) && (
-            <Button variant="outline" size="sm" className="mt-auto" asChild>
-              <Link href={previous || '/'}>
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Return
-              </Link>
-            </Button>
           )}
+
+          <div className="min-w-0">
+            <h1 className={cn('truncate', styles.title)}>{title}</h1>
+
+            {description ? <p className={cn('mt-1', styles.description)}>{description}</p> : null}
+          </div>
         </div>
-        {setSubItem && (
-          <Tabs
-            value={activeTab}
-            onValueChange={(value) => {
-              const tab = setSubItem.find((t) => t.title === value);
-              if (tab) router.push(tab.url);
-            }}
-          >
-            <TabsList>
-              {setSubItem.map((tab) => (
-                <TabsTrigger key={tab.title} value={tab.title}>
-                  {tab.title}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
+
+        {showReturnButton && (
+          <Button variant="outline" size="sm" className="mt-auto shrink-0" asChild>
+            <Link href={previous}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Return
+            </Link>
+          </Button>
         )}
       </div>
-    );
 
-  return <div className="-m-3" />;
+      {subItems && subItems.length > 0 && activeTab ? (
+        <Tabs
+          value={activeTab}
+          onValueChange={(value) => {
+            const tab = subItems.find((item) => item.title === value);
+
+            if (tab) {
+              router.push(tab.url);
+            }
+          }}
+        >
+          <TabsList>
+            {subItems.map((tab) => (
+              <TabsTrigger key={tab.title} value={tab.title} className={styles.tabs}>
+                {tab.title}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      ) : null}
+    </div>
+  );
 };
 
 export const AppSidebar = () => {

@@ -10,6 +10,24 @@ function getRowStatus(log: Log): RowStatus {
   return 'default';
 }
 
-export function LogsTable({ data }: { data: Log[] }) {
-  return <DataTable columns={columns} data={data} getRowStatus={getRowStatus} />;
+export function LogsTable({
+  data,
+  pageSize,
+  onOpen,
+}: {
+  data: Log[];
+  pageSize: number;
+  onOpen: (id: string) => void;
+}) {
+  return (
+    <DataTable
+      columns={columns}
+      data={data}
+      getRowStatus={getRowStatus}
+      onRowClick={(row) => onOpen(row.id)}
+      pageSize={pageSize}
+      showPaging
+      height={11}
+    />
+  );
 }

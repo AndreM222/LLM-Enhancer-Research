@@ -32,6 +32,7 @@ export type Project = {
 import { getProjectCards } from '@/lib/mockApi';
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { usePathname } from 'next/navigation';
 
 const data: Project[] = getProjectCards();
 
@@ -57,10 +58,11 @@ export const ProjectIcon = ({
 };
 
 const ProjectCard = ({ item }: { item: Project }) => {
-  const currState = item.state === 'online';
+  const currState: boolean = item.state === 'online';
+  const pathname: string = usePathname();
 
   return (
-    <Link href={`./${item.id}`} className="group block">
+    <Link href={`${pathname}${item.id}`} className="group block">
       <Card className="h-full overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
         <CardHeader className="space-y-3">
           <div className="flex items-start justify-between gap-3">

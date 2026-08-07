@@ -1,6 +1,6 @@
 'use client';
 
-import { CreateTagGroupDialog, TagGroupInput } from '@/components/dialogs/tag-group';
+import { CreateTagGroupDialog, TagGroupInput } from '@/components/dialogs/tag-group-dialog';
 import LinkGraph from '@/components/linkGraph';
 import { TagGroup } from '@/components/tables/tags-columns';
 import { CreateTagGroupTable } from '@/components/tables/tags-table';

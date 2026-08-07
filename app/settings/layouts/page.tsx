@@ -1,9 +1,9 @@
 'use client';
 
+import { CreateLayoutDialog, LayoutInput } from '@/components/dialogs/layout-dialog';
 import LinkGraph from '@/components/linkGraph';
 import { Layout } from '@/components/tables/layouts-columns';
 import { CreateLayoutsTable } from '@/components/tables/layouts-table';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
@@ -21,8 +21,16 @@ import { usePathname, useRouter } from 'next/navigation';
 const data: Layout[] = getProjectLayouts();
 
 export default function Layouts() {
-  const pathName = usePathname();
+  const pathname = usePathname();
   const router = useRouter();
+
+  const handleCreate = (input: LayoutInput) => {
+    console.log('Creating layout:', input);
+
+    const tempId = `tg-${Date.now()}`;
+    router.push(`${pathname}/${tempId}`);
+  };
+
   return (
     <div className="space-y-6">
       <Card>
@@ -51,7 +59,7 @@ export default function Layouts() {
             <Field>
               <Input id="input-button-group" placeholder="Type to search..." />
             </Field>
-            <Button>Create Layout</Button>
+            <CreateLayoutDialog onCreate={handleCreate} />
           </div>
 
           <CreateLayoutsTable
@@ -59,7 +67,7 @@ export default function Layouts() {
             pageSize={15}
             onDuplicate={() => console.log('Duplicate')}
             onDelete={() => console.log('Deleted')}
-            onOpen={(id) => router.push(`${pathName}/${id}`)}
+            onOpen={(id) => router.push(`${pathname}/${id}`)}
           />
         </CardContent>
       </Card>

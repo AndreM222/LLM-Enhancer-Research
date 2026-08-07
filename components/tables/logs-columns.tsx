@@ -3,12 +3,20 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { Badge } from '../ui/badge';
 
+export type LogError = {
+  code?: string;
+  message: string;
+  details?: unknown;
+};
+
 export type Log = {
   id: string;
   request: string;
   type: string;
   status: number;
   time: string;
+  response?: unknown;
+  error?: LogError;
 };
 
 export const columns: ColumnDef<Log>[] = [

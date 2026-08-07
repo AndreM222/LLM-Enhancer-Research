@@ -534,6 +534,11 @@ export const getLogs = (): Log[] => [
     request: '/api/server/connect',
     status: 200,
     time: new Date().toISOString(),
+    response: {
+      connected: true,
+      server: 'workspace-api',
+      version: '1.4.2',
+    },
   },
   {
     id: '728ed54f',
@@ -541,20 +546,45 @@ export const getLogs = (): Log[] => [
     request: '/api/server/user',
     status: 500,
     time: new Date().toISOString(),
+    response: {
+      deleted: false,
+    },
+    error: {
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'The user could not be deleted because the server encountered an unexpected error.',
+      details: {
+        userId: 'usr_1044',
+        service: 'workspace-api',
+      },
+    },
   },
   {
-    id: '728ed54f',
+    id: '728ed55f',
     type: 'DELETE',
     request: '/api/server/user',
     status: 100,
     time: new Date().toISOString(),
+    response: {
+      message: 'Request received and is being processed.',
+    },
   },
   {
-    id: '728ed54f',
+    id: '728ed56f',
     type: 'DELETE',
     request: '/api/server/user',
     status: 400,
     time: new Date().toISOString(),
+    response: {
+      deleted: false,
+    },
+    error: {
+      code: 'INVALID_REQUEST',
+      message: 'The request is missing the required user identifier.',
+      details: {
+        field: 'userId',
+        reason: 'This field is required.',
+      },
+    },
   },
 ];
 
