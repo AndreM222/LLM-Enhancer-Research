@@ -87,7 +87,10 @@ export function createDetectionColumns(
             <Button
               size="sm"
               variant="destructive"
-              onClick={() => onDelete(row.getValue<string>('id'))}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(row.getValue<string>('id'))
+              }}
             >
               <Trash className="h-4 w-4" />
             </Button>

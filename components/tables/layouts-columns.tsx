@@ -42,18 +42,31 @@ export function createLayoutsColumns(
           <Button
             size="sm"
             variant="destructive"
-            onClick={() => onDelete(row.getValue<string>('id'))}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(row.getValue<string>('id'));
+            }}
           >
             <Trash />
           </Button>
           <Button
             size="sm"
             variant="outline"
-            onClick={() => onDuplicate(row.getValue<string>('id'))}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDuplicate(row.getValue<string>('id'));
+            }}
           >
             <Copy />
           </Button>
-          <Button size="sm" variant="outline" onClick={() => onOpen(row.getValue<string>('id'))}>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpen(row.getValue<string>('id'));
+            }}
+          >
             <ChevronRight />
           </Button>
         </ButtonGroup>
@@ -92,11 +105,21 @@ export function linkLayoutColumns(
           <Button
             size="sm"
             variant="destructive"
-            onClick={() => onDelete(row.getValue<string>('id'))}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(row.getValue<string>('id'));
+            }}
           >
             <X />
           </Button>
-          <Button size="sm" variant="outline" onClick={() => onOpen(row.getValue<string>('id'))}>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpen(row.getValue<string>('id'));
+            }}
+          >
             <ChevronRight />
           </Button>
         </ButtonGroup>

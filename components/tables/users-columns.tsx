@@ -63,15 +63,36 @@ export function createInvitationColumns(
 
         return (
           <ButtonGroup className="float-end">
-            <Button size="sm" variant="destructive" onClick={() => onDelete(id)}>
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(id);
+              }}
+            >
               <Trash />
             </Button>
             {status.toUpperCase() !== 'ACCEPTED' && (
-              <Button size="sm" variant="outline" onClick={() => onResend(id)}>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onResend(id);
+                }}
+              >
                 <RotateCcw />
               </Button>
             )}
-            <Button size="sm" variant="outline" onClick={() => onOpen(id)}>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpen(id);
+              }}
+            >
               <ChevronRight />
             </Button>
           </ButtonGroup>
@@ -116,27 +137,44 @@ export function usersListColumns(
     {
       accessorKey: 'id',
       header: '',
-      cell: ({ row }) => (
-        <ButtonGroup className="float-end">
-          <Button
-            size="sm"
-            variant="destructive"
-            onClick={() => onDelete(row.getValue<string>('id'))}
-          >
-            <Trash />
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => onSuspended(row.getValue<string>('id'))}
-          >
-            {isSuspended ? <Play /> : <Pause />}
-          </Button>
-          <Button size="sm" variant="outline" onClick={() => onOpen(row.getValue<string>('id'))}>
-            <Pen />
-          </Button>
-        </ButtonGroup>
-      ),
+      cell: ({ row }) => {
+        const { id } = row.original;
+
+        return (
+          <ButtonGroup className="float-end">
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(id);
+              }}
+            >
+              <Trash />
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSuspended(row.getValue<string>('id'));
+              }}
+            >
+              {isSuspended ? <Play /> : <Pause />}
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpen(id);
+              }}
+            >
+              <Pen />
+            </Button>
+          </ButtonGroup>
+        );
+      },
     },
   ];
 }
@@ -173,20 +211,34 @@ export function linkUserColumns(
     {
       accessorKey: 'id',
       header: '',
-      cell: ({ row }) => (
-        <ButtonGroup className="float-end">
-          <Button
-            size="sm"
-            variant="destructive"
-            onClick={() => onDelete(row.getValue<string>('id'))}
-          >
-            <X />
-          </Button>
-          <Button size="sm" variant="outline" onClick={() => onOpen(row.getValue<string>('id'))}>
-            <ChevronRight />
-          </Button>
-        </ButtonGroup>
-      ),
+      cell: ({ row }) => {
+        const { id } = row.original;
+
+        return (
+          <ButtonGroup className="float-end">
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(id);
+              }}
+            >
+              <X />
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpen(id);
+              }}
+            >
+              <ChevronRight />
+            </Button>
+          </ButtonGroup>
+        );
+      },
     },
   ];
 }

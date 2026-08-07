@@ -62,10 +62,24 @@ export function rolesColumns(
 
         return (
           <ButtonGroup className="float-end">
-            <Button size="sm" variant="destructive" onClick={() => onDelete(roleId)}>
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(roleId);
+              }}
+            >
               <Trash />
             </Button>
-            <Button size="sm" variant="outline" onClick={() => onEdit(roleId)}>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(roleId);
+              }}
+            >
               <Pen />
             </Button>
           </ButtonGroup>

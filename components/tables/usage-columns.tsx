@@ -76,7 +76,14 @@ export function getUsageColumns(onOpen: (id: string) => void): ColumnDef<Usage>[
       header: '',
       cell: ({ row }) => (
         <ButtonGroup className="float-end">
-          <Button size="xs" variant="outline" onClick={() => onOpen(row.getValue<string>('id'))}>
+          <Button
+            size="xs"
+            variant="outline"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpen(row.getValue<string>('id'));
+            }}
+          >
             <ChevronRight />
           </Button>
         </ButtonGroup>

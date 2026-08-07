@@ -155,10 +155,24 @@ export function linkServerColumns(
       header: '',
       cell: ({ row }) => (
         <ButtonGroup className="float-end">
-          <Button size="sm" variant="destructive" onClick={() => onDelete(row.original.id)}>
+          <Button
+            size="sm"
+            variant="destructive"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(row.original.id);
+            }}
+          >
             <X />
           </Button>
-          <Button size="sm" variant="outline" onClick={() => onOpen(row.original.id)}>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpen(row.original.id);
+            }}
+          >
             <ChevronRight />
           </Button>
         </ButtonGroup>
