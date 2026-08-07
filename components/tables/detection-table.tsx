@@ -7,7 +7,6 @@ import {
   linkedDetectionColumns,
 } from './detection-columns';
 import { useMemo } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
 import { Project } from '../project-cards';
 
 function getRowStatus(session: DetectionSession): RowStatus {
@@ -19,43 +18,51 @@ function getRowStatus(session: DetectionSession): RowStatus {
 
 export function CreateDetectionTable({
   data,
-  onDeleteAction: onDelete,
+  pageSize,
+  onDelete,
+  onOpen,
 }: {
   data: DetectionSession[];
-  onDeleteAction: (id: string) => void;
+  pageSize: number;
+  onDelete: (id: string) => void;
+  onOpen: (id: string) => void;
 }) {
-  const columns = useMemo(() => createDetectionColumns(onDelete), [onDelete]);
-  const router = useRouter();
-  const pathname = usePathname();
+  const columns = useMemo(() => createDetectionColumns(onDelete, onOpen), [onDelete, onOpen]);
 
   return (
     <DataTable
       columns={columns}
       data={data}
       getRowStatus={getRowStatus}
-      onRowClick={(row) => router.push(`${pathname}/${row.id}`)}
+      onRowClick={(row) => onOpen(row.id)}
+      pageSize={pageSize}
+      showPaging
+      height={11}
     />
   );
 }
 
 export function LinkDetectionTable({
   data,
+  pageSize,
   onDelete,
   onOpen,
 }: {
   data: Project[];
+  pageSize: number;
   onDelete: (id: string) => void;
   onOpen: (id: string) => void;
 }) {
   const columns = useMemo(() => linkedDetectionColumns(onDelete, onOpen), [onDelete, onOpen]);
-  const router = useRouter();
-  const pathname = usePathname();
 
   return (
     <DataTable
       columns={columns}
       data={data}
-      onRowClick={(row) => router.push(`${pathname}/${row.id}`)}
+      onRowClick={(row) => onOpen(row.id)}
+      pageSize={pageSize}
+      showPaging
+      height={11}
     />
   );
 }

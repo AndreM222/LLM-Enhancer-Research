@@ -36,13 +36,24 @@ export function ServerActivityTable({
 
 export function LinkServerTable({
   data,
+  pageSize,
   onDelete,
   onOpen,
 }: {
   data: ServerActivity[];
+  pageSize: number;
   onDelete: (id: string) => void;
   onOpen: (id: string) => void;
 }) {
   const columns = useMemo(() => linkServerColumns(onDelete, onOpen), [onDelete, onOpen]);
-  return <DataTable columns={columns} data={data} onRowClick={(row) => onOpen(row.id)} />;
+  return (
+    <DataTable
+      columns={columns}
+      data={data}
+      onRowClick={(row) => onOpen(row.id)}
+      pageSize={pageSize}
+      showPaging
+      height={11}
+    />
+  );
 }

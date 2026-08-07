@@ -85,6 +85,20 @@ export type Workspace = {
   plan: string;
 };
 
+export function getModelOptions() {
+  return [
+    'YOLOv8',
+    'YOLOv11',
+    'YOLO-World',
+    'RF-DETR',
+    'Gemini 2.5 Flash',
+    'Gemini 2.5 Pro',
+    'AWS Rekognition',
+    'Clarifai',
+    'Ground Truth (manual)',
+  ];
+}
+
 export function getGlobalActivity() {
   return {
     summary: [

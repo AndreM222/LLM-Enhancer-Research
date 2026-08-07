@@ -26,6 +26,7 @@ import {
   getProjectUsers,
   getProjectLayouts,
   getProjectServers,
+  getModelOptions,
 } from '@/lib/mockApi';
 import { LinkServerTable } from '@/components/tables/global-table';
 import { ServerActivity, ServerIndicator } from '@/components/tables/global-columns';
@@ -55,17 +56,7 @@ const layoutList: Layout[] = getProjectLayouts();
 const serversList: ServerActivity[] = getProjectServers();
 const projectsList: Project[] = getProjects();
 
-const MODEL_OPTIONS = [
-  'YOLOv8',
-  'YOLOv11',
-  'YOLO-World',
-  'RF-DETR',
-  'Gemini 2.5 Flash',
-  'Gemini 2.5 Pro',
-  'AWS Rekognition',
-  'Clarifai',
-  'Ground Truth (manual)',
-];
+const MODEL_OPTIONS = getModelOptions();
 
 type DetectionLayer = {
   id: string;
@@ -485,6 +476,7 @@ export default function ProjectSettings() {
             )}
           />
           <LinkLayoutsTable
+            pageSize={4}
             data={layouts}
             onDelete={(id) => {
               setLayouts((prev) => prev.filter((l) => l.id !== id));
@@ -524,6 +516,7 @@ export default function ProjectSettings() {
             )}
           />
           <LinkServerTable
+            pageSize={4}
             data={servers}
             onDelete={(id) => {
               setServers((prev) => prev.filter((s) => s.id !== id));
@@ -564,12 +557,13 @@ export default function ProjectSettings() {
             )}
           />
           <LinkDetectionTable
+            pageSize={4}
             data={projectLinks}
             onDelete={(id) => {
               setProjectLinks((prev) => prev.filter((p) => p.id !== id));
               toast.success('Project unlinked.');
             }}
-            onOpen={(id) => router.push('/')}
+            onOpen={(id) => router.replace(`/${id}`)}
           />
         </CardContent>
       </Card>

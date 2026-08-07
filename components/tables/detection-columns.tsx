@@ -5,8 +5,6 @@ import { Badge } from '../ui/badge';
 import { ButtonGroup } from '../ui/button-group';
 import { Button } from '../ui/button';
 import { CheckCheck, ChevronRight, CloudSync, Trash, X } from 'lucide-react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { Project, ProjectIcon } from '../project-cards';
 import { CircularProgress } from '../ui/circular-progress';
 
@@ -35,30 +33,25 @@ function statusVariant(status: DetectionSession['status']) {
 }
 
 export function createDetectionColumns(
-  onDelete: (id: string) => void
+  onDelete: (id: string) => void,
+  onOpen: (id: string) => void
 ): ColumnDef<DetectionSession>[] {
   return [
     {
       accessorKey: 'id',
       header: 'Session',
-      cell: ({ row }) => (
-        <div className="font-medium tabular-nums">{row.getValue<string>('id')}</div>
-      ),
     },
     {
       accessorKey: 'images',
       header: 'Images',
-      cell: ({ row }) => <Badge variant="outline">{row.getValue<number>('images')}</Badge>,
     },
     {
       accessorKey: 'type',
       header: 'Detection type',
-      cell: ({ row }) => <span className="text-sm">{row.getValue<string>('type')}</span>,
     },
     {
       accessorKey: 'detections',
       header: 'Detections',
-      cell: ({ row }) => <Badge variant="outline">{row.getValue<number>('detections')}</Badge>,
     },
     {
       accessorKey: 'status',
@@ -80,7 +73,6 @@ export function createDetectionColumns(
       header: '',
       cell: ({ row }) => {
         const id = row.getValue<string>('id');
-        const path = usePathname().split('/').pop();
 
         return (
           <ButtonGroup className="float-end">
@@ -89,15 +81,20 @@ export function createDetectionColumns(
               variant="destructive"
               onClick={(e) => {
                 e.stopPropagation();
-                onDelete(row.getValue<string>('id'));
+                onDelete(id);
               }}
             >
               <Trash className="h-4 w-4" />
             </Button>
-            <Button size="sm" variant="outline" asChild>
-              <Link href={`./${path}/${id}`}>
-                <ChevronRight className="h-4 w-4" />
-              </Link>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpen(id);
+              }}
+            >
+              <ChevronRight className="h-4 w-4" />
             </Button>
           </ButtonGroup>
         );
