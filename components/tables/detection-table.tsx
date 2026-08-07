@@ -47,7 +47,7 @@ export function LinkDetectionTable({
   onDelete: (id: string) => void;
   onOpen: (id: string) => void;
 }) {
-  const columns = useMemo(() => linkedDetectionColumns(onDelete), [onDelete]);
+  const columns = useMemo(() => linkedDetectionColumns(onDelete, onOpen), [onDelete, onOpen]);
   const router = useRouter();
   const pathname = usePathname();
 

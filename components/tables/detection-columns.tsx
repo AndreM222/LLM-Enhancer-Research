@@ -4,7 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Badge } from '../ui/badge';
 import { ButtonGroup } from '../ui/button-group';
 import { Button } from '../ui/button';
-import { CheckCheck, ChevronRight, CloudSync, Trash } from 'lucide-react';
+import { CheckCheck, ChevronRight, CloudSync, Trash, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Project, ProjectIcon } from '../project-cards';
@@ -89,7 +89,7 @@ export function createDetectionColumns(
               variant="destructive"
               onClick={(e) => {
                 e.stopPropagation();
-                onDelete(row.getValue<string>('id'))
+                onDelete(row.getValue<string>('id'));
               }}
             >
               <Trash className="h-4 w-4" />
@@ -106,7 +106,10 @@ export function createDetectionColumns(
   ];
 }
 
-export function linkedDetectionColumns(onDelete: (id: string) => void): ColumnDef<Project>[] {
+export function linkedDetectionColumns(
+  onDelete: (id: string) => void,
+  onOpen: (id: string) => void
+): ColumnDef<Project>[] {
   return [
     {
       accessorKey: 'title',
@@ -154,21 +157,28 @@ export function linkedDetectionColumns(onDelete: (id: string) => void): ColumnDe
       header: '',
       cell: ({ row }) => {
         const { id } = row.original;
-        const path = usePathname().split('/').pop();
 
         return (
           <ButtonGroup className="float-end">
             <Button
               size="sm"
               variant="destructive"
-              onClick={() => onDelete(row.getValue<string>('id'))}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(id);
+              }}
             >
-              <Trash className="h-4 w-4" />
+              <X className="h-4 w-4" />
             </Button>
-            <Button size="sm" variant="outline" asChild>
-              <Link href={`./${path}/${id}`}>
-                <ChevronRight className="h-4 w-4" />
-              </Link>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpen(id);
+              }}
+            >
+              <ChevronRight className="h-4 w-4" />
             </Button>
           </ButtonGroup>
         );
