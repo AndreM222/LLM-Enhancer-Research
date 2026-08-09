@@ -15,14 +15,14 @@ import {
 import { Button } from './ui/button';
 import { useMemo, useState } from 'react';
 
-const rowVariants = cva('transition-colors', {
+const rowStatusVariants = cva('transition-colors', {
   variants: {
     status: {
       default: '',
-      success: 'bg-green-500/10 hover:bg-green-500/20',
-      warning: 'bg-yellow-500/10 hover:bg-yellow-500/20',
-      error: 'bg-red-500/10 hover:bg-red-500/20',
-      info: 'bg-blue-500/10 hover:bg-blue-500/20',
+      success: ['bg-emerald-500/10', 'hover:bg-emerald-500/20'].join(' '),
+      warning: ['bg-amber-500/10', 'hover:bg-amber-500/20'].join(' '),
+      error: ['bg-red-500/10', 'hover:bg-red-500/20'].join(' '),
+      info: ['bg-blue-500/10', 'hover:bg-blue-500/20'].join(' '),
     },
   },
   defaultVariants: {
@@ -30,7 +30,7 @@ const rowVariants = cva('transition-colors', {
   },
 });
 
-export type RowStatus = VariantProps<typeof rowVariants>['status'];
+export type RowStatus = VariantProps<typeof rowStatusVariants>['status'];
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -98,7 +98,7 @@ export function DataTable<TData, TValue>({
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
                   className={cn(
-                    rowVariants({ status }),
+                    rowStatusVariants({ status }),
                     onRowClick && 'cursor-pointer',
                     `h-${height}`
                   )}

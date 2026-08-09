@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Check, CircleAlert, Clock3, Copy, Hash, Server, X } from 'lucide-react';
+import { CircleAlert, Clock3, Hash, Server, X } from 'lucide-react';
 
 import { Log } from '@/components/tables/logs-columns';
 import { LogsTable } from '@/components/tables/logs-table';
@@ -24,10 +24,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
 import { getLogs } from '@/lib/mockApi';
 import { PageHeader } from '@/components/app-navigation';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { CodeBlock } from '@/components/ui/code-block';
+import { cn } from '@/lib/utils';
 
 const data: Log[] = getLogs();
 
@@ -40,27 +41,14 @@ function JsonBlock({
   value: unknown;
   emptyMessage?: string;
 }) {
-  const [copied, setCopied] = useState(false);
-
-  const json =
+  const code =
     value === undefined || value === null
       ? ''
       : typeof value === 'string'
         ? value
         : JSON.stringify(value, null, 2);
 
-  const copyJson = async () => {
-    if (!json) return;
-
-    await navigator.clipboard.writeText(json);
-    setCopied(true);
-
-    window.setTimeout(() => {
-      setCopied(false);
-    }, 1800);
-  };
-
-  if (!json) {
+  if (!code) {
     return (
       <div className="rounded-lg border border-dashed bg-muted/30 p-4 text-sm text-muted-foreground">
         {emptyMessage}
@@ -68,31 +56,10 @@ function JsonBlock({
     );
   }
 
-  return (
-    <div className="overflow-hidden rounded-lg border bg-zinc-950 text-zinc-100">
-      <div className="flex items-center justify-between border-b border-white/10 px-3 py-2">
-        <p className="font-mono text-xs text-zinc-400">JSON</p>
-
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={copyJson}
-          className="h-7 text-zinc-300 hover:bg-white/10 hover:text-white"
-        >
-          {copied ? <Check className="mr-2 h-3.5 w-3.5" /> : <Copy className="mr-2 h-3.5 w-3.5" />}
-          {copied ? 'Copied' : 'Copy'}
-        </Button>
-      </div>
-
-      <pre className="max-h-64 overflow-auto p-4 font-mono text-xs leading-5">
-        <code>{json}</code>
-      </pre>
-    </div>
-  );
+  return <CodeBlock code={code} language="json" filename="ya" />;
 }
 
-function methodVariant(method: string): BadgeVariant {
+export function methodVariant(method: string): BadgeVariant {
   switch (method.toUpperCase()) {
     case 'GET':
       return 'default';
@@ -108,13 +75,53 @@ function methodVariant(method: string): BadgeVariant {
   }
 }
 
-function statusVariant(status: number): BadgeVariant {
-  if (status >= 500) return 'destructive';
-  if (status >= 400) return 'secondary';
-  if (status >= 300) return 'outline';
-  if (status >= 200) return 'default';
+type StatusTone = 'success' | 'info' | 'warning' | 'error' | 'neutral';
 
-  return 'outline';
+export function getStatusTone(status: number): StatusTone {
+  if (status >= 500) return 'error';
+  if (status >= 400) return 'warning';
+  if (status >= 300) return 'info';
+  if (status >= 200) return 'success';
+
+  return 'neutral';
+}
+
+export function statusBadgeClass(status: number) {
+  switch (getStatusTone(status)) {
+    case 'success':
+      return 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400';
+
+    case 'info':
+      return 'border-blue-500/30 bg-blue-500/10 text-blue-700 dark:text-blue-400';
+
+    case 'warning':
+      return 'border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-400';
+
+    case 'error':
+      return 'border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-400';
+
+    default:
+      return 'border-border bg-muted text-muted-foreground';
+  }
+}
+
+function statusIconClass(status: number) {
+  switch (getStatusTone(status)) {
+    case 'success':
+      return 'text-emerald-600 dark:text-emerald-400';
+
+    case 'info':
+      return 'text-blue-600 dark:text-blue-400';
+
+    case 'warning':
+      return 'text-amber-600 dark:text-amber-400';
+
+    case 'error':
+      return 'text-red-600 dark:text-red-400';
+
+    default:
+      return 'text-muted-foreground';
+  }
 }
 
 function statusLabel(status: number) {
@@ -194,21 +201,35 @@ export default function Logs() {
         }}
       >
         <DialogContent className="p-0 sm:max-w-xl">
-          <DialogHeader className="border-b bg-muted/20 px-6 py-5">
+          <DialogHeader className="border-b bg-muted/20 px-6 py-5 -mb-4">
             <PageHeader
               setTitle="Request details"
               setDescription="Information about this workspace activity."
               setIcon={<Server />}
               size="sm"
               iconClassName={
-                openLog?.status && openLog.status >= 400
-                  ? 'bg-destructive/10 text-destructive'
-                  : 'bg-primary/10 text-primary'
+                openLog
+                  ? [
+                      'border-transparent',
+                      getStatusTone(openLog.status) === 'success' &&
+                        'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+                      getStatusTone(openLog.status) === 'info' &&
+                        'bg-blue-500/10 text-blue-600 dark:text-blue-400',
+                      getStatusTone(openLog.status) === 'warning' &&
+                        'bg-amber-500/10 text-amber-600 dark:text-amber-400',
+                      getStatusTone(openLog.status) === 'error' &&
+                        'bg-red-500/10 text-red-600 dark:text-red-400',
+                      getStatusTone(openLog.status) === 'neutral' &&
+                        'bg-muted text-muted-foreground',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')
+                  : undefined
               }
             />
           </DialogHeader>
 
-          <ScrollArea className="max-h-[80vh] ">
+          <ScrollArea className="max-h-[80vh]" type="scroll">
             {openLog && (
               <>
                 <div className="space-y-6 px-6 py-5">
@@ -239,7 +260,7 @@ export default function Logs() {
                       <div className="flex items-center gap-2">
                         <p className="text-xl font-semibold tabular-nums">{openLog.status}</p>
 
-                        <Badge variant={statusVariant(openLog.status)}>
+                        <Badge variant="outline" className={statusBadgeClass(openLog.status)}>
                           {statusLabel(openLog.status)}
                         </Badge>
                       </div>
@@ -272,13 +293,36 @@ export default function Logs() {
                   {openLog.error && (
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
-                        <X className="h-4 w-4 text-destructive" />
-                        <p className="text-sm font-medium text-destructive">Error information</p>
+                        <X className={cn('h-4 w-4', statusIconClass(openLog.status))} />
+                        <p
+                          className={cn(
+                            'text-sm font-medium',
+                            openLog.status >= 500
+                              ? 'text-red-600 dark:text-red-400'
+                              : 'text-amber-700 dark:text-amber-400'
+                          )}
+                        >
+                          Error information
+                        </p>
                       </div>
 
-                      <div className="space-y-4 rounded-lg border border-destructive/30 bg-destructive/10 p-4">
+                      <div
+                        className={cn(
+                          'space-y-4 rounded-lg border p-4',
+                          openLog.status >= 500
+                            ? 'border-red-500/30 bg-red-500/10'
+                            : 'border-amber-500/40 bg-amber-500/10'
+                        )}
+                      >
                         <div className="space-y-1">
-                          <p className="text-xs font-medium uppercase tracking-wide text-destructive/80">
+                          <p
+                            className={cn(
+                              'text-xs font-medium uppercase tracking-wide',
+                              openLog.status >= 500
+                                ? 'text-red-700/80 dark:text-red-400/80'
+                                : 'text-amber-700/80 dark:text-amber-400/80'
+                            )}
+                          >
                             Message
                           </p>
                           <DialogDescription>{openLog.error.message}</DialogDescription>
@@ -286,7 +330,14 @@ export default function Logs() {
 
                         {openLog.error.code && (
                           <div className="space-y-1">
-                            <p className="text-xs font-medium uppercase tracking-wide text-destructive/80">
+                            <p
+                              className={cn(
+                                'text-xs font-medium uppercase tracking-wide',
+                                openLog.status >= 500
+                                  ? 'text-red-700/80 dark:text-red-400/80'
+                                  : 'text-amber-700/80 dark:text-amber-400/80'
+                              )}
+                            >
                               Error code
                             </p>
                             <code className="text-sm">{openLog.error.code}</code>
@@ -295,7 +346,14 @@ export default function Logs() {
 
                         {openLog.error.details !== undefined && (
                           <div className="space-y-2">
-                            <p className="text-xs font-medium uppercase tracking-wide text-destructive/80">
+                            <p
+                              className={cn(
+                                'text-xs font-medium uppercase tracking-wide',
+                                openLog.status >= 500
+                                  ? 'text-red-700/80 dark:text-red-400/80'
+                                  : 'text-amber-700/80 dark:text-amber-400/80'
+                              )}
+                            >
                               Error details
                             </p>
 

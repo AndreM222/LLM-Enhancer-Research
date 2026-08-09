@@ -2,6 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { Badge } from '../ui/badge';
+import { methodVariant } from '@/app/logs/page';
 
 export type LogError = {
   code?: string;
@@ -21,24 +22,16 @@ export type Log = {
 
 export const columns: ColumnDef<Log>[] = [
   {
-    accessorKey: 'status',
-    header: 'Status',
+    accessorKey: 'type',
+    header: 'Type',
     cell: ({ row }) => {
-      const status = row.getValue<number>('status');
-      const variant =
-        status >= 500
-          ? 'destructive'
-          : status >= 400
-            ? 'secondary'
-            : status >= 200 && status < 300
-              ? 'default'
-              : 'outline';
-      return <Badge variant={variant}>{status}</Badge>;
+      const type: string = row.original.type;
+      return <Badge variant={methodVariant(type)}>{type}</Badge>;
     },
   },
   {
-    accessorKey: 'type',
-    header: 'Type',
+    accessorKey: 'status',
+    header: 'Status',
   },
   {
     accessorKey: 'time',

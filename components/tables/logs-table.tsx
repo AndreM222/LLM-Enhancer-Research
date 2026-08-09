@@ -6,7 +6,9 @@ import { DataTable, type RowStatus } from '@/components/data-table';
 function getRowStatus(log: Log): RowStatus {
   if (log.status >= 500) return 'error';
   if (log.status >= 400) return 'warning';
+  if (log.status >= 300) return 'info';
   if (log.status >= 200 && log.status < 300) return 'success';
+
   return 'default';
 }
 

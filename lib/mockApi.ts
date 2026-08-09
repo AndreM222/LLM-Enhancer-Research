@@ -533,7 +533,7 @@ export const getLogs = (): Log[] => [
     type: 'GET',
     request: '/api/server/connect',
     status: 200,
-    time: new Date().toISOString(),
+    time: '2026-08-07T04:10:32.118Z',
     response: {
       connected: true,
       server: 'workspace-api',
@@ -545,7 +545,7 @@ export const getLogs = (): Log[] => [
     type: 'DELETE',
     request: '/api/server/user',
     status: 500,
-    time: new Date().toISOString(),
+    time: '2026-08-07T04:10:32.118Z',
     response: {
       deleted: false,
     },
@@ -559,21 +559,31 @@ export const getLogs = (): Log[] => [
     },
   },
   {
+    id: 'njkk234',
+    type: 'POST',
+    request: '/api/server/user',
+    status: 300,
+    time: '2026-08-07T04:10:32.118Z',
+    response: {
+      deleted: false,
+    },
+  },
+  {
     id: '728ed55f',
-    type: 'DELETE',
+    type: 'PUSH',
     request: '/api/server/user',
     status: 100,
-    time: new Date().toISOString(),
+    time: '2026-08-07T04:10:32.118Z',
     response: {
       message: 'Request received and is being processed.',
     },
   },
   {
     id: '728ed56f',
-    type: 'DELETE',
+    type: 'PATCH',
     request: '/api/server/user',
     status: 400,
-    time: new Date().toISOString(),
+    time: '2026-08-07T04:10:32.118Z',
     response: {
       deleted: false,
     },
