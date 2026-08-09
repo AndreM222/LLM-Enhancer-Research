@@ -1,16 +1,8 @@
 'use client';
 
 import { columns, type Log } from '@/components/tables/logs-columns';
-import { DataTable, type RowStatus } from '@/components/data-table';
-
-function getRowStatus(log: Log): RowStatus {
-  if (log.status >= 500) return 'error';
-  if (log.status >= 400) return 'warning';
-  if (log.status >= 300) return 'info';
-  if (log.status >= 200 && log.status < 300) return 'success';
-
-  return 'default';
-}
+import { DataTable } from '@/components/data-table';
+import { getStatusTone } from '@/app/logs/page';
 
 export function LogsTable({
   data,
@@ -25,7 +17,7 @@ export function LogsTable({
     <DataTable
       columns={columns}
       data={data}
-      getRowStatus={getRowStatus}
+      getRowStatus={(log) => getStatusTone(log.status)}
       onRowClick={(row) => onOpen(row.id)}
       pageSize={pageSize}
       showPaging

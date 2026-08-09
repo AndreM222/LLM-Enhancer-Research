@@ -25,7 +25,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { RolesTable } from '@/components/tables/roles-table';
+import { CreateRolesTable } from '@/components/tables/roles-table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import LinkGraph from '@/components/linkGraph';
 
@@ -241,7 +241,7 @@ export default function Members() {
             <Button onClick={() => setCreateOpen(true)}>Create role</Button>
           </div>
 
-          <RolesTable
+          <CreateRolesTable
             pageSize={15}
             data={filtered}
             onDelete={handleDeleteRequest}

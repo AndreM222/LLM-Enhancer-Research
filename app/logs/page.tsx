@@ -75,7 +75,7 @@ export function methodVariant(method: string): BadgeVariant {
   }
 }
 
-type StatusTone = 'success' | 'info' | 'warning' | 'error' | 'neutral';
+type StatusTone = 'success' | 'info' | 'warning' | 'error' | 'default';
 
 export function getStatusTone(status: number): StatusTone {
   if (status >= 500) return 'error';
@@ -83,7 +83,7 @@ export function getStatusTone(status: number): StatusTone {
   if (status >= 300) return 'info';
   if (status >= 200) return 'success';
 
-  return 'neutral';
+  return 'default';
 }
 
 export function statusBadgeClass(status: number) {
@@ -219,7 +219,7 @@ export default function Logs() {
                         'bg-amber-500/10 text-amber-600 dark:text-amber-400',
                       getStatusTone(openLog.status) === 'error' &&
                         'bg-red-500/10 text-red-600 dark:text-red-400',
-                      getStatusTone(openLog.status) === 'neutral' &&
+                      getStatusTone(openLog.status) === 'default' &&
                         'bg-muted text-muted-foreground',
                     ]
                       .filter(Boolean)

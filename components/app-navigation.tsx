@@ -454,7 +454,6 @@ export function getNavigationItems(): {
 
   const navData = navList;
 
-  // Sanatize
   navData.map((group) => {
     let currItem: { group: string; tabs: NavItem[] } = {
       group: group.group,

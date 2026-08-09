@@ -27,6 +27,7 @@ import {
   getProjectLayouts,
   getProjectServers,
   getModelOptions,
+  getRoles,
 } from '@/lib/mockApi';
 import { LinkServerTable } from '@/components/tables/global-table';
 import { ServerActivity, ServerIndicator } from '@/components/tables/global-columns';
@@ -49,9 +50,12 @@ import {
   ComboboxList,
 } from '@/components/ui/combobox';
 import { AccountBanner } from '@/components/account-banner';
+import { Role } from '@/components/tables/roles-columns';
+import { LinkedRolesTable } from '@/components/tables/roles-table';
 
 const tagsList: TagGroup[] = getProjectTags();
 const usersList: User[] = getProjectUsers();
+const rolesList: Role[] = getRoles();
 const layoutList: Layout[] = getProjectLayouts();
 const serversList: ServerActivity[] = getProjectServers();
 const projectsList: Project[] = getProjects();
@@ -213,7 +217,7 @@ function LayerCard({
                 <ComboboxList>
                   {allTags ? (
                     allTags.map((t) => (
-                      <ComboboxItem key={t.id} value={t.id}>
+                      <ComboboxItem key={t.id} value={t.name}>
                         {t.name}
                       </ComboboxItem>
                     ))
@@ -255,6 +259,9 @@ export default function ProjectSettings() {
 
   const [users, setUsers] = useState<User[]>(usersList ?? []);
   const [userValue, setUserValue] = useState('');
+
+  const [roles, setRoles] = useState<Role[]>(rolesList ?? []);
+  const [roleValue, setRoleValue] = useState('');
 
   const [layouts, setLayouts] = useState<Layout[]>(layoutList ?? []);
   const [layoutValue, setLayoutValue] = useState('');
@@ -315,6 +322,7 @@ export default function ProjectSettings() {
     );
 
   const selectedUser = usersList.find((u) => u.id === userValue) ?? null;
+  const selectedRole = rolesList.find((u) => u.id === roleValue) ?? null;
   const selectedLayout = layoutList.find((l) => l.id === layoutValue) ?? null;
   const selectedServer = serversList.find((s) => s.id === serverValue) ?? null;
   const selectedProjectLink = projectsList.find((p) => p.id === projectLinkValue) ?? null;
@@ -386,7 +394,11 @@ export default function ProjectSettings() {
         <CardContent className="space-y-4">
           <AddRow
             items={usersList}
-            value={userValue}
+            value={(() => {
+              const user = usersList.find((curr) => curr.id === userValue);
+
+              return user ? `${user?.name ?? 'Unknown'} · ${user?.email ?? ''}` : '';
+            })()}
             onValueChange={setUserValue}
             placeholder="Search users..."
             disabled={!selectedUser}
@@ -404,6 +416,47 @@ export default function ProjectSettings() {
             onDelete={(id) => {
               setUsers((prev) => prev.filter((u) => u.id !== id));
               toast.success('User removed.');
+            }}
+            onOpen={() => router.push('/')}
+          />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Roles</CardTitle>
+          <CardDescription>List of roles with permission to interact.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <AddRow
+            items={rolesList}
+            value={(() => {
+              const role = rolesList.find((curr) => curr.id === roleValue);
+
+              return role?.name ?? '';
+            })()}
+            onValueChange={setRoleValue}
+            placeholder="Search users..."
+            disabled={!selectedRole}
+            onAdd={() => {
+              if (!selectedRole || roles.some((u) => u.id === selectedRole.id)) return;
+              setRoles((prev) => [...prev, selectedRole]);
+              setRoleValue('');
+              toast.success(`${selectedRole.name} added.`);
+            }}
+            renderItem={(curr) => (
+              <span className="flex flex-col">
+                <span>{curr.name}</span>
+                <span className="text-xs text-muted-foreground">{curr.description}</span>
+              </span>
+            )}
+          />
+          <LinkedRolesTable
+            pageSize={4}
+            data={roles}
+            onDelete={(id) => {
+              setRoles((prev) => prev.filter((u) => u.id !== id));
+              toast.success('Role removed.');
             }}
             onOpen={() => router.push('/')}
           />
@@ -458,7 +511,10 @@ export default function ProjectSettings() {
         <CardContent className="space-y-4">
           <AddRow
             items={layoutList}
-            value={layoutValue}
+            value={(() => {
+              const layout = layoutList.find((curr) => curr.id === layoutValue);
+              return layout?.name ?? '';
+            })()}
             onValueChange={setLayoutValue}
             placeholder="Search layouts..."
             disabled={!selectedLayout}
@@ -495,7 +551,11 @@ export default function ProjectSettings() {
         <CardContent className="space-y-4">
           <AddRow
             items={serversList}
-            value={serverValue}
+            value={(() => {
+              const server = serversList.find((curr) => curr.id === serverValue);
+
+              return server?.region ?? '';
+            })()}
             onValueChange={setServerValue}
             placeholder="Search servers..."
             disabled={!selectedServer}
@@ -535,7 +595,11 @@ export default function ProjectSettings() {
         <CardContent className="space-y-4">
           <AddRow
             items={projectsList}
-            value={projectLinkValue}
+            value={(() => {
+              const project = projectsList.find((curr) => curr.id === projectLinkValue);
+
+              return project?.title ?? '';
+            })()}
             onValueChange={setProjectLinkValue}
             placeholder="Search projects..."
             disabled={!selectedProjectLink}
