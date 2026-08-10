@@ -39,7 +39,7 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   Combobox,
@@ -52,6 +52,16 @@ import {
 import { AccountBanner } from '@/components/account-banner';
 import { Role } from '@/components/tables/roles-columns';
 import { LinkedRolesTable } from '@/components/tables/roles-table';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 const tagsList: TagGroup[] = getProjectTags();
 const usersList: User[] = getProjectUsers();
@@ -69,7 +79,7 @@ type DetectionLayer = {
   tags: TagGroup[];
 };
 
-function AddRow<T extends { id: string }>({
+export function AddRow<T extends { id: string }>({
   items,
   value,
   onValueChange,
@@ -246,10 +256,12 @@ function LayerCard({
 
 export default function ProjectSettings() {
   const router = useRouter();
+  const { project } = useParams<{ project: string }>();
+  const projectItems: Project | undefined = getProjects().find((curr) => curr.id === project);
 
   const [openIcon, setOpenIcon] = useState(false);
-  const [selectedIcon, setSelectedIcon] = useState<IconName>('Folder');
-  const [selectedColor, setSelectedColor] = useState('#7c3aed');
+  const [selectedIcon, setSelectedIcon] = useState<IconName>(projectItems?.icon ?? 'Folder');
+  const [selectedColor, setSelectedColor] = useState(projectItems?.color ?? '');
   const [projectName, setProjectName] = useState('');
   const [projectDesc, setProjectDesc] = useState('');
 
@@ -271,6 +283,20 @@ export default function ProjectSettings() {
 
   const [projectLinks, setProjectLinks] = useState<Project[]>(projectsList ?? []);
   const [projectLinkValue, setProjectLinkValue] = useState('');
+
+  const [deleteConfirm, setDeleteConfirm] = useState('');
+  const canDelete = deleteConfirm === projectItems?.title;
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  const handleDeleteProject = () => {
+    if (!canDelete) return;
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    toast.error('Project deleted.');
+    setDeleteDialogOpen(false);
+  };
 
   const swapLayers = (indexA: number, indexB: number) => {
     setLayers((prev) => {
@@ -362,7 +388,7 @@ export default function ProjectSettings() {
             <Label htmlFor="project-name">Project name</Label>
             <Input
               id="project-name"
-              placeholder="Japan People"
+              placeholder={projectItems?.title}
               value={projectName}
               onChange={(e) => setProjectName(e.target.value)}
               maxLength={32}
@@ -372,7 +398,7 @@ export default function ProjectSettings() {
             <Label htmlFor="project-description">Description</Label>
             <Input
               id="project-description"
-              placeholder="Focused on people in Japan with specific tag rules."
+              placeholder={projectItems?.description}
               value={projectDesc}
               onChange={(e) => setProjectDesc(e.target.value)}
             />
@@ -630,6 +656,50 @@ export default function ProjectSettings() {
             onOpen={(id) => router.replace(`/${id}`)}
           />
         </CardContent>
+      </Card>
+
+      <Card className="border-destructive/40">
+        <CardHeader>
+          <CardTitle className="text-destructive">Delete Project</CardTitle>
+          <CardDescription>This action is permanent and cannot be reversed.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Input
+            type="text"
+            placeholder={projectItems?.title}
+            value={deleteConfirm}
+            onChange={(e) => setDeleteConfirm(e.target.value)}
+          />
+        </CardContent>
+        <CardFooter className="justify-between">
+          <CardDescription>
+            Type <b>{projectItems?.title}</b> to confirm deletion.
+          </CardDescription>
+          <Button variant="destructive" disabled={!canDelete} onClick={handleDeleteProject}>
+            Delete Project
+          </Button>
+
+          <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will permanently delete <b>{projectItems?.title}</b>'s project and all
+                  associated data. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  onClick={handleConfirmDelete}
+                >
+                  Yes, delete project {projectItems?.title}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </CardFooter>
       </Card>
 
       <LinkGraph />

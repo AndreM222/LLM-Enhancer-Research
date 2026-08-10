@@ -7,6 +7,7 @@ import { Project } from '@/components/project-cards';
 import { TagGroupDetail } from '@/app/settings/tags/[tagGroup]/page';
 import { TagGroup } from '@/components/tables/tags-columns';
 import { ServerActivity } from '@/components/tables/global-columns';
+import { SingleSetting } from '@/components/tables/settings-columns';
 
 export type Invoice = {
   id: string;
@@ -84,6 +85,168 @@ export type Workspace = {
   logo: string;
   plan: string;
 };
+
+export function notificationAllOptions(): SingleSetting[] {
+  return [
+    {
+      id: 'channel-email',
+      name: 'Email',
+      icon: 'Mail',
+      description: 'Notifications sent to your registered email address.',
+      type: 'switch',
+      value: true,
+    },
+    {
+      id: 'channel-push',
+      name: 'Push notifications',
+      icon: 'Smartphone',
+      description: 'In-app and browser push notifications.',
+      type: 'switch',
+      value: true,
+    },
+    {
+      id: 'channel-sms',
+      name: 'SMS',
+      icon: 'MessageSquare',
+      description: 'Text messages for critical alerts only.',
+      type: 'switch',
+      value: false,
+    },
+  ];
+}
+
+const notificationChannels = [
+  {
+    label: 'Email',
+    value: 'email',
+    icon: 'Mail',
+  },
+  {
+    label: 'Push',
+    value: 'push',
+    icon: 'Smartphone',
+  },
+  {
+    label: 'SMS',
+    value: 'sms',
+    icon: 'MessageSquare',
+  },
+];
+
+export function notificationSettingsOptions(): SingleSetting[] {
+  return [
+    {
+      id: 'event-mentions',
+      name: 'Mentions',
+      description: 'When someone mentions you in a comment or note.',
+      type: 'toggleGroup',
+      value: {
+        email: true,
+        push: true,
+        sms: false,
+      },
+      options: notificationChannels,
+    },
+    {
+      id: 'event-comments',
+      name: 'Comments on your items',
+      description: 'When someone comments on an item you follow or own.',
+      type: 'toggleGroup',
+      value: {
+        email: true,
+        push: true,
+        sms: false,
+      },
+      options: notificationChannels,
+    },
+    {
+      id: 'event-assignments',
+      name: 'Assignments',
+      description: 'When you are assigned to a new item or task.',
+      type: 'toggleGroup',
+      value: {
+        email: true,
+        push: true,
+        sms: false,
+      },
+      options: notificationChannels,
+    },
+    {
+      id: 'event-due-dates',
+      name: 'Due date reminders',
+      description: 'Reminders for upcoming or overdue due dates.',
+      type: 'toggleGroup',
+      value: {
+        email: true,
+        push: true,
+        sms: false,
+      },
+      options: notificationChannels,
+    },
+    {
+      id: 'event-product-updates',
+      name: 'Product updates & announcements',
+      description: 'News about new features, improvements, and changes.',
+      type: 'toggleGroup',
+      value: {
+        email: true,
+        push: true,
+        sms: false,
+      },
+      options: notificationChannels.map((channel) => ({
+        ...channel,
+        disabled: channel.value === 'sms',
+      })),
+    },
+  ];
+}
+
+export function roleSettingsOptions(): SingleSetting[] {
+  return [
+    {
+      id: '123',
+      name: 'Manage users',
+      description: 'Allow this role to manage users.',
+      type: 'switch',
+      value: true,
+    },
+    {
+      id: '512412',
+      name: 'Edit prompts',
+      description: 'Allow this role to edit prompts.',
+      type: 'switch',
+      value: true,
+    },
+    {
+      id: '66031',
+      name: 'Review corrections',
+      description: 'Allow this role to review corrections.',
+      type: 'switch',
+      value: true,
+    },
+    {
+      id: '002834',
+      name: 'View analytics',
+      description: 'Allow this role to view analytics.',
+      type: 'switch',
+      value: true,
+    },
+    {
+      id: '8989298278',
+      name: 'Export data',
+      description: 'Allow this role to export data.',
+      type: 'switch',
+      value: true,
+    },
+    {
+      id: '0-340-345890',
+      name: 'Export data',
+      description: 'Allow this role to change settings.',
+      type: 'switch',
+      value: true,
+    },
+  ];
+}
 
 export function getModelOptions() {
   return [
@@ -173,15 +336,6 @@ export const getPrompts = (): Prompt[] => [
     updated: '1 day ago',
     description: 'Good baseline, but misses small scratches on dark cars.',
   },
-];
-
-export const getRolePermissions = (): string[] => [
-  'Manage users',
-  'Edit prompts',
-  'Review corrections',
-  'View analytics',
-  'Export data',
-  'Change settings',
 ];
 
 export const getRoles = (): Role[] => [

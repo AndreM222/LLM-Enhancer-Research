@@ -48,11 +48,13 @@ export function DataTable<TData, TValue>({
   onRowClick,
   pageSize,
   showPaging,
+  className,
 }: {
   hideHeader?: boolean;
   pageSize?: number;
   showPaging?: boolean;
   height?: number;
+  className?: string;
 } & DataTableProps<TData, TValue>) {
   const [page, setPage] = useState(0);
 
@@ -74,7 +76,7 @@ export function DataTable<TData, TValue>({
     : 0;
 
   return (
-    <div className="overflow-hidden rounded-md border">
+    <div className={cn('overflow-hidden rounded-md border', className)}>
       <Table>
         <TableHeader className={cn(hideHeader && 'hidden')}>
           {table.getHeaderGroups().map((headerGroup) => (

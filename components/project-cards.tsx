@@ -44,7 +44,8 @@ export const ProjectIcon = ({
   icon,
   color,
   className,
-}: React.ComponentProps<'div'> & { icon: IconName; color: string }) => {
+  iconClassName,
+}: React.ComponentProps<'div'> & { icon: IconName; color: string; iconClassName?: string }) => {
   const Selected = LucideIcons[icon] as React.ComponentType<{ className?: string }>;
 
   return (
@@ -52,7 +53,7 @@ export const ProjectIcon = ({
       className={cn('flex h-12 w-12 items-center justify-center rounded-2xl border', className)}
       style={{ backgroundColor: `${color}20`, color: color }}
     >
-      <Selected />
+      <Selected className={iconClassName} />
     </div>
   );
 };

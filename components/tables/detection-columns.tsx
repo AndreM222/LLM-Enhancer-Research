@@ -116,7 +116,12 @@ export function linkedDetectionColumns(
 
         return (
           <div className="flex items-center gap-2">
-            <ProjectIcon icon={icon} color={color} className="h-9 w-9 rounded-xl" />
+            <ProjectIcon
+              icon={icon}
+              color={color}
+              className="h-7 w-7 rounded-md"
+              iconClassName="h-4 w-4"
+            />
             {title}
           </div>
         );

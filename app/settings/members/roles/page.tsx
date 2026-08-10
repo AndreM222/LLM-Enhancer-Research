@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { getRoles, getRolePermissions } from '@/lib/mockApi';
+import { getRoles, roleSettingsOptions } from '@/lib/mockApi';
 import {
   Dialog,
   DialogContent,
@@ -28,8 +28,14 @@ import { Switch } from '@/components/ui/switch';
 import { CreateRolesTable } from '@/components/tables/roles-table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import LinkGraph from '@/components/linkGraph';
+import { getProjects, Project, ProjectIcon } from '@/components/project-cards';
+import { AddRow } from '@/app/[project]/settings/page';
+import { LinkDetectionTable } from '@/components/tables/detection-table';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { SingleSetting, updateSettingValue } from '@/components/tables/settings-columns';
+import { SingleSettingsTable } from '@/components/tables/settings-table';
 
-const PERMISSIONS = getRolePermissions();
+const projectsList: Project[] = getProjects();
 
 export type Role = {
   id: string;
@@ -63,20 +69,15 @@ function RoleDialog({
   mode: 'create' | 'edit';
 }) {
   const [form, setForm] = useState<Role>(initial);
+  const [settings, setSettings] = useState<SingleSetting[]>(roleSettingsOptions());
+
+  const [projectLinks, setProjectLinks] = useState<Project[]>(projectsList ?? []);
+  const [projectLinkValue, setProjectLinkValue] = useState('');
 
   // reset form when dialog opens with new initial value
   const handleOpenChange = (v: boolean) => {
     if (v) setForm(initial);
     onOpenChange(v);
-  };
-
-  const togglePermission = (p: string) => {
-    setForm((prev) => ({
-      ...prev,
-      permissions: prev.permissions.includes(p)
-        ? prev.permissions.filter((x) => x !== p)
-        : [...prev.permissions, p],
-    }));
   };
 
   const handleSave = () => {
@@ -87,6 +88,8 @@ function RoleDialog({
     onSave(form);
     onOpenChange(false);
   };
+
+  const selectedProjectLink = projectsList.find((p) => p.id === projectLinkValue) ?? null;
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -100,69 +103,116 @@ function RoleDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-4 py-2">
-          <div className="grid gap-2">
-            <Label htmlFor="role-name">Role name</Label>
-            <Input
-              id="role-name"
-              placeholder="Research Editor"
-              value={form.name}
-              onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-            />
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="role-description">Description</Label>
-            <Input
-              id="role-description"
-              placeholder="Can edit prompts and review corrections."
-              value={form.description}
-              onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
-            />
-          </div>
-
-          <div className="rounded-lg border p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Default role</p>
-                <p className="text-sm text-muted-foreground">
-                  Assigned automatically when inviting new users.
-                </p>
-              </div>
-              <Switch
-                checked={form.isDefault}
-                onCheckedChange={(v) => setForm((p) => ({ ...p, isDefault: v }))}
+        <ScrollArea className="max-h-170">
+          <div className="grid gap-4 py-2 px-2">
+            <div className="grid gap-2">
+              <Label htmlFor="role-name">Role name</Label>
+              <Input
+                id="role-name"
+                placeholder="Research Editor"
+                value={form.name}
+                onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
               />
             </div>
-          </div>
 
-          <div className="grid gap-3">
-            <Label>Permissions</Label>
-            <div className="space-y-3 rounded-lg border p-4">
-              {PERMISSIONS.map((permission) => (
-                <div key={permission} className="flex items-center justify-between gap-4">
-                  <div>
-                    <p className="font-medium">{permission}</p>
-                    <p className="text-sm text-muted-foreground">
-                      Allow this role to {permission.toLowerCase()}.
-                    </p>
-                  </div>
-                  <Switch
-                    checked={form.permissions.includes(permission)}
-                    onCheckedChange={() => togglePermission(permission)}
-                  />
+            <div className="grid gap-2">
+              <Label htmlFor="role-description">Description</Label>
+              <Input
+                id="role-description"
+                placeholder="Can edit prompts and review corrections."
+                value={form.description}
+                onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
+              />
+            </div>
+
+            <div className="rounded-lg border p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Default role</p>
+                  <p className="text-sm text-muted-foreground">
+                    Assigned automatically when inviting new users.
+                  </p>
                 </div>
-              ))}
+                <Switch
+                  checked={form.isDefault}
+                  onCheckedChange={(v) => setForm((p) => ({ ...p, isDefault: v }))}
+                />
+              </div>
+            </div>
+
+            <Card className="grid gap-3">
+              <CardHeader>
+                <CardTitle>Permissions</CardTitle>
+                <CardDescription>Allowed activity for this role.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <SingleSettingsTable
+                  data={settings}
+                  onChange={(id, value) =>
+                    setSettings((previous) => updateSettingValue(previous, id, value))
+                  }
+                />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Linked Projects</CardTitle>
+                <CardDescription>Add projects to link images.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <AddRow
+                  items={projectsList}
+                  value={(() => {
+                    const project = projectsList.find((curr) => curr.id === projectLinkValue);
+
+                    return project?.title ?? '';
+                  })()}
+                  onValueChange={setProjectLinkValue}
+                  placeholder="Search projects..."
+                  disabled={!selectedProjectLink}
+                  onAdd={() => {
+                    if (
+                      !selectedProjectLink ||
+                      projectLinks.some((p) => p.id === selectedProjectLink.id)
+                    )
+                      return;
+                    setProjectLinks((prev) => [...prev, selectedProjectLink]);
+                    setProjectLinkValue('');
+                    toast.success(`${selectedProjectLink.title} linked.`);
+                  }}
+                  renderItem={(p) => (
+                    <span className="flex items-center gap-2">
+                      <ProjectIcon icon={p.icon} color={p.color} className="w-6 h-6 rounded-md" />
+                      <span className="flex flex-col">
+                        <span>{p.title}</span>
+                        <span className="text-xs text-muted-foreground">{p.description}</span>
+                      </span>
+                    </span>
+                  )}
+                />
+                <LinkDetectionTable
+                  pageSize={4}
+                  data={projectLinks}
+                  onDelete={(id) => {
+                    setProjectLinks((prev) => prev.filter((p) => p.id !== id));
+                    toast.success('Project unlinked.');
+                  }}
+                  onOpen={(id) => console.log(id)}
+                />
+              </CardContent>
+            </Card>
+
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => onOpenChange(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleSave}>
+                {mode === 'create' ? 'Save role' : 'Update role'}
+              </Button>
             </div>
           </div>
-
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSave}>{mode === 'create' ? 'Save role' : 'Update role'}</Button>
-          </div>
-        </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

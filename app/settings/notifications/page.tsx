@@ -1,218 +1,183 @@
 'use client';
 
-import { useState } from 'react';
-import { Bell, Mail, MessageSquare, Smartphone } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
-import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
+
+import {
+  SettingValue,
+  SingleSetting,
+  updateSettingValue,
+} from '@/components/tables/settings-columns';
+
+import { SingleSettingsTable } from '@/components/tables/settings-table';
+
+import { notificationAllOptions, notificationSettingsOptions } from '@/lib/mockApi';
 
 type ChannelKey = 'email' | 'push' | 'sms';
-type EventKey = 'mentions' | 'comments' | 'assignments' | 'dueDates' | 'productUpdates';
 
-type NotificationPreferences = Record<ChannelKey, Record<EventKey, boolean>>;
-
-const EVENT_LABELS: Record<EventKey, string> = {
-  mentions: 'Mentions',
-  comments: 'Comments on your items',
-  assignments: 'Assignments',
-  dueDates: 'Due date reminders',
-  productUpdates: 'Product updates & announcements',
+const CHANNEL_BY_ID: Record<string, ChannelKey> = {
+  'channel-email': 'email',
+  'channel-push': 'push',
+  'channel-sms': 'sms',
 };
 
-const EVENT_DESCRIPTIONS: Record<EventKey, string> = {
-  mentions: 'When someone mentions you in a comment or note.',
-  comments: 'When someone comments on an item you follow or own.',
-  assignments: 'When you are assigned to a new item or task.',
-  dueDates: 'Reminders for upcoming or overdue due dates.',
-  productUpdates: 'News about new features, improvements, and changes.',
-};
+type ToggleGroupSetting = Extract<SingleSetting, { type: 'toggleGroup' }>;
+
+function getEventSettings(settings: SingleSetting[]) {
+  return settings.filter(
+    (setting): setting is ToggleGroupSetting => setting.type === 'toggleGroup'
+  );
+}
+
+function isToggleGroupValue(value: SettingValue): value is Record<string, boolean> {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    !Array.isArray(value) &&
+    Object.values(value).every((item) => typeof item === 'boolean')
+  );
+}
+
+function getChannelStatus(
+  channel: ChannelKey,
+  eventSettings: ToggleGroupSetting[]
+): 'all' | 'some' | 'none' {
+  const values = eventSettings.map((setting) => setting.value[channel] ?? false);
+
+  if (values.length > 0 && values.every(Boolean)) {
+    return 'all';
+  }
+
+  if (values.some(Boolean)) {
+    return 'some';
+  }
+
+  return 'none';
+}
+
+function updateNotificationSetting(
+  previous: SingleSetting[],
+  id: string,
+  value: SettingValue
+): SingleSetting[] {
+  const changedSetting = previous.find((setting) => setting.id === id);
+
+  if (!changedSetting) {
+    return previous;
+  }
+
+  let next = updateSettingValue(previous, id, value);
+
+  if (changedSetting.type === 'switch' && typeof value === 'boolean') {
+    const channel = CHANNEL_BY_ID[id];
+
+    if (!channel) {
+      return next;
+    }
+
+    return next.map((setting) => {
+      if (setting.type !== 'toggleGroup') {
+        return setting;
+      }
+
+      return {
+        ...setting,
+        value: {
+          ...setting.value,
+          [channel]: value,
+        },
+      };
+    });
+  }
+
+  if (changedSetting.type === 'toggleGroup' && isToggleGroupValue(value)) {
+    const eventSettings = getEventSettings(next);
+
+    return next.map((setting) => {
+      if (setting.type !== 'switch') {
+        return setting;
+      }
+
+      const channel = CHANNEL_BY_ID[setting.id];
+
+      if (!channel) {
+        return setting;
+      }
+
+      const status = getChannelStatus(channel, eventSettings);
+
+      return {
+        ...setting,
+        value: status === 'all',
+        status,
+      };
+    });
+  }
+
+  return next;
+}
 
 export default function Notifications() {
-  const [prefs, setPrefs] = useState<NotificationPreferences>({
-    email: {
-      mentions: true,
-      comments: true,
-      assignments: true,
-      dueDates: true,
-      productUpdates: false,
-    },
-    push: {
-      mentions: true,
-      comments: true,
-      assignments: true,
-      dueDates: true,
-      productUpdates: false,
-    },
-    sms: {
-      mentions: false,
-      comments: false,
-      assignments: false,
-      dueDates: true,
-      productUpdates: false,
-    },
-  });
+  const [settings, setSettings] = useState<SingleSetting[]>(() => [
+    ...notificationAllOptions(),
+    ...notificationSettingsOptions(),
+  ]);
 
-  const updatePref = (channel: ChannelKey, event: EventKey, value: boolean) => {
-    setPrefs((prev) => ({
-      ...prev,
-      [channel]: {
-        ...prev[channel],
-        [event]: value,
-      },
-    }));
+  const eventSettings = useMemo(() => getEventSettings(settings), [settings]);
+
+  const channelSettings = useMemo(() => {
+    return settings
+      .filter(
+        (setting): setting is Extract<SingleSetting, { type: 'switch' }> =>
+          setting.type === 'switch'
+      )
+      .map((setting) => {
+        const channel = CHANNEL_BY_ID[setting.id];
+
+        return {
+          ...setting,
+          status: channel ? getChannelStatus(channel, eventSettings) : 'none',
+        };
+      });
+  }, [settings, eventSettings]);
+
+  const handleSettingChange = (id: string, value: SettingValue) => {
+    setSettings((previous) => updateNotificationSetting(previous, id, value));
   };
 
-  const setChannel = (channel: ChannelKey, value: boolean) => {
-    setPrefs((prev) => ({
-      ...prev,
-      [channel]: {
-        mentions: value,
-        comments: value,
-        assignments: value,
-        dueDates: value,
-        productUpdates: channel === 'sms' ? false : value,
-      },
-    }));
+  const handleSave = () => {
+    console.log('Saving notification settings:', settings);
   };
-
-  const allEnabled = (channel: ChannelKey) => Object.values(prefs[channel]).every(Boolean);
-
-  const someEnabled = (channel: ChannelKey) =>
-    Object.values(prefs[channel]).some(Boolean) && !allEnabled(channel);
 
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Bell className="h-5 w-5" />
-              <div>
-                <CardTitle>Notification channels</CardTitle>
-                <CardDescription>
-                  Choose which channels to use for different events.
-                </CardDescription>
-              </div>
-            </div>
-          </div>
+          <CardTitle>Notification channels</CardTitle>
+          <CardDescription>Choose which channels to use for different events.</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Mail className="h-5 w-5 text-muted-foreground" />
-              <div>
-                <p className="font-medium">Email</p>
-                <p className="text-sm text-muted-foreground">
-                  Notifications sent to your registered email address.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              {someEnabled('email') && <Badge variant="secondary">Some</Badge>}
-              {allEnabled('email') && <Badge variant="secondary">All</Badge>}
-              <Switch
-                checked={allEnabled('email')}
-                onCheckedChange={(v) => setChannel('email', v)}
-              />
-            </div>
-          </div>
 
-          <Separator />
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Smartphone className="h-5 w-5 text-muted-foreground" />
-              <div>
-                <p className="font-medium">Push notifications</p>
-                <p className="text-sm text-muted-foreground">
-                  In-app and browser push notifications.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              {someEnabled('push') && <Badge variant="secondary">Some</Badge>}
-              {allEnabled('push') && <Badge variant="secondary">All</Badge>}
-              <Switch checked={allEnabled('push')} onCheckedChange={(v) => setChannel('push', v)} />
-            </div>
-          </div>
-
-          <Separator />
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <MessageSquare className="h-5 w-5 text-muted-foreground" />
-              <div>
-                <p className="font-medium">SMS</p>
-                <p className="text-sm text-muted-foreground">
-                  Text messages for critical alerts only.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              {someEnabled('sms') && <Badge variant="secondary">Some</Badge>}
-              {allEnabled('sms') && <Badge variant="secondary">All</Badge>}
-              <Switch checked={allEnabled('sms')} onCheckedChange={(v) => setChannel('sms', v)} />
-            </div>
-          </div>
+        <CardContent>
+          <SingleSettingsTable data={channelSettings} onChange={handleSettingChange} />
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
           <CardTitle>Event notifications</CardTitle>
-          <CardDescription>Fine‑tune which events notify you through each channel.</CardDescription>
+          <CardDescription>Fine-tune which events notify you through each channel.</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
-          {(Object.keys(EVENT_LABELS) as EventKey[]).map((event) => (
-            <div key={event} className="space-y-3">
-              <div>
-                <p className="font-medium">{EVENT_LABELS[event]}</p>
-                <p className="text-sm text-muted-foreground">{EVENT_DESCRIPTIONS[event]}</p>
-              </div>
 
-              <div className="grid gap-3 sm:grid-cols-3">
-                <div className="flex items-center justify-between rounded-md border p-3">
-                  <div className="flex items-center gap-2">
-                    <Mail className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">Email</span>
-                  </div>
-                  <Switch
-                    checked={prefs.email[event]}
-                    onCheckedChange={(v) => updatePref('email', event, v)}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between rounded-md border p-3">
-                  <div className="flex items-center gap-2">
-                    <Smartphone className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">Push</span>
-                  </div>
-                  <Switch
-                    checked={prefs.push[event]}
-                    onCheckedChange={(v) => updatePref('push', event, v)}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between rounded-md border p-3">
-                  <div className="flex items-center gap-2">
-                    <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">SMS</span>
-                  </div>
-                  <Switch
-                    checked={prefs.sms[event]}
-                    onCheckedChange={(v) => updatePref('sms', event, v)}
-                    disabled={event === 'productUpdates'}
-                  />
-                </div>
-              </div>
-            </div>
-          ))}
+        <CardContent>
+          <SingleSettingsTable data={eventSettings} onChange={handleSettingChange} />
         </CardContent>
       </Card>
-      <Button className="float-end">Save changes</Button>
+
+      <div className="flex justify-end">
+        <Button onClick={handleSave}>Save changes</Button>
+      </div>
     </div>
   );
 }
