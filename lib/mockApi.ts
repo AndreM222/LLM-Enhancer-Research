@@ -8,13 +8,7 @@ import { TagGroupDetail } from '@/app/settings/tags/[tagGroup]/page';
 import { TagGroup } from '@/components/tables/tags-columns';
 import { ServerActivity } from '@/components/tables/global-columns';
 import { SingleSetting } from '@/components/tables/settings-columns';
-
-export type Invoice = {
-  id: string;
-  date: string;
-  amount: string;
-  status: string;
-};
+import { Invoice } from '@/components/tables/invoice-table';
 
 export type UsageItem = {
   label: string;

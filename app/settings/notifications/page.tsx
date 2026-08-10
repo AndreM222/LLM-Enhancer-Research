@@ -1,10 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-
 import {
   SettingValue,
   SingleSetting,
@@ -12,7 +9,6 @@ import {
 } from '@/components/tables/settings-columns';
 
 import { SingleSettingsTable } from '@/components/tables/settings-table';
-
 import { notificationAllOptions, notificationSettingsOptions } from '@/lib/mockApi';
 
 type ChannelKey = 'email' | 'push' | 'sms';
@@ -147,10 +143,6 @@ export default function Notifications() {
     setSettings((previous) => updateNotificationSetting(previous, id, value));
   };
 
-  const handleSave = () => {
-    console.log('Saving notification settings:', settings);
-  };
-
   return (
     <div className="space-y-6">
       <Card>
@@ -174,10 +166,6 @@ export default function Notifications() {
           <SingleSettingsTable data={eventSettings} onChange={handleSettingChange} />
         </CardContent>
       </Card>
-
-      <div className="flex justify-end">
-        <Button onClick={handleSave}>Save changes</Button>
-      </div>
     </div>
   );
 }

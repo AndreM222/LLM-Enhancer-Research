@@ -1,7 +1,6 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { ButtonGroup } from '../ui/button-group';
 import { Button } from '../ui/button';
 import { ChevronRight, Info } from 'lucide-react';
 import { CircularProgress } from '../ui/circular-progress';
@@ -75,18 +74,16 @@ export function getUsageColumns(onOpen: (id: string) => void): ColumnDef<Usage>[
       accessorKey: 'id',
       header: '',
       cell: ({ row }) => (
-        <ButtonGroup className="float-end">
-          <Button
-            size="xs"
-            variant="outline"
-            onClick={(e) => {
-              e.stopPropagation();
-              onOpen(row.getValue<string>('id'));
-            }}
-          >
-            <ChevronRight />
-          </Button>
-        </ButtonGroup>
+        <Button
+          size="xs"
+          variant="outline"
+          onClick={(e) => {
+            e.stopPropagation();
+            onOpen(row.getValue<string>('id'));
+          }}
+        >
+          <ChevronRight />
+        </Button>
       ),
     },
   ];

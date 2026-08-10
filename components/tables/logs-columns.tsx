@@ -20,7 +20,7 @@ export type Log = {
   error?: LogError;
 };
 
-export const columns: ColumnDef<Log>[] = [
+export const logColumns: ColumnDef<Log>[] = [
   {
     accessorKey: 'type',
     header: 'Type',

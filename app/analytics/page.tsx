@@ -9,6 +9,7 @@ import { UsageTable } from '@/components/tables/usage-table';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { getTags } from '@/lib/mockApi';
+import { useRouter } from 'next/navigation';
 import { FaFileExport } from 'react-icons/fa6';
 
 type MetricProps = {
@@ -51,6 +52,7 @@ const MetricItem = ({ label, value, hint }: MetricProps) => (
 
 export default function AnalyticsPage() {
   const projects = getProjects();
+  const router = useRouter();
 
   return (
     <div className="space-y-6">
@@ -113,7 +115,11 @@ export default function AnalyticsPage() {
             <CardDescription>Which detection types need the most review.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-            <CorrectionsTable data={correctionsData} onOpen={() => console.log('Open')} />
+            <CorrectionsTable
+              data={correctionsData}
+              onOpen={(id) => router.push(`/settings/tags/${id ?? ''}`)}
+              pageSize={4}
+            />
           </CardContent>
         </Card>
 
@@ -157,7 +163,7 @@ export default function AnalyticsPage() {
             <CardDescription>Summary of data usage throughout the project.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-            <UsageTable data={projects[0].usage} onOpen={() => console.log('Open')} />
+            <UsageTable data={projects[0].usage} onOpen={() => console.log('Open')} pageSize={4} />
           </CardContent>
         </Card>
       </div>
