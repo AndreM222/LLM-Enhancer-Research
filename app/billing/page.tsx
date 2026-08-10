@@ -247,14 +247,8 @@ export default function BillingDialogPage() {
       <div className="space-y-6">
         <Card>
           <CardHeader className="flex flex-row items-start justify-between gap-4">
-            <div>
-              <CardTitle>Payment methods</CardTitle>
-              <CardDescription>The default card is charged on renewal.</CardDescription>
-            </div>
-            <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              Add
-            </Button>
+            <CardTitle>Payment methods</CardTitle>
+            <CardDescription>The default card is charged on renewal.</CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-3">
