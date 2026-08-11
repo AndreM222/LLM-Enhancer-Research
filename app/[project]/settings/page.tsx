@@ -32,7 +32,7 @@ import {
 import { LinkServerTable } from '@/components/tables/global-table';
 import { ServerActivity, ServerIndicator } from '@/components/tables/global-columns';
 import { getProjects, Project, ProjectIcon } from '@/components/project-cards';
-import { ChevronLeft, ChevronRight, Layers, Plus, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, GripHorizontal, Layers, Plus, X } from 'lucide-react';
 import { LinkDetectionTable } from '@/components/tables/detection-table';
 import Flag from 'react-world-flags';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
@@ -134,9 +134,9 @@ function LayerCard({
   onRemoveTag,
   draggedId,
   dragOverId,
-  onDragStart,
-  onDragEnd,
-  onDragOver,
+  setDragStart,
+  setDragEnd,
+  setDragOver,
   onDrop,
 }: {
   layer: DetectionLayer;
@@ -151,9 +151,9 @@ function LayerCard({
   onRemoveTag: (layerId: string, tagId: string) => void;
   draggedId: string | null;
   dragOverId: string | null;
-  onDragStart: (id: string) => void;
-  onDragEnd: () => void;
-  onDragOver: (id: string) => void;
+  setDragStart: (id: string) => void;
+  setDragEnd: () => void;
+  setDragOver: (id: string) => void;
   onDrop: (id: string) => void;
 }) {
   const [tagValue, setTagValue] = useState('');
@@ -166,42 +166,38 @@ function LayerCard({
     setTagValue('');
   };
 
+  const isDragging = draggedId === layer.id;
+
   return (
     <motion.div
       layout
       layoutId={layer.id}
-      initial={{ opacity: 0, y: 12, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
+      initial={{ opacity: 0, x: 20, scale: 0.98 }}
+      animate={{
+        opacity: isDragging ? 0.4 : 1,
+        scale: isDragging ? 0.95 : 1,
+        x: 0,
+      }}
       exit={{ opacity: 0, y: -8, scale: 0.97 }}
-      transition={{
-        type: 'spring',
-        stiffness: 400,
-        damping: 35,
-      }}
+      transition={{ type: 'spring', stiffness: 400, damping: 35 }}
       draggable
-      onDragStart={() => onDragStart(layer.id)}
-      onDragEnd={() => {
-        onDragEnd();
-      }}
+      onDragStart={() => setDragStart(layer.id)}
+      onDragEnd={setDragEnd}
       onDragOver={(e) => {
         e.preventDefault();
-        onDragOver(layer.id);
+        setDragOver(layer.id);
       }}
-      onDragLeave={() => {
-        if (dragOverId === layer.id) {
-          onDragOver('');
-        }
-      }}
+      onDragLeave={() => setDragOver('')}
       onDrop={() => onDrop(layer.id)}
       className={[
-        'group transition-colors cursor-grab active:cursor-grabbing',
+        'group flex gap-3 rounded-xl bg-card transition-colors',
         draggedId === layer.id ? 'opacity-40 scale-95' : '',
         dragOverId === layer.id && draggedId !== layer.id
           ? 'border-primary bg-primary/5'
           : 'hover:border-primary/40',
       ].join(' ')}
       style={{
-        cursor: draggedId === layer.id ? 'grabbing' : 'grab',
+        cursor: draggedId === layer.id ? 'grabbing' : 'default',
       }}
     >
       <Card
@@ -214,6 +210,12 @@ function LayerCard({
       >
         <CardHeader className="space-y-3">
           <div className="flex items-center gap-2">
+            <motion.div
+              className="rounded-md p-1 text-muted-foreground hover:bg-muted cursor-grab active:cursor-grabbing"
+              whileTap={{ scale: 0.9 }}
+            >
+              <GripHorizontal className="h-5 w-5" />
+            </motion.div>
             <CardTitle>
               <Layers className="h-4 w-4" />
             </CardTitle>
@@ -297,7 +299,7 @@ function LayerCard({
             pageSize={4}
             data={layer.tags}
             onDelete={(id) => onRemoveTag(layer.id, id)}
-            onOpen={() => { }}
+            onOpen={() => {}}
           />
         </CardContent>
       </Card>
@@ -601,12 +603,12 @@ export default function ProjectSettings() {
                     onRemoveTag={removeTagFromLayer}
                     draggedId={draggedId}
                     dragOverId={dragOverId}
-                    onDragStart={setDraggedId}
-                    onDragEnd={() => {
+                    setDragStart={setDraggedId}
+                    setDragEnd={() => {
                       setDraggedId(null);
                       setDragOverId(null);
                     }}
-                    onDragOver={setDragOverId}
+                    setDragOver={setDragOverId}
                     onDrop={handleLayerDrop}
                   />
                 ))}

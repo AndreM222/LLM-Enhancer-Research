@@ -341,8 +341,8 @@ export default function LayoutManager() {
                     </div>
 
                     {/* controls */}
-                    <div className="flex shrink-0 items-start gap-1">
-                      <div className="hidden items-center gap-1 sm:flex">
+                    <div className="shrink-0 items-start gap-1 space-y-2 block sm:flex">
+                      <div className="items-center gap-1">
                         <ButtonGroup>
                           <Button
                             variant="outline"
