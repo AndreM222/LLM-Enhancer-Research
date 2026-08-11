@@ -34,7 +34,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import {} from '@/components/app-navigation';
+import { } from '@/components/app-navigation';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 type Detection = {
@@ -205,59 +205,56 @@ export default function Session() {
                   <span>Image not found</span>
                 </div>
               ) : (
-                <>
-                  <Image
-                    src={activeImage?.src ?? '/session-preview.jpg'}
-                    alt={activeImage?.title ?? 'Session preview'}
-                    fill
-                    className="object-cover opacity-95"
-                    onError={() => setImgErrorById((prev) => ({ ...prev, [activeImageId]: true }))}
-                  />
-
-                  <svg
-                    viewBox="0 0 100 100"
-                    className="pointer-events-none absolute inset-0 h-full w-full"
-                    preserveAspectRatio="none"
-                  >
-                    <AnimatePresence>
-                      {detections.map((area) => {
-                        const isSelected =
-                          selectedId.includes(area.id) && !hiddenId.includes(area.id);
-                        const isHidden = hiddenId.includes(area.id);
-
-                        return (
-                          <motion.g
-                            key={area.id}
-                            initial={{ opacity: 0, scale: 0.98 }}
-                            animate={{ opacity: isHidden ? 0.15 : 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.96 }}
-                            transition={{ duration: 0.2 }}
-                          >
-                            <motion.rect
-                              x={area.box.x}
-                              y={area.box.y}
-                              width={area.box.w}
-                              height={area.box.h}
-                              rx="1.5"
-                              ry="1.5"
-                              initial={false}
-                              animate={{
-                                fill: isSelected ? 'rgba(34,197,94,0.20)' : 'rgba(34,197,94,0.08)',
-                                stroke: isSelected ? '#22c55e' : 'rgba(34,197,94,0.55)',
-                                strokeWidth: isSelected ? 0.2 : 0.1,
-                              }}
-                              transition={{ duration: 0.18 }}
-                              style={{ pointerEvents: 'visiblePainted', cursor: 'pointer' }}
-                              onTap={() => toggleSelected(area.id)}
-                              whileTap={{ scale: 0.99 }}
-                            />
-                          </motion.g>
-                        );
-                      })}
-                    </AnimatePresence>
-                  </svg>
-                </>
+                <Image
+                  src={activeImage?.src ?? '/session-preview.jpg'}
+                  alt={activeImage?.title ?? 'Session preview'}
+                  fill
+                  className="object-cover opacity-95"
+                  onError={() => setImgErrorById((prev) => ({ ...prev, [activeImageId]: true }))}
+                />
               )}
+
+              <svg
+                viewBox="0 0 100 100"
+                className="pointer-events-none absolute inset-0 h-full w-full"
+                preserveAspectRatio="none"
+              >
+                <AnimatePresence>
+                  {detections.map((area) => {
+                    const isSelected = selectedId.includes(area.id) && !hiddenId.includes(area.id);
+                    const isHidden = hiddenId.includes(area.id);
+
+                    return (
+                      <motion.g
+                        key={area.id}
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: isHidden ? 0.15 : 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.96 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <motion.rect
+                          x={area.box.x}
+                          y={area.box.y}
+                          width={area.box.w}
+                          height={area.box.h}
+                          rx="1.5"
+                          ry="1.5"
+                          initial={false}
+                          animate={{
+                            fill: isSelected ? 'rgba(34,197,94,0.20)' : 'rgba(34,197,94,0.08)',
+                            stroke: isSelected ? '#22c55e' : 'rgba(34,197,94,0.55)',
+                            strokeWidth: isSelected ? 0.2 : 0.1,
+                          }}
+                          transition={{ duration: 0.18 }}
+                          style={{ pointerEvents: 'visiblePainted', cursor: 'pointer' }}
+                          onTap={() => toggleSelected(area.id)}
+                          whileTap={{ scale: 0.99 }}
+                        />
+                      </motion.g>
+                    );
+                  })}
+                </AnimatePresence>
+              </svg>
             </div>
 
             <div className="grid grid-cols-2 gap-4 text-sm md:grid-cols-3 lg:grid-cols-4">

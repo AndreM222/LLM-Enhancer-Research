@@ -189,13 +189,13 @@ export default function LayoutManager() {
         prev.map((s) =>
           s.id === editingStepId
             ? {
-                ...s,
-                title: form.title.trim(),
-                description: form.description.trim(),
-                thumbnail: form.thumbnail.trim(),
-                required: form.required,
-                mode: form.mode,
-              }
+              ...s,
+              title: form.title.trim(),
+              description: form.description.trim(),
+              thumbnail: form.thumbnail.trim(),
+              required: form.required,
+              mode: form.mode,
+            }
             : s
         )
       );
@@ -228,12 +228,9 @@ export default function LayoutManager() {
         setDescription="Define the pictures users must capture for this session."
       />
 
-      <div className="flex items-center gap-2">
-        <Button variant="outline" onClick={openCreate}>
-          <Plus className="mr-2 h-4 w-4" /> Add picture
-        </Button>
-        <Button onClick={() => toast.success('Layout saved.')}>Save layout</Button>
-      </div>
+      <Button variant="outline" onClick={openCreate}>
+        <Plus className="mr-2 h-4 w-4" /> Add picture
+      </Button>
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
         <Card>

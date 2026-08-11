@@ -21,6 +21,7 @@ export function CorrectionsTable({
       onRowClick={(row) => onOpen(row.id)}
       pageSize={pageSize}
       hideHeader
+      showPaging
     />
   );
 }

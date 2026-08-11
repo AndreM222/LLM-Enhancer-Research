@@ -118,7 +118,7 @@ export default function AnalyticsPage() {
             <CorrectionsTable
               data={correctionsData}
               onOpen={(id) => router.push(`/settings/tags/${id ?? ''}`)}
-              pageSize={4}
+              pageSize={6}
             />
           </CardContent>
         </Card>
