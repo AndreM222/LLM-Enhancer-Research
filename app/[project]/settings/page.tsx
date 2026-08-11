@@ -132,6 +132,12 @@ function LayerCard({
   onSetModel,
   onAddTag,
   onRemoveTag,
+  draggedId,
+  dragOverId,
+  onDragStart,
+  onDragEnd,
+  onDragOver,
+  onDrop,
 }: {
   layer: DetectionLayer;
   index: number;
@@ -143,6 +149,12 @@ function LayerCard({
   onSetModel: (id: string, model: string) => void;
   onAddTag: (layerId: string, tag: TagGroup) => void;
   onRemoveTag: (layerId: string, tagId: string) => void;
+  draggedId: string | null;
+  dragOverId: string | null;
+  onDragStart: (id: string) => void;
+  onDragEnd: () => void;
+  onDragOver: (id: string) => void;
+  onDrop: (id: string) => void;
 }) {
   const [tagValue, setTagValue] = useState('');
 
@@ -158,9 +170,48 @@ function LayerCard({
     <motion.div
       layout
       layoutId={layer.id}
-      transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+      initial={{ opacity: 0, y: 12, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -8, scale: 0.97 }}
+      transition={{
+        type: 'spring',
+        stiffness: 400,
+        damping: 35,
+      }}
+      draggable
+      onDragStart={() => onDragStart(layer.id)}
+      onDragEnd={() => {
+        onDragEnd();
+      }}
+      onDragOver={(e) => {
+        e.preventDefault();
+        onDragOver(layer.id);
+      }}
+      onDragLeave={() => {
+        if (dragOverId === layer.id) {
+          onDragOver('');
+        }
+      }}
+      onDrop={() => onDrop(layer.id)}
+      className={[
+        'group transition-colors cursor-grab active:cursor-grabbing',
+        draggedId === layer.id ? 'opacity-40 scale-95' : '',
+        dragOverId === layer.id && draggedId !== layer.id
+          ? 'border-primary bg-primary/5'
+          : 'hover:border-primary/40',
+      ].join(' ')}
+      style={{
+        cursor: draggedId === layer.id ? 'grabbing' : 'grab',
+      }}
     >
-      <Card className="flex w-96 shrink-0 flex-col">
+      <Card
+        className={[
+          'flex w-96 shrink-0 flex-col transition-all duration-200',
+          dragOverId === layer.id && draggedId !== layer.id
+            ? 'border-primary bg-primary/5'
+            : 'hover:border-primary/40',
+        ].join(' ')}
+      >
         <CardHeader className="space-y-3">
           <div className="flex items-center gap-2">
             <CardTitle>
@@ -200,12 +251,12 @@ function LayerCard({
 
           <CardAction>
             <ButtonGroup>
-              {index === total - 1 && (
+              {index > 0 && (
                 <Button variant="outline" size="icon" onClick={() => onMoveLeft(layer.id)}>
                   <ChevronLeft />
                 </Button>
               )}
-              {index === 0 && (
+              {index < total - 1 && (
                 <Button variant="outline" size="icon" onClick={() => onMoveRight(layer.id)}>
                   <ChevronRight />
                 </Button>
@@ -246,7 +297,7 @@ function LayerCard({
             pageSize={4}
             data={layer.tags}
             onDelete={(id) => onRemoveTag(layer.id, id)}
-            onOpen={() => {}}
+            onOpen={() => { }}
           />
         </CardContent>
       </Card>
@@ -268,6 +319,8 @@ export default function ProjectSettings() {
   const [layers, setLayers] = useState<DetectionLayer[]>([
     { id: crypto.randomUUID(), position: 1, model: 'YOLOv8', tags: tagsList ?? [] },
   ]);
+  const [draggedId, setDraggedId] = useState<string | null>(null);
+  const [dragOverId, setDragOverId] = useState<string | null>(null);
 
   const [users, setUsers] = useState<User[]>(usersList ?? []);
   const [userValue, setUserValue] = useState('');
@@ -304,6 +357,32 @@ export default function ProjectSettings() {
       [next[indexA], next[indexB]] = [next[indexB], next[indexA]];
       return next.map((l, i) => ({ ...l, position: i + 1 }));
     });
+  };
+
+  const reorderLayers = (layers: DetectionLayer[]) =>
+    layers.map((layer, index) => ({
+      ...layer,
+      position: index + 1,
+    }));
+
+  const handleLayerDrop = (targetId: string) => {
+    if (!draggedId || draggedId === targetId) return;
+
+    setLayers((prev) => {
+      const from = prev.findIndex((l) => l.id === draggedId);
+      const to = prev.findIndex((l) => l.id === targetId);
+
+      if (from < 0 || to < 0) return prev;
+
+      const next = [...prev];
+      const [item] = next.splice(from, 1);
+      next.splice(to, 0, item);
+
+      return reorderLayers(next);
+    });
+
+    setDraggedId(null);
+    setDragOverId(null);
   };
 
   const moveLayerLeft = (id: string) => {
@@ -506,7 +585,7 @@ export default function ProjectSettings() {
         <CardContent className="min-w-0">
           <ScrollArea>
             <div className="flex gap-4 p-2">
-              <AnimatePresence initial={false}>
+              <AnimatePresence initial={false} mode="popLayout">
                 {layers.map((layer, index) => (
                   <LayerCard
                     key={layer.id}
@@ -520,6 +599,15 @@ export default function ProjectSettings() {
                     onSetModel={setLayerModel}
                     onAddTag={addTagToLayer}
                     onRemoveTag={removeTagFromLayer}
+                    draggedId={draggedId}
+                    dragOverId={dragOverId}
+                    onDragStart={setDraggedId}
+                    onDragEnd={() => {
+                      setDraggedId(null);
+                      setDragOverId(null);
+                    }}
+                    onDragOver={setDragOverId}
+                    onDrop={handleLayerDrop}
                   />
                 ))}
               </AnimatePresence>

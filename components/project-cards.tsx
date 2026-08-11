@@ -109,7 +109,7 @@ const ProjectCard = ({ item }: { item: Project }) => {
 
           <div className="rounded-lg border bg-muted/30 p-3 space-y-2">
             <p className="text-xs text-muted-foreground">Last 30 days</p>
-            <UsageTable data={item.usage} onOpen={() => console.log('Open')} pageSize={4} />
+            <UsageTable data={item.usage} pageSize={4} />
           </div>
         </CardContent>
 
