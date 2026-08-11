@@ -163,7 +163,7 @@ export default function AnalyticsPage() {
             <CardDescription>Summary of data usage throughout the project.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-            <UsageTable data={projects[0].usage} onOpen={() => console.log('Open')} pageSize={4} />
+            <UsageTable data={projects[0].usage} pageSize={4} />
           </CardContent>
         </Card>
       </div>
