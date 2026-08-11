@@ -1,8 +1,7 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { Button } from '../ui/button';
-import { ChevronRight, Info } from 'lucide-react';
+import { Info } from 'lucide-react';
 import { CircularProgress } from '../ui/circular-progress';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
@@ -15,7 +14,7 @@ export type Usage = {
   dataType: string;
 };
 
-export function getUsageColumns(onOpen: (id: string) => void): ColumnDef<Usage>[] {
+export function getUsageColumns(): ColumnDef<Usage>[] {
   return [
     {
       accessorKey: 'status',
@@ -69,22 +68,6 @@ export function getUsageColumns(onOpen: (id: string) => void): ColumnDef<Usage>[
           </span>
         );
       },
-    },
-    {
-      accessorKey: 'id',
-      header: '',
-      cell: ({ row }) => (
-        <Button
-          size="xs"
-          variant="outline"
-          onClick={(e) => {
-            e.stopPropagation();
-            onOpen(row.getValue<string>('id'));
-          }}
-        >
-          <ChevronRight />
-        </Button>
-      ),
     },
   ];
 }

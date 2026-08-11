@@ -7,18 +7,15 @@ import { useMemo } from 'react';
 export function UsageTable({
   data,
   pageSize,
-  onOpen,
 }: {
   data: Usage[];
   pageSize: number;
-  onOpen: (id: string) => void;
 }) {
-  const columns = useMemo(() => getUsageColumns(onOpen), [onOpen]);
+  const columns = useMemo(() => getUsageColumns(), []);
   return (
     <DataTable
       columns={columns}
       data={data}
-      onRowClick={(row) => onOpen(row.id)}
       hideHeader
       pageSize={pageSize}
     />
