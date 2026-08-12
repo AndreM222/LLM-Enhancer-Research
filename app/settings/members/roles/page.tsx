@@ -4,7 +4,14 @@ import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { getProjects, getRoles, roleSettingsOptions } from '@/lib/mockApi';
+import {
+  getGraphGroups,
+  getGraphLinks,
+  getGraphNodes,
+  getProjects,
+  getRoles,
+  roleSettingsOptions,
+} from '@/lib/mockApi';
 import {
   Dialog,
   DialogContent,
@@ -300,7 +307,7 @@ export default function Members() {
         </CardContent>
       </Card>
 
-      <LinkGraph />
+      <LinkGraph nodes={getGraphNodes()} groups={getGraphGroups()} links={getGraphLinks()} />
 
       <RoleDialog
         open={createOpen}

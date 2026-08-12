@@ -32,6 +32,9 @@ import {
   getModelOptions,
   getRoles,
   getProjects,
+  getGraphGroups,
+  getGraphLinks,
+  getGraphNodes,
 } from '@/lib/mockApi';
 import { LinkServerTable } from '@/components/tables/global-table';
 import { ServerActivity, ServerIndicator } from '@/components/tables/global-columns';
@@ -801,7 +804,7 @@ export default function ProjectSettings() {
         </CardFooter>
       </Card>
 
-      <LinkGraph />
+      <LinkGraph nodes={getGraphNodes()} groups={getGraphGroups()} links={getGraphLinks()} />
     </div>
   );
 }

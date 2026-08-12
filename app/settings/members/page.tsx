@@ -32,7 +32,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { getRoles, getUsers } from '@/lib/mockApi';
+import { getGraphGroups, getGraphLinks, getGraphNodes, getRoles, getUsers } from '@/lib/mockApi';
 import { User } from '@/components/tables/users-columns';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import LinkGraph from '@/components/linkGraph';
@@ -179,7 +179,7 @@ export default function Members() {
         </CardContent>
       </Card>
 
-      <LinkGraph />
+      <LinkGraph nodes={getGraphNodes()} groups={getGraphGroups()} links={getGraphLinks()} />
 
       {/* Edit role dialog */}
       <Dialog open={editOpen} onOpenChange={setEditOpen}>

@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { getProjectLayouts } from '@/lib/mockApi';
+import { getGraphGroups, getGraphLinks, getGraphNodes, getProjectLayouts } from '@/lib/mockApi';
 import { usePathname, useRouter } from 'next/navigation';
 
 const data: LayoutTableData[] = getProjectLayouts();
@@ -72,7 +72,7 @@ export default function Layouts() {
         </CardContent>
       </Card>
 
-      <LinkGraph />
+      <LinkGraph nodes={getGraphNodes()} groups={getGraphGroups()} links={getGraphLinks()} />
     </div>
   );
 }

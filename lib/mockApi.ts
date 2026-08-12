@@ -9,6 +9,7 @@ import { TagGroup } from '@/components/tables/tags-columns';
 import { ServerActivity } from '@/components/tables/global-columns';
 import { SingleSetting } from '@/components/tables/settings-columns';
 import { Invoice } from '@/components/tables/invoice-table';
+import { GraphLink, GraphNode, NodeCategory } from '@/components/linkGraph';
 
 export type UsageItem = {
   label: string;
@@ -1010,6 +1011,70 @@ export const getWorkspace = (): Workspace[] => [
     name: 'Evil Corp.',
     logo: '',
     plan: 'Free',
+  },
+];
+
+export const getGraphNodes = (): GraphNode[] => [
+  { id: 'frontend', label: 'Next.js Frontend', group: 'tags', radius: 14 },
+  { id: 'canvas', label: 'Konva Canvas', group: 'tags', radius: 10 },
+  { id: 'api', label: 'API Server', group: 'layout', radius: 16 },
+  { id: 'detection', label: 'Detection Service', group: 'layout', radius: 12 },
+  { id: 'prompt-engine', label: 'Prompt Engine', group: 'layout', radius: 12 },
+  { id: 'gemini', label: 'Gemini Flash', group: 'roles', radius: 14 },
+  { id: 'llm-optimizer', label: 'LLM Optimizer', group: 'roles', radius: 12 },
+  { id: 'image-store', label: 'Image Storage', group: 'roles', radius: 10 },
+  { id: 'users-detections', label: 'Detections users', group: 'users', radius: 12 },
+  { id: 'users-prompts', label: 'Prompts users', group: 'users', radius: 12 },
+];
+
+export const getGraphLinks = (): GraphLink[] => [
+  { source: 'frontend', target: 'api' },
+  { source: 'frontend', target: 'canvas' },
+  { source: 'canvas', target: 'api' },
+  { source: 'api', target: 'detection' },
+  { source: 'api', target: 'llm-optimizer' },
+  { source: 'api', target: 'users-detections' },
+  { source: 'api', target: 'image-store' },
+  { source: 'detection', target: 'gemini' },
+  { source: 'prompt-engine', target: 'api' },
+  { source: 'prompt-engine', target: 'gemini' },
+  { source: 'prompt-engine', target: 'users-prompts' },
+  { source: 'llm-optimizer', target: 'prompt-engine' },
+  { source: 'llm-optimizer', target: 'users-prompts' },
+  { source: 'users-detections', target: 'canvas' },
+  { source: 'image-store', target: 'detection' },
+];
+
+export const getGraphGroups = (): NodeCategory[] => [
+  {
+    id: 'tags',
+    color: '#7c6aed',
+    icon: 'Tag',
+    url: '/settings/tags',
+  },
+  {
+    id: 'layout',
+    color: '#4a9eff',
+    icon: 'LayoutTemplate',
+    url: '/settings/layouts',
+  },
+  {
+    id: 'roles',
+    color: '#3ecf8e',
+    icon: 'Key',
+    url: '/settings/members/roles',
+  },
+  {
+    id: 'users',
+    color: '#f97316',
+    icon: 'User',
+    url: '/settings/members',
+  },
+  {
+    id: 'project',
+    color: '#ba32c7',
+    icon: 'Box',
+    url: '/',
   },
 ];
 

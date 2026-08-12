@@ -7,7 +7,7 @@ import { CreateTagGroupTable } from '@/components/tables/tags-table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { getProjectTags } from '@/lib/mockApi';
+import { getGraphGroups, getGraphLinks, getGraphNodes, getProjectTags } from '@/lib/mockApi';
 import { usePathname, useRouter } from 'next/navigation';
 
 const data: TagGroup[] = getProjectTags();
@@ -51,7 +51,7 @@ export default function Tags() {
           />
         </CardContent>
       </Card>
-      <LinkGraph />
+      <LinkGraph nodes={getGraphNodes()} groups={getGraphGroups()} links={getGraphLinks()} />
     </div>
   );
 }
