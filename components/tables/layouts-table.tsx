@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import {
   createLayoutsColumns,
   linkLayoutColumns,
-  type Layout,
+  type LayoutTableData,
 } from '@/components/tables/layouts-columns';
 import { DataTable } from '@/components/data-table';
 
@@ -15,7 +15,7 @@ export function CreateLayoutsTable({
   onOpen,
   onDuplicate,
 }: {
-  data: Layout[];
+  data: LayoutTableData[];
   pageSize: number;
   onDelete: (id: string) => void;
   onOpen: (id: string) => void;
@@ -43,7 +43,7 @@ export function LinkLayoutsTable({
   onDelete,
   onOpen,
 }: {
-  data: Layout[];
+  data: LayoutTableData[];
   pageSize: number;
   onDelete: (id: string) => void;
   onOpen: (id: string) => void;

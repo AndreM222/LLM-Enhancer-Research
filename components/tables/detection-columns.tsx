@@ -10,6 +10,7 @@ import { CircularProgress } from '../ui/circular-progress';
 
 export type DetectionSession = {
   id: string;
+  projectId: string;
   images: number;
   type: string;
   detections: number;

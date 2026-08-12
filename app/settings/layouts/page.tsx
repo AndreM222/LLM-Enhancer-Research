@@ -2,7 +2,7 @@
 
 import { CreateLayoutDialog, LayoutInput } from '@/components/dialogs/layout-dialog';
 import LinkGraph from '@/components/linkGraph';
-import { Layout } from '@/components/tables/layouts-columns';
+import { LayoutTableData } from '@/components/tables/layouts-columns';
 import { CreateLayoutsTable } from '@/components/tables/layouts-table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field } from '@/components/ui/field';
@@ -18,7 +18,7 @@ import {
 import { getProjectLayouts } from '@/lib/mockApi';
 import { usePathname, useRouter } from 'next/navigation';
 
-const data: Layout[] = getProjectLayouts();
+const data: LayoutTableData[] = getProjectLayouts();
 
 export default function Layouts() {
   const pathname = usePathname();

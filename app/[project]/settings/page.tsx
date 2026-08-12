@@ -19,19 +19,23 @@ import { TagGroup } from '@/components/tables/tags-columns';
 import { User } from '@/components/tables/users-columns';
 import { LinkUsersTable } from '@/components/tables/users-table';
 import { LinkLayoutsTable } from '@/components/tables/layouts-table';
-import { Layout } from '@/components/tables/layouts-columns';
+import { LayoutTableData } from '@/components/tables/layouts-columns';
 import LinkGraph from '@/components/linkGraph';
 import {
   getProjectTags,
   getProjectUsers,
+  getUsers,
+  getProjectRoles,
   getProjectLayouts,
   getProjectServers,
+  getProjectLinkedProjects,
   getModelOptions,
   getRoles,
+  getProjects,
 } from '@/lib/mockApi';
 import { LinkServerTable } from '@/components/tables/global-table';
 import { ServerActivity, ServerIndicator } from '@/components/tables/global-columns';
-import { getProjects, Project, ProjectIcon } from '@/components/project-cards';
+import { Project, ProjectIcon } from '@/components/project-cards';
 import { ChevronLeft, ChevronRight, GripHorizontal, Layers, Plus, X } from 'lucide-react';
 import { LinkDetectionTable } from '@/components/tables/detection-table';
 import Flag from 'react-world-flags';
@@ -64,12 +68,6 @@ import {
 } from '@/components/ui/alert-dialog';
 
 const tagsList: TagGroup[] = getProjectTags();
-const usersList: User[] = getProjectUsers();
-const rolesList: Role[] = getRoles();
-const layoutList: Layout[] = getProjectLayouts();
-const serversList: ServerActivity[] = getProjectServers();
-const projectsList: Project[] = getProjects();
-
 const MODEL_OPTIONS = getModelOptions();
 
 type DetectionLayer = {
@@ -310,7 +308,18 @@ function LayerCard({
 export default function ProjectSettings() {
   const router = useRouter();
   const { project } = useParams<{ project: string }>();
-  const projectItems: Project | undefined = getProjects().find((curr) => curr.id === project);
+  const allUsers: User[] = getUsers();
+  const allRoles: Role[] = getRoles();
+  const allLayouts: LayoutTableData[] = getProjectLayouts();
+  const allServers: ServerActivity[] = getProjectServers();
+  const allProjects: Project[] = getProjects();
+
+  const projectItems: Project | undefined = allProjects.find((curr) => curr.id === project);
+  const projectUsers: User[] = getProjectUsers(project ?? '');
+  const projectRoles: Role[] = getProjectRoles(project ?? '');
+  const projectLayouts: LayoutTableData[] = getProjectLayouts(project ?? '');
+  const projectServers: ServerActivity[] = getProjectServers(project ?? '');
+  const projectLinksData: Project[] = project ? getProjectLinkedProjects(project) : [];
 
   const [openIcon, setOpenIcon] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState<IconName>(projectItems?.icon ?? 'Folder');
@@ -324,19 +333,19 @@ export default function ProjectSettings() {
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
 
-  const [users, setUsers] = useState<User[]>(usersList ?? []);
+  const [users, setUsers] = useState<User[]>(projectUsers);
   const [userValue, setUserValue] = useState('');
 
-  const [roles, setRoles] = useState<Role[]>(rolesList ?? []);
+  const [roles, setRoles] = useState<Role[]>(projectRoles);
   const [roleValue, setRoleValue] = useState('');
 
-  const [layouts, setLayouts] = useState<Layout[]>(layoutList ?? []);
+  const [layouts, setLayouts] = useState<LayoutTableData[]>(projectLayouts);
   const [layoutValue, setLayoutValue] = useState('');
 
-  const [servers, setServers] = useState<ServerActivity[]>(serversList ?? []);
+  const [servers, setServers] = useState<ServerActivity[]>(projectServers);
   const [serverValue, setServerValue] = useState('');
 
-  const [projectLinks, setProjectLinks] = useState<Project[]>(projectsList ?? []);
+  const [projectLinks, setProjectLinks] = useState<Project[]>(projectLinksData);
   const [projectLinkValue, setProjectLinkValue] = useState('');
 
   const [deleteConfirm, setDeleteConfirm] = useState('');
@@ -428,11 +437,11 @@ export default function ProjectSettings() {
       prev.map((l) => (l.id === layerId ? { ...l, tags: l.tags.filter((t) => t.id !== tagId) } : l))
     );
 
-  const selectedUser = usersList.find((u) => u.id === userValue) ?? null;
-  const selectedRole = rolesList.find((u) => u.id === roleValue) ?? null;
-  const selectedLayout = layoutList.find((l) => l.id === layoutValue) ?? null;
-  const selectedServer = serversList.find((s) => s.id === serverValue) ?? null;
-  const selectedProjectLink = projectsList.find((p) => p.id === projectLinkValue) ?? null;
+  const selectedUser = allUsers.find((u) => u.id === userValue) ?? null;
+  const selectedRole = allRoles.find((u) => u.id === roleValue) ?? null;
+  const selectedLayout = allLayouts.find((l) => l.id === layoutValue) ?? null;
+  const selectedServer = allServers.find((s) => s.id === serverValue) ?? null;
+  const selectedProjectLink = allProjects.find((p) => p.id === projectLinkValue) ?? null;
 
   return (
     <div className="space-y-6">
@@ -500,9 +509,9 @@ export default function ProjectSettings() {
         </CardHeader>
         <CardContent className="space-y-4">
           <AddRow
-            items={usersList}
+            items={allUsers}
             value={(() => {
-              const user = usersList.find((curr) => curr.id === userValue);
+              const user = allUsers.find((curr) => curr.id === userValue);
 
               return user ? `${user?.name ?? 'Unknown'} · ${user?.email ?? ''}` : '';
             })()}
@@ -536,9 +545,9 @@ export default function ProjectSettings() {
         </CardHeader>
         <CardContent className="space-y-4">
           <AddRow
-            items={rolesList}
+            items={allRoles}
             value={(() => {
-              const role = rolesList.find((curr) => curr.id === roleValue);
+              const role = allRoles.find((curr) => curr.id === roleValue);
 
               return role?.name ?? '';
             })()}
@@ -626,9 +635,9 @@ export default function ProjectSettings() {
         </CardHeader>
         <CardContent className="space-y-4">
           <AddRow
-            items={layoutList}
+            items={allLayouts}
             value={(() => {
-              const layout = layoutList.find((curr) => curr.id === layoutValue);
+              const layout = allLayouts.find((curr) => curr.id === layoutValue);
               return layout?.name ?? '';
             })()}
             onValueChange={setLayoutValue}
@@ -666,9 +675,9 @@ export default function ProjectSettings() {
         </CardHeader>
         <CardContent className="space-y-4">
           <AddRow
-            items={serversList}
+            items={allServers}
             value={(() => {
-              const server = serversList.find((curr) => curr.id === serverValue);
+              const server = allServers.find((curr) => curr.id === serverValue);
 
               return server?.region ?? '';
             })()}
@@ -710,9 +719,9 @@ export default function ProjectSettings() {
         </CardHeader>
         <CardContent className="space-y-4">
           <AddRow
-            items={projectsList}
+            items={allProjects}
             value={(() => {
-              const project = projectsList.find((curr) => curr.id === projectLinkValue);
+              const project = allProjects.find((curr) => curr.id === projectLinkValue);
 
               return project?.title ?? '';
             })()}

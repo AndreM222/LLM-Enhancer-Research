@@ -5,7 +5,7 @@ import { ChevronRight, Copy, Trash, X } from 'lucide-react';
 import { Button } from '../ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 
-export type Layout = {
+export type LayoutTableData = {
   id: string;
   name: string;
   description: string;
@@ -16,7 +16,7 @@ export function createLayoutsColumns(
   onDelete: (id: string) => void,
   onOpen: (id: string) => void,
   onDuplicate: (id: string) => void
-): ColumnDef<Layout>[] {
+): ColumnDef<LayoutTableData>[] {
   return [
     {
       accessorKey: 'name',
@@ -78,7 +78,7 @@ export function createLayoutsColumns(
 export function linkLayoutColumns(
   onDelete: (id: string) => void,
   onOpen: (id: string) => void
-): ColumnDef<Layout>[] {
+): ColumnDef<LayoutTableData>[] {
   return [
     {
       accessorKey: 'name',

@@ -13,15 +13,15 @@ import { Field } from '@/components/ui/field';
 import { CreateDetectionTable } from '@/components/tables/detection-table';
 import { DetectionSession } from '@/components/tables/detection-columns';
 
-import { getDetectionSessions } from '@/lib/mockApi';
+import { getDetectionSessionsByProject } from '@/lib/mockApi';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { usePathname, useRouter } from 'next/navigation';
-
-const detectionList: DetectionSession[] = getDetectionSessions();
+import { usePathname, useRouter, useParams } from 'next/navigation';
 
 export default function Project() {
   const router = useRouter();
   const pathname = usePathname();
+  const { project } = useParams<{ project: string }>();
+  const detectionList: DetectionSession[] = project ? getDetectionSessionsByProject(project) : [];
 
   return (
     <div className="space-y-6">

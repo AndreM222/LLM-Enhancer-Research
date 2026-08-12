@@ -1,6 +1,6 @@
 'use client';
 
-import { getProjects } from '@/components/project-cards';
+import { Project } from '@/components/project-cards';
 import { ProjectSwitcher } from '@/components/project-switcher';
 import PromptDiff from '@/components/promptDiff';
 import { Badge } from '@/components/ui/badge';
@@ -14,13 +14,13 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { getPrompts } from '@/lib/mockApi';
+import { getProjects, getPrompts } from '@/lib/mockApi';
 import { FaFileExport } from 'react-icons/fa6';
 
 const prompts = getPrompts();
 
 export default function Prompts() {
-  const projects = getProjects();
+  const projects: Project[] = getProjects();
 
   return (
     <div className="space-y-6">

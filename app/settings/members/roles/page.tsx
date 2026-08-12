@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { getRoles, roleSettingsOptions } from '@/lib/mockApi';
+import { getProjects, getRoles, roleSettingsOptions } from '@/lib/mockApi';
 import {
   Dialog,
   DialogContent,
@@ -28,7 +28,7 @@ import { Switch } from '@/components/ui/switch';
 import { CreateRolesTable } from '@/components/tables/roles-table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import LinkGraph from '@/components/linkGraph';
-import { getProjects, Project, ProjectIcon } from '@/components/project-cards';
+import { Project, ProjectIcon } from '@/components/project-cards';
 import { AddRow } from '@/app/[project]/settings/page';
 import { LinkDetectionTable } from '@/components/tables/detection-table';
 import { ScrollArea } from '@/components/ui/scroll-area';

@@ -6,12 +6,12 @@ import { NavItem, PageHeader } from '@/components/app-navigation';
 import * as LucideIcons from 'lucide-react';
 import { IconName } from '@/components/dialogs/project-icon';
 import { Project } from '@/components/project-cards';
-import { getProjectCards } from '@/lib/mockApi';
+import { getProjects } from '@/lib/mockApi';
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const { project, session } = useParams<{ project: string; session: string }>();
 
-  const projects: Project[] = getProjectCards();
+  const projects: Project[] = getProjects();
   const currProject: Project | undefined = projects.find((item) => item.id === project);
 
   const [selectedColor, setSelectedColor] = useState(currProject?.color);

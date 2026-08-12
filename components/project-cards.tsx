@@ -27,18 +27,20 @@ export type Project = {
   icon: IconName;
   color: string;
   usage: Usage[];
+  tagGroupIds?: string[];
+  layoutIds?: string[];
+  userIds?: string[];
+  roleIds?: string[];
+  serverIds?: string[];
+  linkedProjectIds?: string[];
 };
 
-import { getProjectCards } from '@/lib/mockApi';
+import { getProjects } from '@/lib/mockApi';
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 
-const data: Project[] = getProjectCards();
-
-export function getProjects(): Project[] {
-  return data;
-}
+const data: Project[] = getProjects();
 
 export const ProjectIcon = ({
   icon,

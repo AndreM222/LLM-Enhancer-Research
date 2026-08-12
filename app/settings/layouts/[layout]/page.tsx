@@ -49,6 +49,7 @@ import { Separator } from '@/components/ui/separator';
 import { PageHeader } from '@/components/app-navigation';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { toast } from 'sonner';
+import { getSessionsData } from '@/lib/mockApi';
 
 type CaptureMode = 'detection' | 'ocr';
 
@@ -62,35 +63,10 @@ type LayoutStep = {
   mode: CaptureMode;
 };
 
-const INITIAL_STEPS: LayoutStep[] = [
-  {
-    id: 'step-1',
-    position: 1,
-    title: 'Front of package',
-    description: 'Capture the front-facing side of the package.',
-    thumbnail: '',
-    required: true,
-    mode: 'detection',
-  },
-  {
-    id: 'step-2',
-    position: 2,
-    title: 'Barcode and label',
-    description: 'Capture the barcode and printed product information.',
-    thumbnail: '',
-    required: true,
-    mode: 'ocr',
-  },
-  {
-    id: 'step-3',
-    position: 3,
-    title: 'Top view',
-    description: 'Capture the top of the package if visible.',
-    thumbnail: '',
-    required: false,
-    mode: 'detection',
-  },
-];
+export type Layout = {
+  id: string;
+  layoutStep: LayoutStep[];
+};
 
 type StepForm = {
   title: string;
@@ -117,7 +93,7 @@ function getModeDescription(mode: CaptureMode) {
 }
 
 export default function LayoutManager() {
-  const [steps, setSteps] = useState<LayoutStep[]>(INITIAL_STEPS);
+  const [steps, setSteps] = useState<LayoutStep[]>(getSessionsData()[0].layoutStep);
   const [form, setForm] = useState<StepForm>(EMPTY_FORM);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingStepId, setEditingStepId] = useState<string | null>(null);
@@ -189,13 +165,13 @@ export default function LayoutManager() {
         prev.map((s) =>
           s.id === editingStepId
             ? {
-              ...s,
-              title: form.title.trim(),
-              description: form.description.trim(),
-              thumbnail: form.thumbnail.trim(),
-              required: form.required,
-              mode: form.mode,
-            }
+                ...s,
+                title: form.title.trim(),
+                description: form.description.trim(),
+                thumbnail: form.thumbnail.trim(),
+                required: form.required,
+                mode: form.mode,
+              }
             : s
         )
       );

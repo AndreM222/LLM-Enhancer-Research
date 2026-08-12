@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { CalendarDays, Copy, Download, Package, Star, Tag, Users } from 'lucide-react';
+import { CalendarDays, Copy, Download, ImageOff, Package, Star, Tag, Users } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -9,16 +9,22 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { cn } from '@/lib/utils';
 import { getSharedModel } from '@/lib/mockApi';
 import { PageHeader } from '@/components/app-navigation';
+import Image from 'next/image';
 
 const model = getSharedModel();
 
 export default function SharedModel() {
   const [selectedImage, setSelectedImage] = useState(0);
+  const [imgErrorById, setImgErrorById] = useState<Record<string, boolean>>({});
 
   const activeImage = useMemo(
     () => model.previewImages[selectedImage] ?? model.previewImages[0],
     [selectedImage]
   );
+
+  const hasError = ({ index }: { index: number }): boolean => {
+    return !!imgErrorById[index];
+  };
 
   return (
     <div className="space-y-6">
@@ -27,11 +33,20 @@ export default function SharedModel() {
       <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
         <Card className="overflow-hidden">
           <div className="border-b bg-muted/20 p-3">
-            <img
-              src={activeImage}
-              alt={`${model.name} preview ${selectedImage + 1}`}
-              className="h-105 w-full rounded-2xl object-cover"
-            />
+            {hasError({ index: 0 }) ? (
+              <div className="flex items-center justify-center gap-2 text-muted-foreground h-105 w-full rounded-2xl object-cover">
+                <ImageOff className="h-5 w-5" />
+                <span>Image not found</span>
+              </div>
+            ) : (
+              <Image
+                src={activeImage}
+                alt={`${model.name} preview ${selectedImage + 1}`}
+                fill
+                className="h-105 w-full rounded-2xl object-cover"
+                onError={() => setImgErrorById((prev) => ({ ...prev, [0]: true }))}
+              />
+            )}
           </div>
 
           <CardContent className="space-y-3 p-4">
@@ -48,11 +63,20 @@ export default function SharedModel() {
                       : 'border-border'
                   )}
                 >
-                  <img
-                    src={src}
-                    alt={`${model.name} thumbnail ${index + 1}`}
-                    className="h-20 w-full object-cover"
-                  />
+                  {hasError({ index: index }) ? (
+                    <div className="flex items-center justify-center gap-2 text-muted-foreground h-20 w-full rounded-2xl object-cover">
+                      <ImageOff className="h-5 w-5" />
+                    </div>
+                  ) : (
+                    <Image
+                      key={index}
+                      src={src}
+                      alt={`${model.name} thumbnail ${index + 1}`}
+                      fill
+                      className="h-20 w-full object-cover"
+                      onError={() => setImgErrorById((prev) => ({ ...prev, [index]: true }))}
+                    />
+                  )}
                 </button>
               ))}
             </div>

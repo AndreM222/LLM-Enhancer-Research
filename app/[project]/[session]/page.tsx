@@ -34,7 +34,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import { } from '@/components/app-navigation';
+import { useParams } from 'next/navigation';
+import {} from '@/components/app-navigation';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 type Detection = {
@@ -61,11 +62,11 @@ type DeletePhase = 'idle' | 'fill' | 'flash' | 'remove';
 
 const FILTERS: FilterValue[] = ['All', 'Pallet', 'Forklift', 'Person'];
 
-const INITIAL_IMAGES: SessionImage[] = getSessionImages();
-
 export default function Session() {
-  const [images, setImages] = useState(INITIAL_IMAGES);
-  const [activeImageId, setActiveImageId] = useState(INITIAL_IMAGES[0].id);
+  const { session } = useParams<{ project: string; session: string }>();
+  const initialImages = session ? getSessionImages(session) : [];
+  const [images, setImages] = useState<SessionImage[]>(initialImages);
+  const [activeImageId, setActiveImageId] = useState(initialImages[0]?.id ?? '');
   const [sortBy, setSortBy] = useState<SortBy>('index');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
   const [filter, setFilter] = useState<FilterValue>('All');

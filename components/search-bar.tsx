@@ -17,8 +17,9 @@ import { InputGroup, InputGroupAddon } from './ui/input-group';
 import { Kbd, KbdGroup } from './ui/kbd';
 import { getNavigationItems, NavItem } from './app-navigation';
 import { useRouter } from 'next/navigation';
-import { getProjects } from './project-cards';
 import * as LucideIcons from 'lucide-react';
+import { getProjects } from '@/lib/mockApi';
+import { Project } from './project-cards';
 
 const SEARCHBAR_KEYBOARD_SHORTCUT = 'k';
 const CLEAN_COMMAND_SHORTCUT = 'Backspace';
@@ -44,7 +45,7 @@ function getSearchItems(
   };
 
   const setProjects = () => {
-    const projectItems = getProjects();
+    const projectItems: Project[] = getProjects();
 
     if (projectItems.length > 0) {
       let currItem: { group: string; tabs: NavItem[] } = {

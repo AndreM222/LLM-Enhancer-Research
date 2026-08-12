@@ -1,14 +1,14 @@
 'use client';
 
 import { ChartAreaInteractive } from '@/components/charts';
-import { getProjects } from '@/components/project-cards';
+import { Project } from '@/components/project-cards';
 import { ProjectSwitcher } from '@/components/project-switcher';
 import { Correction } from '@/components/tables/correction-columns';
 import { CorrectionsTable } from '@/components/tables/corrections-table';
 import { UsageTable } from '@/components/tables/usage-table';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { getTags } from '@/lib/mockApi';
+import { getProjects, getTags } from '@/lib/mockApi';
 import { useRouter } from 'next/navigation';
 import { FaFileExport } from 'react-icons/fa6';
 
@@ -51,7 +51,7 @@ const MetricItem = ({ label, value, hint }: MetricProps) => (
 );
 
 export default function AnalyticsPage() {
-  const projects = getProjects();
+  const projects: Project[] = getProjects();
   const router = useRouter();
 
   return (

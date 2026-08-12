@@ -1,6 +1,6 @@
 import { Role } from '@/components/tables/roles-columns';
 import { User } from '@/components/tables/users-columns';
-import { Layout } from '@/components/tables/layouts-columns';
+import { LayoutTableData } from '@/components/tables/layouts-columns';
 import { DetectionSession } from '@/components/tables/detection-columns';
 import { Log } from '@/components/tables/logs-columns';
 import { Project } from '@/components/project-cards';
@@ -69,15 +69,37 @@ export type SessionDetection = {
 
 export type SessionImage = {
   id: string;
+  sessionId: string;
   title: string;
   src: string;
   detections: SessionDetection[];
+};
+
+export type LayoutStep = {
+  id: string;
+  position: number;
+  title: string;
+  description: string;
+  thumbnail?: string;
+  required: boolean;
+  mode: 'detection' | 'ocr';
+};
+
+export type SessionLayout = {
+  id: string;
+  layoutStep: LayoutStep[];
 };
 
 export type Workspace = {
   name: string;
   logo: string;
   plan: string;
+};
+
+export type ProjectLinkedSession = {
+  id: string;
+  projectId: string;
+  sessionId: string;
 };
 
 export function notificationAllOptions(): SingleSetting[] {
@@ -332,63 +354,6 @@ export const getPrompts = (): Prompt[] => [
   },
 ];
 
-export const getRoles = (): Role[] => [
-  {
-    id: '124123',
-    name: 'Admin',
-    description: 'Full access to the workspace.',
-    isDefault: false,
-    permissions: ['Manage users', 'Edit prompts', 'View analytics', 'Change settings'],
-  },
-  {
-    id: '124124',
-    name: 'Editor',
-    description: 'Can edit prompts and review corrections.',
-    isDefault: true,
-    permissions: ['Edit prompts', 'Review corrections', 'View analytics'],
-  },
-  {
-    id: '124125',
-    name: 'Viewer',
-    description: 'Read-only access to reports and dashboards.',
-    isDefault: false,
-    permissions: ['View analytics'],
-  },
-];
-
-export const getUsers = (): User[] => [
-  {
-    id: '728ed52f',
-    name: 'David',
-    role: getRoles()[0].name,
-    status: 'SENT',
-    time: '2026-07-07T18:00:00.000Z',
-    username: 'David123',
-    email: 'david@gmail.com',
-    avatar: '',
-  },
-  {
-    id: '731ed57f',
-    name: 'Stephanie',
-    role: getRoles()[1].name,
-    status: 'REJECTED',
-    time: '2026-07-07T17:30:00.000Z',
-    username: 'Stephanie-Flower',
-    email: 'flower@gmail.com',
-    avatar: '',
-  },
-  {
-    id: '728ed54f',
-    name: 'Jerry',
-    role: getRoles()[2].name,
-    status: 'ACCEPTED',
-    time: '2026-07-07T16:45:00.000Z',
-    username: 'jealing2',
-    email: 'jealing@gmail.com',
-    avatar: '',
-  },
-];
-
 export const getMarketplaceFilters = (): string[] => [
   'All',
   'Featured',
@@ -505,7 +470,7 @@ export const getSharedModel = (): SharedModel => ({
   previewImages: ['/session-preview.jpg', '/session-preview.jpg', '/session-preview.jpg'],
 });
 
-export const getProjectTags = (): TagGroup[] => [
+const ALL_TAG_GROUPS: TagGroup[] = [
   {
     id: '1232',
     name: 'Japanese',
@@ -520,11 +485,11 @@ export const getProjectTags = (): TagGroup[] => [
   },
 ];
 
-export const getProjectUsers = (): User[] => [
+const ALL_USERS: User[] = [
   {
     id: '728ed52f',
     name: 'David',
-    role: 'Japan',
+    role: 'Admin',
     status: 'SENT',
     time: '2026-07-07T18:00:00.000Z',
     username: 'David123',
@@ -534,7 +499,7 @@ export const getProjectUsers = (): User[] => [
   {
     id: '731ed57f',
     name: 'Stephanie',
-    role: 'Scratches',
+    role: 'Editor',
     status: 'REJECTED',
     time: '2026-07-07T17:30:00.000Z',
     username: 'Stephanie-Flower',
@@ -544,7 +509,7 @@ export const getProjectUsers = (): User[] => [
   {
     id: '728ed54f',
     name: 'Jerry',
-    role: 'Scratches',
+    role: 'Viewer',
     status: 'ACCEPTED',
     time: '2026-07-07T16:45:00.000Z',
     username: 'jealing2',
@@ -553,7 +518,31 @@ export const getProjectUsers = (): User[] => [
   },
 ];
 
-export const getProjectLayouts = (): Layout[] => [
+const ALL_ROLES: Role[] = [
+  {
+    id: '124123',
+    name: 'Admin',
+    description: 'Full access to the workspace.',
+    isDefault: false,
+    permissions: ['Manage users', 'Edit prompts', 'View analytics', 'Change settings'],
+  },
+  {
+    id: '124124',
+    name: 'Editor',
+    description: 'Can edit prompts and review corrections.',
+    isDefault: true,
+    permissions: ['Edit prompts', 'Review corrections', 'View analytics'],
+  },
+  {
+    id: '124125',
+    name: 'Viewer',
+    description: 'Read-only access to reports and dashboards.',
+    isDefault: false,
+    permissions: ['View analytics'],
+  },
+];
+
+const ALL_LAYOUTS: LayoutTableData[] = [
   {
     id: '1232',
     name: 'Cars',
@@ -568,7 +557,44 @@ export const getProjectLayouts = (): Layout[] => [
   },
 ];
 
-export const getProjectServers = (): ServerActivity[] => [
+const ALL_SESSION_LAYOUTS: SessionLayout[] = [
+  {
+    id: '12312',
+    layoutStep: [
+      {
+        id: 'step-1',
+        position: 1,
+        title: 'Front of package',
+        description: 'Capture the front-facing side of the package.',
+        thumbnail: '',
+        required: true,
+        mode: 'detection',
+      },
+      {
+        id: 'step-2',
+        position: 2,
+        title: 'Barcode and label',
+        description: 'Capture the barcode and printed product information.',
+        thumbnail: '',
+        required: true,
+        mode: 'ocr',
+      },
+      {
+        id: 'step-3',
+        position: 3,
+        title: 'Top view',
+        description: 'Capture the top of the package if visible.',
+        thumbnail: '',
+        required: false,
+        mode: 'detection',
+      },
+    ],
+  },
+];
+
+export const getSessionsData = (): SessionLayout[] => ALL_SESSION_LAYOUTS;
+
+const ALL_SERVERS: ServerActivity[] = [
   {
     id: 'us-east-1',
     region: 'United States East',
@@ -580,11 +606,179 @@ export const getProjectServers = (): ServerActivity[] => [
     lat: 39.0,
     lon: -77.5,
   },
+  {
+    id: 'eu-west-1',
+    region: 'Europe West',
+    countryCode: 'GB',
+    status: 'healthy',
+    requests: 2187,
+    dataTransferred: '6.1 MB',
+    avgResponseMs: 158,
+    lat: 51.5,
+    lon: -0.1,
+  },
 ];
 
-export const getDetectionSessions = (): DetectionSession[] => [
+const ALL_PROJECTS: Project[] = [
+  {
+    id: 'area',
+    title: 'Area',
+    total: 23,
+    state: 'online',
+    description: 'Reducing the detection area for focused car inspections.',
+    model: 'Gemini',
+    icon: 'Folder',
+    color: '#7c3aed',
+    usage: [
+      {
+        id: '1',
+        name: 'Data Usage',
+        description: 'Total data usage of the AI model',
+        usedData: 1.24,
+        maxData: 100,
+        dataType: 'GB',
+      },
+      {
+        id: '2',
+        name: 'Image Optimization',
+        description:
+          'The number of image transformations that were requested from your Deployments.',
+        usedData: 12,
+        maxData: 100,
+        dataType: 'K',
+      },
+      {
+        id: '3',
+        name: 'Fast Memory',
+        description: 'Total memory usage for optimization.',
+        usedData: 12,
+        maxData: 64,
+        dataType: 'GB',
+      },
+      {
+        id: '4',
+        name: 'Fast Memory',
+        description: 'Total memory usage for optimization.',
+        usedData: 12,
+        maxData: 64,
+        dataType: 'GB',
+      },
+    ],
+    tagGroupIds: ['1232'],
+    layoutIds: ['1232'],
+    userIds: ['728ed52f', '728ed54f'],
+    roleIds: ['124123', '124124'],
+    serverIds: ['us-east-1'],
+    linkedProjectIds: ['simple'],
+  },
+  {
+    id: 'simple',
+    title: 'Simple',
+    total: 23,
+    state: 'processing',
+    description: 'Simple parsing rules for clean, minimal detections.',
+    model: 'GPT',
+    icon: 'Globe',
+    color: '#ef4444',
+    usage: [
+      {
+        id: '1',
+        name: 'Data Usage',
+        description: 'Total data usage of the AI model',
+        usedData: 1.24,
+        maxData: 100,
+        dataType: 'GB',
+      },
+      {
+        id: '2',
+        name: 'Image Optimization',
+        description:
+          'The number of image transformations that were requested from your Deployments.',
+        usedData: 12,
+        maxData: 100,
+        dataType: 'K',
+      },
+      {
+        id: '3',
+        name: 'Fast Memory',
+        description: 'Total memory usage for optimization.',
+        usedData: 12,
+        maxData: 64,
+        dataType: 'GB',
+      },
+      {
+        id: '4',
+        name: 'Fast Memory',
+        description: 'Total memory usage for optimization.',
+        usedData: 12,
+        maxData: 64,
+        dataType: 'GB',
+      },
+    ],
+    tagGroupIds: ['1235'],
+    layoutIds: ['1235'],
+    userIds: ['731ed57f'],
+    roleIds: ['124124', '124125'],
+    serverIds: ['eu-west-1'],
+    linkedProjectIds: ['tags'],
+  },
+  {
+    id: 'tags',
+    title: 'Tags',
+    total: 23,
+    state: 'online',
+    description: 'Uses tags to specialize what the project should look for.',
+    model: 'Gemini',
+    icon: 'ClipboardList',
+    color: '#0ea5e9',
+    usage: [
+      {
+        id: '1',
+        name: 'Data Usage',
+        description: 'Total data usage of the AI model',
+        usedData: 1.24,
+        maxData: 100,
+        dataType: 'GB',
+      },
+      {
+        id: '2',
+        name: 'Image Optimization',
+        description:
+          'The number of image transformations that were requested from your Deployments.',
+        usedData: 12,
+        maxData: 100,
+        dataType: 'K',
+      },
+      {
+        id: '3',
+        name: 'Fast Memory',
+        description: 'Total memory usage for optimization.',
+        usedData: 12,
+        maxData: 64,
+        dataType: 'GB',
+      },
+      {
+        id: '4',
+        name: 'Fast Memory',
+        description: 'Total memory usage for optimization.',
+        usedData: 12,
+        maxData: 64,
+        dataType: 'GB',
+      },
+    ],
+    tagGroupIds: ['1232', '1235'],
+    layoutIds: ['1232', '1235'],
+    userIds: ['728ed52f', '731ed57f', '728ed54f'],
+    roleIds: ['124123', '124124', '124125'],
+    serverIds: ['us-east-1', 'eu-west-1'],
+    linkedProjectIds: [],
+  },
+];
+
+const ALL_SESSIONS: DetectionSession[] = [
   {
     id: 'S-1042',
+    projectId: 'area',
     images: 18,
     type: 'People detection',
     detections: 64,
@@ -593,6 +787,7 @@ export const getDetectionSessions = (): DetectionSession[] => [
   },
   {
     id: 'S-1043',
+    projectId: 'area',
     images: 6,
     type: 'Face detection',
     detections: 11,
@@ -601,6 +796,7 @@ export const getDetectionSessions = (): DetectionSession[] => [
   },
   {
     id: 'S-1044',
+    projectId: 'simple',
     images: 24,
     type: 'Vehicle detection',
     detections: 38,
@@ -609,6 +805,7 @@ export const getDetectionSessions = (): DetectionSession[] => [
   },
   {
     id: 'S-1045',
+    projectId: 'tags',
     images: 9,
     type: 'Damage detection',
     detections: 7,
@@ -617,9 +814,10 @@ export const getDetectionSessions = (): DetectionSession[] => [
   },
 ];
 
-export const getSessionImages = (): SessionImage[] => [
+const ALL_IMAGES: SessionImage[] = [
   {
     id: 'img-1',
+    sessionId: 'S-1042',
     title: 'Entrance view',
     src: '/session-preview.jpg',
     detections: [
@@ -631,6 +829,7 @@ export const getSessionImages = (): SessionImage[] => [
   },
   {
     id: 'img-2',
+    sessionId: 'S-1042',
     title: 'Loading dock',
     src: '/session-preview.jpg',
     detections: [
@@ -641,6 +840,7 @@ export const getSessionImages = (): SessionImage[] => [
   },
   {
     id: 'img-3',
+    sessionId: 'S-1043',
     title: 'Storage aisle',
     src: '/session-preview.jpg',
     detections: [
@@ -649,7 +849,145 @@ export const getSessionImages = (): SessionImage[] => [
       { id: '10', index: 2, label: 'Person', confidence: 79, box: { x: 71, y: 20, w: 9, h: 18 } },
     ],
   },
+  {
+    id: 'img-4',
+    sessionId: 'S-1044',
+    title: 'Shared aisle',
+    src: '/session-preview.jpg',
+    detections: [
+      { id: '11', index: 0, label: 'Car', confidence: 84, box: { x: 12, y: 24, w: 42, h: 34 } },
+      { id: '12', index: 1, label: 'Wheel', confidence: 71, box: { x: 54, y: 20, w: 24, h: 18 } },
+    ],
+  },
+  {
+    id: 'img-5',
+    sessionId: 'S-1044',
+    title: 'Roadside view',
+    src: '/session-preview.jpg',
+    detections: [
+      { id: '13', index: 0, label: 'Car', confidence: 60, box: { x: 14, y: 32, w: 28, h: 24 } },
+      { id: '14', index: 1, label: 'Person', confidence: 58, box: { x: 40, y: 28, w: 16, h: 24 } },
+    ],
+  },
+  {
+    id: 'img-6',
+    sessionId: 'S-1045',
+    title: 'Damaged hood',
+    src: '/session-preview.jpg',
+    detections: [
+      { id: '15', index: 0, label: 'Dent', confidence: 71, box: { x: 15, y: 18, w: 25, h: 22 } },
+      { id: '16', index: 1, label: 'Scratch', confidence: 66, box: { x: 48, y: 26, w: 22, h: 18 } },
+    ],
+  },
 ];
+
+export const getProjectTags = (projectId?: string): TagGroup[] => {
+  if (!projectId) {
+    return ALL_TAG_GROUPS;
+  }
+
+  const project = getProjects().find((item) => item.id === projectId);
+  return (
+    project?.tagGroupIds
+      ?.map((id) => ALL_TAG_GROUPS.find((tag) => tag.id === id))
+      .filter((tag): tag is TagGroup => Boolean(tag)) ?? []
+  );
+};
+
+export const getUsers = (): User[] => ALL_USERS;
+
+export const getProjectUsers = (projectId?: string): User[] => {
+  if (!projectId) {
+    return ALL_USERS;
+  }
+
+  const project = getProjects().find((item) => item.id === projectId);
+  return (
+    project?.userIds
+      ?.map((id) => ALL_USERS.find((user) => user.id === id))
+      .filter((user): user is User => Boolean(user)) ?? []
+  );
+};
+
+export const getRoles = (): Role[] => ALL_ROLES;
+
+export const getProjectRoles = (projectId?: string): Role[] => {
+  if (!projectId) {
+    return ALL_ROLES;
+  }
+
+  const project = getProjects().find((item) => item.id === projectId);
+  return (
+    project?.roleIds
+      ?.map((id) => ALL_ROLES.find((role) => role.id === id))
+      .filter((role): role is Role => Boolean(role)) ?? []
+  );
+};
+
+export const getProjectLayouts = (projectId?: string): LayoutTableData[] => {
+  if (!projectId) {
+    return ALL_LAYOUTS;
+  }
+
+  const project = getProjects().find((item) => item.id === projectId);
+  return (
+    project?.layoutIds
+      ?.map((id) => ALL_LAYOUTS.find((layout) => layout.id === id))
+      .filter((layout): layout is LayoutTableData => Boolean(layout)) ?? []
+  );
+};
+
+export const getProjectServers = (projectId?: string): ServerActivity[] => {
+  if (!projectId) {
+    return ALL_SERVERS;
+  }
+
+  const project = getProjects().find((item) => item.id === projectId);
+  return (
+    project?.serverIds
+      ?.map((id) => ALL_SERVERS.find((server) => server.id === id))
+      .filter((server): server is ServerActivity => Boolean(server)) ?? []
+  );
+};
+
+export const getProjects = (): Project[] => ALL_PROJECTS;
+
+export const getProjectById = (projectId: string): Project | undefined =>
+  getProjects().find((item) => item.id === projectId);
+
+export const getProjectLinkedProjects = (projectId: string): Project[] => {
+  const project = getProjectById(projectId);
+  return (
+    project?.linkedProjectIds
+      ?.map((id) => getProjectById(id))
+      .filter((target): target is Project => Boolean(target)) ?? []
+  );
+};
+
+export const getDetectionSessions = (): DetectionSession[] => ALL_SESSIONS;
+
+export const getDetectionSessionsByProject = (projectId: string): DetectionSession[] =>
+  ALL_SESSIONS.filter((session) => session.projectId === projectId);
+
+export const getSessionById = (sessionId: string): DetectionSession | undefined =>
+  ALL_SESSIONS.find((session) => session.id === sessionId);
+
+export const getSessionImages = (sessionId?: string): SessionImage[] =>
+  sessionId ? ALL_IMAGES.filter((image) => image.sessionId === sessionId) : ALL_IMAGES;
+
+export const getProjectSessionImages = (projectId: string): SessionImage[] => {
+  const project = getProjectById(projectId);
+  if (!project) {
+    return [];
+  }
+
+  const availableProjectIds = [project.id, ...(project.linkedProjectIds ?? [])];
+  const sessionIds = ALL_SESSIONS.filter((session) =>
+    availableProjectIds.includes(session.projectId)
+  ).map((session) => session.id);
+
+  return ALL_IMAGES.filter((image) => sessionIds.includes(image.sessionId));
+};
 
 export const getAccountUser = () => ({
   name: 'Jacke Myres',
@@ -743,143 +1081,5 @@ export const getLogs = (): Log[] => [
         reason: 'This field is required.',
       },
     },
-  },
-];
-
-export const getProjectCards = (): Project[] => [
-  {
-    id: 'area',
-    title: 'Area',
-    total: 23,
-    state: 'online',
-    description: 'Reducing the detection area for focused car inspections.',
-    model: 'Gemini',
-    icon: 'Folder',
-    color: '#7c3aed',
-    usage: [
-      {
-        id: '1',
-        name: 'Data Usage',
-        description: 'Total data usage of the AI model',
-        usedData: 1.24,
-        maxData: 100,
-        dataType: 'GB',
-      },
-      {
-        id: '2',
-        name: 'Image Optimization',
-        description:
-          'The number of image transformations that were requested from your Deployments.',
-        usedData: 12,
-        maxData: 100,
-        dataType: 'K',
-      },
-      {
-        id: '3',
-        name: 'Fast Memory',
-        description: 'Total memory usage for optimization.',
-        usedData: 12,
-        maxData: 64,
-        dataType: 'GB',
-      },
-      {
-        id: '4',
-        name: 'Fast Memory',
-        description: 'Total memory usage for optimization.',
-        usedData: 12,
-        maxData: 64,
-        dataType: 'GB',
-      },
-    ],
-  },
-  {
-    id: 'simple',
-    title: 'Simple',
-    total: 23,
-    state: 'processing',
-    description: 'Simple parsing rules for clean, minimal detections.',
-    model: 'GPT',
-    icon: 'Globe',
-    color: '#ef4444',
-    usage: [
-      {
-        id: '1',
-        name: 'Data Usage',
-        description: 'Total data usage of the AI model',
-        usedData: 1.24,
-        maxData: 100,
-        dataType: 'GB',
-      },
-      {
-        id: '2',
-        name: 'Image Optimization',
-        description:
-          'The number of image transformations that were requested from your Deployments.',
-        usedData: 12,
-        maxData: 100,
-        dataType: 'K',
-      },
-      {
-        id: '3',
-        name: 'Fast Memory',
-        description: 'Total memory usage for optimization.',
-        usedData: 12,
-        maxData: 64,
-        dataType: 'GB',
-      },
-      {
-        id: '4',
-        name: 'Fast Memory',
-        description: 'Total memory usage for optimization.',
-        usedData: 12,
-        maxData: 64,
-        dataType: 'GB',
-      },
-    ],
-  },
-  {
-    id: 'tags',
-    title: 'Tags',
-    total: 23,
-    state: 'online',
-    description: 'Uses tags to specialize what the project should look for.',
-    model: 'Gemini',
-    icon: 'ClipboardList',
-    color: '#0ea5e9',
-    usage: [
-      {
-        id: '1',
-        name: 'Data Usage',
-        description: 'Total data usage of the AI model',
-        usedData: 1.24,
-        maxData: 100,
-        dataType: 'GB',
-      },
-      {
-        id: '2',
-        name: 'Image Optimization',
-        description:
-          'The number of image transformations that were requested from your Deployments.',
-        usedData: 12,
-        maxData: 100,
-        dataType: 'K',
-      },
-      {
-        id: '3',
-        name: 'Fast Memory',
-        description: 'Total memory usage for optimization.',
-        usedData: 12,
-        maxData: 64,
-        dataType: 'GB',
-      },
-      {
-        id: '4',
-        name: 'Fast Memory',
-        description: 'Total memory usage for optimization.',
-        usedData: 12,
-        maxData: 64,
-        dataType: 'GB',
-      },
-    ],
   },
 ];

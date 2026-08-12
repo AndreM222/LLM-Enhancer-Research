@@ -1,9 +1,10 @@
 'use client';
 
 import ActivityCanvas, { edgeInput } from '@/components/activity-canvas';
-import { getProjects } from '@/components/project-cards';
+import { Project } from '@/components/project-cards';
 import { ProjectSwitcher } from '@/components/project-switcher';
 import { Button } from '@/components/ui/button';
+import { getProjects } from '@/lib/mockApi';
 import { Edge, Node } from '@xyflow/react';
 import {
   Globe,
@@ -140,7 +141,7 @@ const initialNodes: Node[] = [
 ];
 
 export default function Activity() {
-  const projects = getProjects();
+  const projects: Project[] = getProjects();
 
   return (
     <div className="w-full h-full overflow-hidden space-y-6">

@@ -3,9 +3,10 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProjectSwitcher } from '@/components/project-switcher';
-import { getProjects } from '@/components/project-cards';
+import { Project } from '@/components/project-cards';
 import { Button } from '@/components/ui/button';
 import { FaFileExport } from 'react-icons/fa6';
+import { getProjects } from '@/lib/mockApi';
 
 const TABS = [
   { value: 'global', label: 'Global Activity', href: '/global-data' },
@@ -15,7 +16,7 @@ const TABS = [
 export default function ActivityLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const projects = getProjects();
+  const projects: Project[] = getProjects();
 
   const activeTab = TABS.find((tab) => tab.href === pathname)?.value ?? TABS[0].value;
 
