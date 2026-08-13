@@ -12,6 +12,7 @@ export type LogError = {
 
 export type Log = {
   id: string;
+  serviceId: string;
   request: string;
   type: string;
   status: number;

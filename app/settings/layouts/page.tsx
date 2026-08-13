@@ -15,10 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  getProjectLayouts,
-  getProjectLinks,
-} from '@/lib/mockApi';
+import { getProjectLayouts, getProjectLinks } from '@/lib/mockApi';
 import { usePathname, useRouter } from 'next/navigation';
 
 const data: LayoutTableData[] = getProjectLayouts();

@@ -128,9 +128,11 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
   }
@@ -143,4 +145,15 @@
   font-style: var(--shiki-dark-font-style) !important;
   font-weight: var(--shiki-dark-font-weight) !important;
   text-decoration: var(--shiki-dark-text-decoration) !important;
+}
+
+@keyframes activity-edge-flow {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+.activity-edge-active {
+  stroke-dasharray: 8 6;
+  animation: activity-edge-flow 0.8s linear infinite;
 }

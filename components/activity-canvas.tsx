@@ -21,6 +21,20 @@ import { ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import { useMemo, useState } from 'react';
+import type { Log } from '@/components/tables/logs-columns';
+
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/components/ui/drawer';
+
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const nodeTypes = { service: ServiceNode };
 
@@ -47,49 +61,103 @@ function StepEdge({
   sourceY,
   targetX,
   targetY,
+  data,
 }: {
   id: string;
   sourceX: number;
   sourceY: number;
   targetX: number;
   targetY: number;
+  data?: ActivityEdgeData;
 }) {
   const centerY = (targetY - sourceY) / 2 + sourceY;
-  const path = `M ${sourceX} ${sourceY} L ${sourceX} ${centerY} L ${targetX} ${centerY} L ${targetX} ${targetY}`;
-  return <BaseEdge id={id} path={path} />;
+
+  const path = [
+    `M ${sourceX} ${sourceY}`,
+    `L ${sourceX} ${centerY}`,
+    `L ${targetX} ${centerY}`,
+    `L ${targetX} ${targetY}`,
+  ].join(' ');
+
+  const active = data?.active === true;
+
+  return (
+    <BaseEdge
+      id={id}
+      path={path}
+      className={active ? 'activity-edge-active' : undefined}
+      style={{
+        stroke: active
+          ? '#22c55e'
+          : 'var(--border, #94a3b8)',
+        strokeWidth: active ? 2.5 : 1.5,
+        strokeOpacity: active ? 1 : 0.85,
+      }}
+    />
+  );
 }
 
 const edgeTypes = { step: StepEdge };
 
+export type ActivityEdgeData = {
+  active?: boolean;
+  label?: string;
+};
+
 export function edgeInput(
   id: string,
   source: string,
-  sh: string,
+  sourceHandle: string,
   target: string,
-  th: string,
-  animated = true,
+  targetHandle: string,
+  active = false,
   label?: string
-): Edge {
-  return { id, source, sourceHandle: sh, target, targetHandle: th, type: 'step', animated, label };
+): Edge<ActivityEdgeData> {
+  return {
+    id,
+    source,
+    sourceHandle,
+    target,
+    targetHandle,
+    type: 'step',
+    animated: active,
+    data: {
+      active,
+      label,
+    },
+  };
 }
 
 export default function ActivityCanvas({
   initialNodes,
   initialEdges,
+  logs,
   className,
   ...props
 }: React.ComponentProps<'div'> & {
   initialNodes: Node[];
-  initialEdges: Edge[];
+  initialEdges: Edge<ActivityEdgeData>[];
+  logs: Log[];
 }) {
   const { resolvedTheme } = useTheme();
   const [nodes, , onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
+  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+
+  const selectedLogs = useMemo(() => {
+    if (!selectedNode) {
+      return [];
+    }
+
+    return logs.filter((log) => log.serviceId === selectedNode.id);
+  }, [logs, selectedNode]);
+
   const onConnect = useCallback(
     (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
     [setEdges]
   );
+
 
   return (
     <div className={cn('h-full w-full', className)} {...props}>
@@ -97,21 +165,107 @@ export default function ActivityCanvas({
         nodes={nodes}
         edges={edges}
         edgeTypes={edgeTypes}
+        nodeTypes={nodeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        style={{ backgroundColor: 'var(--card)' }}
-        nodeTypes={nodeTypes}
+        onNodeClick={(_, node) => setSelectedNode(node)}
+        style={{ backgroundColor: 'hsl(var(--card))' }}
         fitView
         colorMode={resolvedTheme === 'dark' ? 'dark' : 'light'}
         className="rounded-3xl border"
-        suppressHydrationWarning
       >
         <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="#333" />
+
         <Panel position="bottom-left">
           <FlowControls />
         </Panel>
       </ReactFlow>
+
+      <Drawer
+        open={!!selectedNode}
+        onOpenChange={(open) => {
+          if (!open) setSelectedNode(null);
+        }}
+        direction="right"
+      >
+        <DrawerContent>
+          <div className="mx-auto w-full max-w-3xl">
+            <DrawerHeader>
+              <DrawerTitle>
+                {String(selectedNode?.data?.name ?? selectedNode?.id ?? 'Activity')}
+              </DrawerTitle>
+              <DrawerDescription>
+                Logs created by this service in the current project.
+              </DrawerDescription>
+            </DrawerHeader>
+
+            <ScrollArea className="max-h-[65vh] px-6 pb-8">
+              {selectedLogs.length === 0 ? (
+                <div className="rounded-lg border border-dashed p-8 text-center">
+                  <p className="font-medium">No logs found</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    No activity has been recorded for this service.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {selectedLogs.map((log) => (
+                    <div
+                      key={log.id}
+                      className="rounded-xl border p-4 max-w-80 justify-self-center"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex min-w-0 items-center gap-2">
+                          <Badge variant="outline">{log.type}</Badge>
+                          <code className="truncate text-sm">{log.request}</code>
+                        </div>
+
+                        <Badge
+                          variant={
+                            log.status >= 500
+                              ? 'destructive'
+                              : log.status >= 400
+                                ? 'secondary'
+                                : 'default'
+                          }
+                        >
+                          {log.status}
+                        </Badge>
+                      </div>
+
+                      <p className="mt-3 text-xs text-muted-foreground">
+                        {new Date(log.time).toLocaleString()}
+                      </p>
+
+                      {log.response !== undefined && (
+                        <>
+                          <Separator className="my-4" />
+                          <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                            Response
+                          </p>
+                          <pre className="overflow-x-auto rounded-lg bg-muted p-3 text-xs">
+                            {JSON.stringify(log.response, null, 2)}
+                          </pre>
+                        </>
+                      )}
+
+                      {log.error && (
+                        <div className="mt-4 rounded-lg border border-destructive/30 bg-destructive/10 p-3">
+                          <p className="text-sm font-medium text-destructive">
+                            {log.error.code ?? 'Request error'}
+                          </p>
+                          <p className="mt-1 text-sm text-muted-foreground">{log.error.message}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </ScrollArea>
+          </div>
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 }

@@ -19,10 +19,11 @@ import {
   FlaskConical,
 } from 'lucide-react';
 import { FaFileExport } from 'react-icons/fa6';
+import { getLogs } from '@/lib/mockApi';
 
 const initialEdges: Edge[] = [
   // User uploads photo → Frontend → API
-  edgeInput('fe-api', 'frontend', 'right', 'api', 'left'),
+  edgeInput('fe-api', 'frontend', 'right', 'api', 'left', true),
   // Frontend hosts the canvas editor
   edgeInput('fe-canvas', 'frontend', 'bottom', 'canvas', 'top'),
   // Canvas (corrected boxes) → API saves correction
@@ -142,17 +143,25 @@ const initialNodes: Node[] = [
 
 export default function Activity() {
   const projects: Project[] = getProjects();
+  const logs = getLogs();
 
   return (
-    <div className="w-full h-full overflow-hidden space-y-6">
+    <div className="h-full w-full space-y-6 overflow-hidden">
       <div className="flex items-center justify-between gap-4">
         <ProjectSwitcher projects={projects} />
-        <Button variant="outline" title="Export analytics">
+
+        <Button variant="outline" title="Export activity">
           <FaFileExport className="mr-2 h-4 w-4" />
           Export
         </Button>
       </div>
-      <ActivityCanvas initialEdges={initialEdges} initialNodes={initialNodes} className="h-180" />
+
+      <ActivityCanvas
+        initialEdges={initialEdges}
+        initialNodes={initialNodes}
+        logs={logs}
+        className="h-180"
+      />
     </div>
   );
 }

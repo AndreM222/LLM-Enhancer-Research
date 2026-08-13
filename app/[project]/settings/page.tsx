@@ -298,7 +298,7 @@ function LayerCard({
             pageSize={4}
             data={layer.tags}
             onDelete={(id) => onRemoveTag(layer.id, id)}
-            onOpen={() => { }}
+            onOpen={() => {}}
           />
         </CardContent>
       </Card>
