@@ -15,7 +15,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { getGraphGroups, getGraphLinks, getGraphNodes, getProjectLayouts } from '@/lib/mockApi';
+import {
+  getProjectLayouts,
+  getProjectLinks,
+} from '@/lib/mockApi';
 import { usePathname, useRouter } from 'next/navigation';
 
 const data: LayoutTableData[] = getProjectLayouts();
@@ -23,6 +26,8 @@ const data: LayoutTableData[] = getProjectLayouts();
 export default function Layouts() {
   const pathname = usePathname();
   const router = useRouter();
+
+  const { nodes, groups, links } = getProjectLinks(undefined, 'layout');
 
   const handleCreate = (input: LayoutInput) => {
     console.log('Creating layout:', input);
@@ -72,7 +77,7 @@ export default function Layouts() {
         </CardContent>
       </Card>
 
-      <LinkGraph nodes={getGraphNodes()} groups={getGraphGroups()} links={getGraphLinks()} />
+      <LinkGraph nodes={nodes} groups={groups} links={links} />
     </div>
   );
 }

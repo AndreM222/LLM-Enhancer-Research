@@ -32,9 +32,7 @@ import {
   getModelOptions,
   getRoles,
   getProjects,
-  getGraphGroups,
-  getGraphLinks,
-  getGraphNodes,
+  getProjectLinks,
 } from '@/lib/mockApi';
 import { LinkServerTable } from '@/components/tables/global-table';
 import { ServerActivity, ServerIndicator } from '@/components/tables/global-columns';
@@ -300,7 +298,7 @@ function LayerCard({
             pageSize={4}
             data={layer.tags}
             onDelete={(id) => onRemoveTag(layer.id, id)}
-            onOpen={() => {}}
+            onOpen={() => { }}
           />
         </CardContent>
       </Card>
@@ -311,6 +309,7 @@ function LayerCard({
 export default function ProjectSettings() {
   const router = useRouter();
   const { project } = useParams<{ project: string }>();
+  const { nodes, groups, links } = getProjectLinks(project);
   const allUsers: User[] = getUsers();
   const allRoles: Role[] = getRoles();
   const allLayouts: LayoutTableData[] = getProjectLayouts();
@@ -352,7 +351,7 @@ export default function ProjectSettings() {
   const [projectLinkValue, setProjectLinkValue] = useState('');
 
   const [deleteConfirm, setDeleteConfirm] = useState('');
-  const canDelete = deleteConfirm === projectItems?.title;
+  const canDelete = deleteConfirm === projectItems?.name;
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const handleDeleteProject = () => {
@@ -481,7 +480,7 @@ export default function ProjectSettings() {
             <Label htmlFor="project-name">Project name</Label>
             <Input
               id="project-name"
-              placeholder={projectItems?.title}
+              placeholder={projectItems?.name}
               value={projectName}
               onChange={(e) => setProjectName(e.target.value)}
               maxLength={32}
@@ -726,7 +725,7 @@ export default function ProjectSettings() {
             value={(() => {
               const project = allProjects.find((curr) => curr.id === projectLinkValue);
 
-              return project?.title ?? '';
+              return project?.name ?? '';
             })()}
             onValueChange={setProjectLinkValue}
             placeholder="Search projects..."
@@ -736,13 +735,13 @@ export default function ProjectSettings() {
                 return;
               setProjectLinks((prev) => [...prev, selectedProjectLink]);
               setProjectLinkValue('');
-              toast.success(`${selectedProjectLink.title} linked.`);
+              toast.success(`${selectedProjectLink.name} linked.`);
             }}
             renderItem={(p) => (
               <span className="flex items-center gap-2">
                 <ProjectIcon icon={p.icon} color={p.color} className="w-6 h-6 rounded-md" />
                 <span className="flex flex-col">
-                  <span>{p.title}</span>
+                  <span>{p.name}</span>
                   <span className="text-xs text-muted-foreground">{p.description}</span>
                 </span>
               </span>
@@ -768,14 +767,14 @@ export default function ProjectSettings() {
         <CardContent>
           <Input
             type="text"
-            placeholder={projectItems?.title}
+            placeholder={projectItems?.name}
             value={deleteConfirm}
             onChange={(e) => setDeleteConfirm(e.target.value)}
           />
         </CardContent>
         <CardFooter className="justify-between">
           <CardDescription>
-            Type <b>{projectItems?.title}</b> to confirm deletion.
+            Type <b>{projectItems?.name}</b> to confirm deletion.
           </CardDescription>
           <Button variant="destructive" disabled={!canDelete} onClick={handleDeleteProject}>
             Delete Project
@@ -786,7 +785,7 @@ export default function ProjectSettings() {
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This will permanently delete <b>{projectItems?.title}</b>'s project and all
+                  This will permanently delete <b>{projectItems?.name}</b>'s project and all
                   associated data. This action cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
@@ -796,7 +795,7 @@ export default function ProjectSettings() {
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   onClick={handleConfirmDelete}
                 >
-                  Yes, delete project {projectItems?.title}
+                  Yes, delete project {projectItems?.name}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -804,7 +803,7 @@ export default function ProjectSettings() {
         </CardFooter>
       </Card>
 
-      <LinkGraph nodes={getGraphNodes()} groups={getGraphGroups()} links={getGraphLinks()} />
+      <LinkGraph nodes={nodes} groups={groups} links={links} />
     </div>
   );
 }

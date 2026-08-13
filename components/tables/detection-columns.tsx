@@ -113,7 +113,7 @@ export function linkedDetectionColumns(
       accessorKey: 'title',
       header: 'Title',
       cell: ({ row }) => {
-        const { title, icon, color } = row.original;
+        const { name: title, icon, color } = row.original;
 
         return (
           <div className="flex items-center gap-2">

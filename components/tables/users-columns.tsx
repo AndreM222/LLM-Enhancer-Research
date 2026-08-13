@@ -10,7 +10,7 @@ import { AccountPicture } from '../account-banner';
 export type User = {
   id: string;
   status: string;
-  role: string;
+  roleId: string;
   name: string;
   username: string;
   email: string;
@@ -129,7 +129,7 @@ export function usersListColumns(
       accessorKey: 'role',
       header: 'Role',
       cell: ({ row }) => {
-        const { role } = row.original;
+        const { roleId: role } = row.original;
 
         return <Badge variant="outline">{role}</Badge>;
       },

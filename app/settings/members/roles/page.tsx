@@ -5,9 +5,7 @@ import { toast } from 'sonner';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import {
-  getGraphGroups,
-  getGraphLinks,
-  getGraphNodes,
+  getProjectLinks,
   getProjects,
   getRoles,
   roleSettingsOptions,
@@ -173,7 +171,7 @@ function RoleDialog({
                   value={(() => {
                     const project = projectsList.find((curr) => curr.id === projectLinkValue);
 
-                    return project?.title ?? '';
+                    return project?.name ?? '';
                   })()}
                   onValueChange={setProjectLinkValue}
                   placeholder="Search projects..."
@@ -186,13 +184,13 @@ function RoleDialog({
                       return;
                     setProjectLinks((prev) => [...prev, selectedProjectLink]);
                     setProjectLinkValue('');
-                    toast.success(`${selectedProjectLink.title} linked.`);
+                    toast.success(`${selectedProjectLink.name} linked.`);
                   }}
                   renderItem={(p) => (
                     <span className="flex items-center gap-2">
                       <ProjectIcon icon={p.icon} color={p.color} className="w-6 h-6 rounded-md" />
                       <span className="flex flex-col">
-                        <span>{p.title}</span>
+                        <span>{p.name}</span>
                         <span className="text-xs text-muted-foreground">{p.description}</span>
                       </span>
                     </span>
@@ -236,6 +234,8 @@ export default function Members() {
 
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const { nodes, groups, links } = getProjectLinks(undefined, 'roles');
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -307,7 +307,7 @@ export default function Members() {
         </CardContent>
       </Card>
 
-      <LinkGraph nodes={getGraphNodes()} groups={getGraphGroups()} links={getGraphLinks()} />
+      <LinkGraph nodes={nodes} groups={groups} links={links} />
 
       <RoleDialog
         open={createOpen}

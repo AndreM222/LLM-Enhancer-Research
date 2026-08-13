@@ -38,9 +38,9 @@ export function ProjectBanner({ project, size = 'sm' }: { project: Project; size
     <div className="flex items-center gap-3">
       <Avatar className={cn('m-[-7]', s.avatar)}>
         <AvatarImage src="" alt="shadcn" />
-        <AvatarFallback className={cn(s.name)}>{pictureFallback(project.title)}</AvatarFallback>
+        <AvatarFallback className={cn(s.name)}>{pictureFallback(project.name)}</AvatarFallback>
       </Avatar>
-      <span className={cn('truncate font-medium', s.name)}>{project.title}</span>
+      <span className={cn('truncate font-medium', s.name)}>{project.name}</span>
     </div>
   );
 }
@@ -73,7 +73,7 @@ export function ProjectSwitcher({ projects: projects }: { projects: Project[] })
                 className="h-10 w-10 rounded-xl"
               />
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{activeProject.title}</span>
+                <span className="truncate font-medium">{activeProject.name}</span>
                 <span className="truncate text-xs text-gray-500">
                   {truncateText(activeProject.description, 30)}
                 </span>
@@ -93,7 +93,7 @@ export function ProjectSwitcher({ projects: projects }: { projects: Project[] })
             {projects.map((team, index) => {
               return (
                 <DropdownMenuItem
-                  key={team.title}
+                  key={team.name}
                   onClick={() => setActiveProject(team)}
                   className="gap-2 p-2"
                 >
@@ -103,7 +103,7 @@ export function ProjectSwitcher({ projects: projects }: { projects: Project[] })
                     className="rounded-xl h-10 w-10"
                   />
                   <div>
-                    {team.title}
+                    {team.name}
                     <div className="truncate text-xs text-gray-500">
                       {truncateText(activeProject.description, 30)}
                     </div>

@@ -9,7 +9,7 @@ import { TagGroup } from '@/components/tables/tags-columns';
 import { ServerActivity } from '@/components/tables/global-columns';
 import { SingleSetting } from '@/components/tables/settings-columns';
 import { Invoice } from '@/components/tables/invoice-table';
-import { GraphLink, GraphNode, NodeCategory } from '@/components/linkGraph';
+import { GraphLink, GraphNode, NodeCategory as GraphGroups } from '@/components/linkGraph';
 
 export type UsageItem = {
   label: string;
@@ -473,13 +473,13 @@ export const getSharedModel = (): SharedModel => ({
 
 const ALL_TAG_GROUPS: TagGroup[] = [
   {
-    id: '1232',
+    id: 'japanese-1',
     name: 'Japanese',
     description: 'Japanese stuff',
     total: 23,
   },
   {
-    id: '1235',
+    id: 'scratches-1',
     name: 'Scratches',
     description: 'Scratches stuff',
     total: 9,
@@ -490,7 +490,7 @@ const ALL_USERS: User[] = [
   {
     id: '728ed52f',
     name: 'David',
-    role: 'Admin',
+    roleId: '124123',
     status: 'SENT',
     time: '2026-07-07T18:00:00.000Z',
     username: 'David123',
@@ -500,7 +500,7 @@ const ALL_USERS: User[] = [
   {
     id: '731ed57f',
     name: 'Stephanie',
-    role: 'Editor',
+    roleId: '124124',
     status: 'REJECTED',
     time: '2026-07-07T17:30:00.000Z',
     username: 'Stephanie-Flower',
@@ -510,7 +510,7 @@ const ALL_USERS: User[] = [
   {
     id: '728ed54f',
     name: 'Jerry',
-    role: 'Viewer',
+    roleId: '124125',
     status: 'ACCEPTED',
     time: '2026-07-07T16:45:00.000Z',
     username: 'jealing2',
@@ -623,7 +623,7 @@ const ALL_SERVERS: ServerActivity[] = [
 const ALL_PROJECTS: Project[] = [
   {
     id: 'area',
-    title: 'Area',
+    name: 'Area',
     total: 23,
     state: 'online',
     description: 'Reducing the detection area for focused car inspections.',
@@ -665,7 +665,7 @@ const ALL_PROJECTS: Project[] = [
         dataType: 'GB',
       },
     ],
-    tagGroupIds: ['1232'],
+    tagGroupIds: ['japanese-1'],
     layoutIds: ['1232'],
     userIds: ['728ed52f', '728ed54f'],
     roleIds: ['124123', '124124'],
@@ -674,7 +674,7 @@ const ALL_PROJECTS: Project[] = [
   },
   {
     id: 'simple',
-    title: 'Simple',
+    name: 'Simple',
     total: 23,
     state: 'processing',
     description: 'Simple parsing rules for clean, minimal detections.',
@@ -716,7 +716,7 @@ const ALL_PROJECTS: Project[] = [
         dataType: 'GB',
       },
     ],
-    tagGroupIds: ['1235'],
+    tagGroupIds: ['scratches-1'],
     layoutIds: ['1235'],
     userIds: ['731ed57f'],
     roleIds: ['124124', '124125'],
@@ -725,7 +725,7 @@ const ALL_PROJECTS: Project[] = [
   },
   {
     id: 'tags',
-    title: 'Tags',
+    name: 'Tags',
     total: 23,
     state: 'online',
     description: 'Uses tags to specialize what the project should look for.',
@@ -881,6 +881,178 @@ const ALL_IMAGES: SessionImage[] = [
     ],
   },
 ];
+
+export const getAllNodes = (groupId?: string, projectId?: string): GraphNode[] => {
+  const project = projectId ? getProjectById(projectId) : undefined;
+
+  const connectedIds = project
+    ? new Set([
+        ...(project.tagGroupIds ?? []),
+        ...(project.layoutIds ?? []),
+        ...(project.roleIds ?? []),
+        ...(project.userIds ?? []),
+        ...(project.serverIds ?? []),
+        ...(project.linkedProjectIds ?? []),
+        project.id,
+      ])
+    : null;
+
+  const keep = (id: string) => {
+    return !connectedIds || connectedIds.has(id);
+  };
+
+  const connectedUserIds = project
+    ? new Set(project.userIds ?? [])
+    : new Set(ALL_USERS.map((user) => user.id));
+
+  const rolesFromUsers = new Set(
+    ALL_USERS.filter((user) => connectedUserIds.has(user.id))
+      .map((user) => user.roleId)
+      .filter((roleId): roleId is string => Boolean(roleId))
+  );
+
+  const relatedRoleIds = new Set([...(project?.roleIds ?? []), ...rolesFromUsers]);
+
+  const nodes: GraphNode[] = [];
+
+  ALL_PROJECTS.filter((item) => keep(item.id)).forEach((item) => {
+    nodes.push({
+      id: item.id,
+      label: item.name,
+      group: 'project',
+      radius: 20,
+    });
+  });
+
+  if (!groupId || groupId === 'tags') {
+    ALL_TAG_GROUPS.filter((item) => keep(item.id)).forEach((item) => {
+      nodes.push({
+        id: item.id,
+        label: item.name,
+        group: 'tags',
+        radius: 12,
+      });
+    });
+  }
+
+  if (!groupId || groupId === 'layout') {
+    ALL_LAYOUTS.filter((item) => keep(item.id)).forEach((item) => {
+      nodes.push({
+        id: item.id,
+        label: item.name,
+        group: 'layout',
+        radius: 18,
+      });
+    });
+  }
+
+  if (!groupId || groupId === 'roles' || groupId === 'users') {
+    ALL_ROLES.filter((role) => {
+      return keep(role.id) || relatedRoleIds.has(role.id);
+    }).forEach((role) => {
+      nodes.push({
+        id: role.id,
+        label: role.name,
+        group: 'roles',
+        radius: 16,
+      });
+    });
+  }
+
+  if (!groupId || groupId === 'users' || groupId === 'roles') {
+    ALL_USERS.filter((user) => {
+      if (!project) {
+        return true;
+      }
+
+      return keep(user.id);
+    }).forEach((user) => {
+      nodes.push({
+        id: user.id,
+        label: user.name,
+        group: 'users',
+        radius: 14,
+      });
+    });
+  }
+
+  return nodes;
+};
+
+export const getAllLinks = (projectId?: string): GraphLink[] => {
+  const links: GraphLink[] = [];
+
+  const projectFiltered: Project[] = projectId
+    ? ([getProjectById(projectId)].filter(Boolean) as Project[])
+    : ALL_PROJECTS;
+
+  const pushLinks = (srcId: string, projects: Project[]) => {
+    projects.forEach((project) => {
+      links.push({ source: srcId, target: project.id });
+    });
+  };
+
+  ALL_TAG_GROUPS.forEach((item) => {
+    pushLinks(
+      item.id,
+      projectFiltered.filter((p) => p.tagGroupIds?.includes(item.id))
+    );
+  });
+
+  ALL_LAYOUTS.forEach((item) => {
+    pushLinks(
+      item.id,
+      projectFiltered.filter((p) => p.layoutIds?.includes(item.id))
+    );
+  });
+
+  ALL_ROLES.forEach((item) => {
+    pushLinks(
+      item.id,
+      projectFiltered.filter((p) => p.roleIds?.includes(item.id))
+    );
+  });
+
+  ALL_USERS.forEach((item) => {
+    pushLinks(
+      item.id,
+      projectFiltered.filter((p) => p.userIds?.includes(item.id))
+    );
+
+    if (item.roleId) links.push({ source: item.id, target: item.roleId });
+  });
+
+  projectFiltered.forEach((item) => {
+    item.linkedProjectIds?.forEach((linkedId) => {
+      links.push({ source: item.id, target: linkedId });
+    });
+  });
+
+  return links;
+};
+
+export const getProjectLinks = (
+  projectId?: string,
+  groupId?: string
+): {
+  nodes: GraphNode[];
+  links: GraphLink[];
+  groups: GraphGroups[];
+} => {
+  const nodes = getAllNodes(groupId, projectId);
+  const links = getAllLinks(projectId);
+
+  const nodeIds = new Set(nodes.map((n) => n.id));
+  const safeLinks = links.filter(
+    (l) => nodeIds.has(l.source as string) && nodeIds.has(l.target as string)
+  );
+
+  return {
+    nodes,
+    links: safeLinks,
+    groups: getAllGraphGroups(),
+  };
+};
 
 export const getProjectTags = (projectId?: string): TagGroup[] => {
   if (!projectId) {
@@ -1045,7 +1217,7 @@ export const getGraphLinks = (): GraphLink[] => [
   { source: 'image-store', target: 'detection' },
 ];
 
-export const getGraphGroups = (): NodeCategory[] => [
+export const getAllGraphGroups = (): GraphGroups[] => [
   {
     id: 'tags',
     color: '#7c6aed',

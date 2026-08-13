@@ -122,8 +122,8 @@ export default function LinkGraph({
       .data(filteredLinks)
       .join('line')
       .attr('stroke', 'currentColor')
-      .attr('stroke-opacity', 0.8)
-      .attr('stroke-width', 1.2)
+      .attr('stroke-opacity', 1)
+      .attr('stroke-width', 1.5)
       .attr('pointer-events', 'none');
 
     const nodeG = g

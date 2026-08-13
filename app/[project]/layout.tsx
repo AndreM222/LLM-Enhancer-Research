@@ -37,7 +37,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             ? session?.length > 0
               ? session.toUpperCase()
               : ''
-            : (currProject?.title ?? project?.charAt(0).toUpperCase() + project.slice(1))
+            : (currProject?.name ?? project?.charAt(0).toUpperCase() + project.slice(1))
         }
         setDescription={
           session

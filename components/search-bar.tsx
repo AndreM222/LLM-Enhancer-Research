@@ -56,7 +56,7 @@ function getSearchItems(
       projectItems.map((item) => {
         const CurrIcon = LucideIcons[item.icon] as React.ComponentType<{ className?: string }>;
         currItem.tabs.push({
-          title: item.title,
+          title: item.name,
           description: item.description,
           url: `/${item.id}`,
           icon: <CurrIcon />,

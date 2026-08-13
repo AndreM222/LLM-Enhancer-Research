@@ -37,7 +37,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 type Props = {
   existingUsers: User[];
-  onInvite: (user: User | { emailOrUsername: string; role: string }) => void;
+  onInvite: (user: User | { emailOrUsername: string; roleId: string }) => void;
   onEditRole?: (user: User, newRole: string) => void;
   trigger?: React.ReactNode;
 };
@@ -81,7 +81,7 @@ export function InviteUserDialog({ existingUsers, onInvite, onEditRole, trigger 
 
   const handleInviteNewUser = () => {
     if (!isValidEmail) return;
-    onInvite({ emailOrUsername: trimmedQuery, role });
+    onInvite({ emailOrUsername: trimmedQuery, roleId: role });
     setOpen(false);
   };
 

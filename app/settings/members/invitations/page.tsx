@@ -47,7 +47,7 @@ const mockUsers: User[] = userData.map((user) => ({
   email: user.email,
   avatar: user.avatar,
   time: user.time,
-  role: (user.role as string) ?? 'MEMBER',
+  roleId: (user.roleId as string) ?? 'MEMBER',
 }));
 
 function statusVariant(status: string) {
@@ -81,7 +81,7 @@ export default function Members() {
         !q ||
         u.email?.toLowerCase().includes(q) ||
         u.name?.toLowerCase().includes(q) ||
-        u.role?.toLowerCase().includes(q);
+        u.roleId?.toLowerCase().includes(q);
       return matchesStatus && matchesSearch;
     });
   }, [users, search, statusFilter]);
@@ -110,14 +110,14 @@ export default function Members() {
     toast.success(`Invitation to ${user?.email ?? deleteId} deleted.`);
   };
 
-  const handleInvite = (payload: User | { emailOrUsername: string; role: string }) => {
+  const handleInvite = (payload: User | { emailOrUsername: string; roleId: string }) => {
     if ('emailOrUsername' in payload) {
       const newUser: User = {
         id: `inv-${Date.now()}`,
         email: payload.emailOrUsername,
         name: payload.emailOrUsername,
         username: payload.emailOrUsername,
-        role: payload.role,
+        roleId: payload.roleId,
         status: 'SENT',
         avatar: '',
         time: new Date().toISOString(),
@@ -129,7 +129,9 @@ export default function Members() {
 
   const handleEditRole = (user: User, newRole: string) => {
     setUsers((prev) =>
-      prev.map((u) => (u.id === user.id ? { ...u, role: newRole as unknown as User['role'] } : u))
+      prev.map((u) =>
+        u.id === user.id ? { ...u, roleId: newRole as unknown as User['roleId'] } : u
+      )
     );
     toast.success(`Role updated to ${newRole} for ${user.email}.`);
   };
@@ -212,7 +214,7 @@ export default function Members() {
 
                 <div className="space-y-1">
                   <p className="text-xs text-muted-foreground">Role</p>
-                  <p className="font-medium">{openUser.role ?? '—'}</p>
+                  <p className="font-medium">{openUser.roleId ?? '—'}</p>
                 </div>
 
                 <div className="space-y-1">

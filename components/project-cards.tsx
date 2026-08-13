@@ -19,7 +19,7 @@ import { Usage } from './tables/usage-columns';
 
 export type Project = {
   id: string;
-  title: string;
+  name: string;
   total: number;
   state: string;
   description: string;
@@ -73,7 +73,7 @@ const ProjectCard = ({ item }: { item: Project }) => {
               <div className="flex gap-2 items-center">
                 <ProjectIcon color={item.color} icon={item.icon} />
 
-                <CardTitle className="text-xl">{item.title}</CardTitle>
+                <CardTitle className="text-xl">{item.name}</CardTitle>
               </div>
               <CardDescription className="mt-1 line-clamp-2">{item.description}</CardDescription>
             </div>

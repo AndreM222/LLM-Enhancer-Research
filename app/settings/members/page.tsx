@@ -32,11 +32,12 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { getGraphGroups, getGraphLinks, getGraphNodes, getRoles, getUsers } from '@/lib/mockApi';
+import { getProjectLinks, getRoles, getUsers } from '@/lib/mockApi';
 import { User } from '@/components/tables/users-columns';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import LinkGraph from '@/components/linkGraph';
 import { AccountBanner } from '@/components/account-banner';
+import { Role } from './roles/page';
 
 const userData: User[] = getUsers();
 
@@ -44,31 +45,30 @@ export default function Members() {
   const [users, setUsers] = useState<User[]>(userData);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('none');
-  const roles = getRoles();
+  const roles: Role[] = getRoles();
 
-  // edit role dialog
+  const { nodes, groups, links } = getProjectLinks(undefined, 'users');
+
   const [editOpen, setEditOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [selectedRole, setSelectedRole] = useState(roles.at(0)?.name);
 
-  // delete confirm
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  // suspend confirm
   const [suspendOpen, setSuspendOpen] = useState(false);
   const [suspendingId, setSuspendingId] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
     return users.filter((u) => {
       const matchesRole =
-        roleFilter === 'none' || roles.find((r) => r.id === roleFilter)?.name === u.role;
+        roleFilter === 'none' || roles.find((r) => r.id === roleFilter)?.name === u.roleId;
       const q = search.trim().toLowerCase();
       const matchesSearch =
         !q ||
         u.name?.toLowerCase().includes(q) ||
         u.email?.toLowerCase().includes(q) ||
-        u.role?.toLowerCase().includes(q);
+        u.roleId?.toLowerCase().includes(q);
       return matchesRole && matchesSearch;
     });
   }, [users, search, roleFilter, roles]);
@@ -78,7 +78,7 @@ export default function Members() {
     const user = users.find((u) => u.id === id);
     if (!user) return;
     setEditingUser(user);
-    setSelectedRole((user.role as string) ?? roles.at(0)?.name);
+    setSelectedRole((user.roleId as string) ?? roles.at(0)?.name);
     setEditOpen(true);
   };
 
@@ -86,7 +86,7 @@ export default function Members() {
     if (!editingUser || !selectedRole) return;
     setUsers((prev) =>
       prev.map((u) =>
-        u.id === editingUser.id ? { ...u, role: selectedRole as unknown as User['role'] } : u
+        u.id === editingUser.id ? { ...u, roleId: selectedRole as unknown as User['roleId'] } : u
       )
     );
     toast.success(`Role updated to ${selectedRole} for ${editingUser.name}.`);
@@ -179,9 +179,8 @@ export default function Members() {
         </CardContent>
       </Card>
 
-      <LinkGraph nodes={getGraphNodes()} groups={getGraphGroups()} links={getGraphLinks()} />
+      <LinkGraph nodes={nodes} groups={groups} links={links} />
 
-      {/* Edit role dialog */}
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>

@@ -220,7 +220,7 @@ function PublishDialog({
     setForm((prev) => ({
       ...prev,
       projectId: id,
-      name: p.title,
+      name: p.name,
       description: p.description,
     }));
   };
@@ -281,7 +281,7 @@ function PublishDialog({
                             className="w-6 h-6 rounded-md"
                           />
                           <span className="flex flex-col">
-                            <span>{p.title}</span>
+                            <span>{p.name}</span>
                             <span className="text-xs text-muted-foreground">{p.description}</span>
                           </span>
                         </span>
@@ -298,7 +298,7 @@ function PublishDialog({
                     className="h-10 w-10"
                   />
                   <div>
-                    <p className="font-medium">{selectedProject.title}</p>
+                    <p className="font-medium">{selectedProject.name}</p>
                     <p className="text-sm text-muted-foreground">{selectedProject.description}</p>
                   </div>
                 </div>

@@ -128,7 +128,6 @@ export default function Session() {
       const current = prev[activeImageId] ?? [];
 
       const next = current.includes(id) ? current.filter((item) => item !== id) : [...current, id];
-      // const next = current.includes(id) ? current.filter((item) => item !== id) : [...current, id];
 
       return { ...prev, [activeImageId]: next };
     });

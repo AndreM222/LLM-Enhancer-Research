@@ -7,7 +7,7 @@ import { CreateTagGroupTable } from '@/components/tables/tags-table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { getGraphGroups, getGraphLinks, getGraphNodes, getProjectTags } from '@/lib/mockApi';
+import { getProjectLinks, getProjectTags } from '@/lib/mockApi';
 import { usePathname, useRouter } from 'next/navigation';
 
 const data: TagGroup[] = getProjectTags();
@@ -15,6 +15,7 @@ const data: TagGroup[] = getProjectTags();
 export default function Tags() {
   const router = useRouter();
   const pathname = usePathname();
+  const { nodes, groups, links } = getProjectLinks(undefined, 'tags');
 
   const handleCreate = (input: TagGroupInput) => {
     console.log('Creating tag group:', input);
@@ -51,7 +52,7 @@ export default function Tags() {
           />
         </CardContent>
       </Card>
-      <LinkGraph nodes={getGraphNodes()} groups={getGraphGroups()} links={getGraphLinks()} />
+      <LinkGraph nodes={nodes} groups={groups} links={links} />
     </div>
   );
 }
