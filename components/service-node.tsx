@@ -19,30 +19,30 @@ export function ServiceNode({ data }: NodeProps) {
     status === 'online' ? 'text-green-400' : status === 'error' ? 'text-red-400' : 'text-zinc-400';
 
   return (
-    <Card className="w-70 overflow-hidden shadow-xl">
+    <Card className="w-70 overflow-hidden shadow-xl contrast-96">
       <Handle
         type="target"
         id="top"
         position={Position.Top}
-        className="bg-zinc-500! border-zinc-400! w-3! h-3!"
+        className="bg-zinc-900! border-zinc-800! w-3! h-3!"
       />
       <Handle
         type="target"
         id="left"
         position={Position.Left}
-        className="bg-zinc-500! border-zinc-400! w-3! h-3!"
+        className="bg-zinc-900! border-zinc-800! w-3! h-3!"
       />
       <Handle
         type="source"
         id="bottom"
         position={Position.Bottom}
-        className="bg-zinc-500! border-zinc-400! w-3! h-3!"
+        className="bg-zinc-900! border-zinc-800! w-3! h-3!"
       />
       <Handle
         type="source"
         id="right"
         position={Position.Right}
-        className="bg-zinc-500! border-zinc-400! w-3! h-3!"
+        className="bg-zinc-900! border-zinc-800! w-3! h-3!"
       />
 
       <div className="p-5">

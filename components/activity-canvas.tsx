@@ -19,7 +19,6 @@ import '@xyflow/react/dist/style.css';
 import { ServiceNode } from './service-node';
 import { ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { useMemo, useState } from 'react';
 import type { Log } from '@/components/tables/logs-columns';
@@ -87,11 +86,9 @@ function StepEdge({
       path={path}
       className={active ? 'activity-edge-active' : undefined}
       style={{
-        stroke: active
-          ? '#22c55e'
-          : 'var(--border, #94a3b8)',
-        strokeWidth: active ? 2.5 : 1.5,
-        strokeOpacity: active ? 1 : 0.85,
+        stroke: active ? '#22c55e' : 'var(--border, #94a3b8)',
+        strokeWidth: 3.5,
+        strokeOpacity: 1,
       }}
     />
   );
@@ -139,10 +136,8 @@ export default function ActivityCanvas({
   initialEdges: Edge<ActivityEdgeData>[];
   logs: Log[];
 }) {
-  const { resolvedTheme } = useTheme();
   const [nodes, , onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
 
   const selectedLogs = useMemo(() => {
@@ -158,7 +153,6 @@ export default function ActivityCanvas({
     [setEdges]
   );
 
-
   return (
     <div className={cn('h-full w-full', className)} {...props}>
       <ReactFlow
@@ -172,7 +166,6 @@ export default function ActivityCanvas({
         onNodeClick={(_, node) => setSelectedNode(node)}
         style={{ backgroundColor: 'hsl(var(--card))' }}
         fitView
-        colorMode={resolvedTheme === 'dark' ? 'dark' : 'light'}
         className="rounded-3xl border"
       >
         <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="#333" />

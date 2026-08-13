@@ -22,37 +22,21 @@ import { FaFileExport } from 'react-icons/fa6';
 import { getLogs } from '@/lib/mockApi';
 
 const initialEdges: Edge[] = [
-  // User uploads photo → Frontend → API
   edgeInput('fe-api', 'frontend', 'right', 'api', 'left', true),
-  // Frontend hosts the canvas editor
   edgeInput('fe-canvas', 'frontend', 'bottom', 'canvas', 'top'),
-  // Canvas (corrected boxes) → API saves correction
   edgeInput('canvas-api', 'canvas', 'right', 'api', 'left'),
-  // API → Detection Service (run detection)
   edgeInput('api-det', 'api', 'bottom', 'detection', 'top'),
-  // Detection Service → Gemini Flash (inference)
   edgeInput('det-gemini', 'detection', 'right', 'gemini', 'left'),
-  // Gemini Flash → Detection Service (returns bboxes)
   edgeInput('gemini-det', 'gemini', 'bottom', 'llm-optimizer', 'top'),
-  // API pulls active prompt from Prompt Engine
   edgeInput('pe-api', 'prompt-engine', 'bottom', 'api', 'top'),
-  // Prompt Engine → Gemini Flash (send prompt)
   edgeInput('pe-gemini', 'prompt-engine', 'right', 'gemini', 'left'),
-  // API → LLM Optimizer (send A+B for prompt improvement)
   edgeInput('api-llm', 'api', 'right', 'llm-optimizer', 'left'),
-  // LLM Optimizer → Prompt Engine (returns improved prompt)
   edgeInput('llm-pe', 'llm-optimizer', 'left', 'prompt-engine', 'right'),
-  // LLM Optimizer saves new prompt
   edgeInput('llm-dbp', 'llm-optimizer', 'right', 'db-prompts', 'left'),
-  // Prompt Engine reads best/last prompt
   edgeInput('pe-dbp', 'prompt-engine', 'right', 'db-prompts', 'left'),
-  // API saves A/B detections
   edgeInput('api-dbd', 'api', 'right', 'db-detections', 'left'),
-  // Canvas reads detection results
   edgeInput('dbd-canvas', 'db-detections', 'bottom', 'canvas', 'right'),
-  // Image store feeds detection service
   edgeInput('img-det', 'image-store', 'top', 'detection', 'bottom'),
-  // API manages image storage
   edgeInput('api-img', 'api', 'bottom', 'image-store', 'top'),
 ];
 
