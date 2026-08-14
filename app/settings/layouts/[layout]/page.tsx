@@ -45,6 +45,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import StepDialog from '@/components/dialogs/step-dialog';
 import { Separator } from '@/components/ui/separator';
 import { PageHeader } from '@/components/app-navigation';
 import { ButtonGroup } from '@/components/ui/button-group';
@@ -432,101 +433,15 @@ export default function LayoutManager() {
         </div>
       </div>
 
-      {/* dialog */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-lg">
-          <form onSubmit={handleSubmit}>
-            <DialogHeader>
-              <DialogTitle>{isEditing ? 'Edit capture step' : 'Add capture step'}</DialogTitle>
-              <DialogDescription>
-                Define one picture that users need to provide during the detection process.
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="grid gap-5 py-5">
-              <div className="grid gap-2">
-                <Label htmlFor="step-title">Title</Label>
-                <Input
-                  id="step-title"
-                  value={form.title}
-                  onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
-                  placeholder="e.g. Front of package"
-                  required
-                />
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="step-description">Description</Label>
-                <Textarea
-                  id="step-description"
-                  value={form.description}
-                  onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
-                  placeholder="Explain what the user should capture."
-                  rows={3}
-                />
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="step-thumbnail">Thumbnail URL</Label>
-                <Input
-                  id="step-thumbnail"
-                  value={form.thumbnail}
-                  onChange={(e) => setForm((p) => ({ ...p, thumbnail: e.target.value }))}
-                  placeholder="https://example.com/example.jpg"
-                />
-                <p className="text-xs text-muted-foreground">
-                  Optional example image to guide the person taking the picture.
-                </p>
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="step-mode">Processing mode</Label>
-                <Select
-                  value={form.mode}
-                  onValueChange={(v) => setForm((p) => ({ ...p, mode: v as CaptureMode }))}
-                >
-                  <SelectTrigger id="step-mode">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="detection">
-                      <span className="flex items-center gap-2">
-                        <Tag className="h-4 w-4" /> Detection
-                      </span>
-                    </SelectItem>
-                    <SelectItem value="ocr">
-                      <span className="flex items-center gap-2">
-                        <ScanText className="h-4 w-4" /> OCR
-                      </span>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex items-center justify-between rounded-lg border p-3">
-                <div className="space-y-1">
-                  <Label htmlFor="step-required">Required picture</Label>
-                  <p className="text-xs text-muted-foreground">
-                    Users must complete this step before continuing.
-                  </p>
-                </div>
-                <Switch
-                  id="step-required"
-                  checked={form.required}
-                  onCheckedChange={(v) => setForm((p) => ({ ...p, required: v }))}
-                />
-              </div>
-            </div>
-
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={closeDialog}>
-                <X className="mr-2 h-4 w-4" /> Cancel
-              </Button>
-              <Button type="submit">{isEditing ? 'Save changes' : 'Add picture'}</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <StepDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        form={form}
+        setForm={(f) => setForm(f)}
+        isEditing={isEditing}
+        handleSubmit={handleSubmit}
+        closeDialog={closeDialog}
+      />
     </div>
   );
 }

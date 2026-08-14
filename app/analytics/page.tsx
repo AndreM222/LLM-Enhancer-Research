@@ -9,7 +9,8 @@ import { UsageTable } from '@/components/tables/usage-table';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { getProjects, getTags } from '@/lib/mockApi';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 import { FaFileExport } from 'react-icons/fa6';
 
 type MetricProps = {
@@ -53,11 +54,34 @@ const MetricItem = ({ label, value, hint }: MetricProps) => (
 export default function AnalyticsPage() {
   const projects: Project[] = getProjects();
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const initialProjectId = searchParams.get('project');
+  const initialProject = projects.find((p) => p.id === initialProjectId) ?? projects[0];
+
+  useEffect(() => {
+    // ensure url has project param when page mounts
+    const params = new URLSearchParams(searchParams.toString());
+    if (initialProject?.id) params.set('project', initialProject.id);
+    router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, { scroll: false });
+  }, []);
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
-        <ProjectSwitcher projects={projects} />
+        <ProjectSwitcher
+          projects={projects}
+          selectedProjectId={initialProject.id}
+          onChange={(p) => {
+            const params = new URLSearchParams(searchParams.toString());
+            if (p?.id) params.set('project', p.id);
+            else params.delete('project');
+            router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, {
+              scroll: false,
+            });
+          }}
+        />
         <Button variant="outline" title="Export analytics">
           <FaFileExport className="mr-2 h-4 w-4" />
           Export
@@ -163,7 +187,7 @@ export default function AnalyticsPage() {
             <CardDescription>Summary of data usage throughout the project.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-            <UsageTable data={projects[0].usage} pageSize={4} />
+            <UsageTable data={initialProject.usage} pageSize={4} />
           </CardContent>
         </Card>
       </div>

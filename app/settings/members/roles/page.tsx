@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
@@ -55,173 +56,29 @@ function emptyRole(): Role {
   };
 }
 
-function RoleDialog({
-  open,
-  onOpenChange,
-  initial,
-  onSave,
-  mode,
-}: {
-  open: boolean;
-  onOpenChange: (v: boolean) => void;
-  initial: Role;
-  onSave: (role: Role) => void;
-  mode: 'create' | 'edit';
-}) {
-  const [form, setForm] = useState<Role>(initial);
-  const [settings, setSettings] = useState<SingleSetting[]>(roleSettingsOptions());
-
-  const [projectLinks, setProjectLinks] = useState<Project[]>(projectsList ?? []);
-  const [projectLinkValue, setProjectLinkValue] = useState('');
-
-  const handleOpenChange = (v: boolean) => {
-    if (v) setForm(initial);
-    onOpenChange(v);
-  };
-
-  const handleSave = () => {
-    if (!form.name.trim()) {
-      toast.error('Role name is required.');
-      return;
-    }
-    onSave(form);
-    onOpenChange(false);
-  };
-
-  const selectedProjectLink = projectsList.find((p) => p.id === projectLinkValue) ?? null;
-
-  return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-200">
-        <DialogHeader>
-          <DialogTitle>{mode === 'create' ? 'Create role' : 'Edit role'}</DialogTitle>
-          <DialogDescription>
-            {mode === 'create'
-              ? 'Define a new role and assign the permissions it should receive.'
-              : 'Update the role details and permissions.'}
-          </DialogDescription>
-        </DialogHeader>
-
-        <ScrollArea className="max-h-170">
-          <div className="grid gap-4 py-2 px-2">
-            <div className="grid gap-2">
-              <Label htmlFor="role-name">Role name</Label>
-              <Input
-                id="role-name"
-                placeholder="Research Editor"
-                value={form.name}
-                onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="role-description">Description</Label>
-              <Input
-                id="role-description"
-                placeholder="Can edit prompts and review corrections."
-                value={form.description}
-                onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
-              />
-            </div>
-
-            <div className="rounded-lg border p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium">Default role</p>
-                  <p className="text-sm text-muted-foreground">
-                    Assigned automatically when inviting new users.
-                  </p>
-                </div>
-                <Switch
-                  checked={form.isDefault}
-                  onCheckedChange={(v) => setForm((p) => ({ ...p, isDefault: v }))}
-                />
-              </div>
-            </div>
-
-            <Card className="grid gap-3">
-              <CardHeader>
-                <CardTitle>Permissions</CardTitle>
-                <CardDescription>Allowed activity for this role.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <SingleSettingsTable
-                  data={settings}
-                  onChange={(id, value) =>
-                    setSettings((previous) => updateSettingValue(previous, id, value))
-                  }
-                />
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Linked Projects</CardTitle>
-                <CardDescription>Add projects to link images.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <AddRow
-                  items={projectsList}
-                  value={(() => {
-                    const project = projectsList.find((curr) => curr.id === projectLinkValue);
-
-                    return project?.name ?? '';
-                  })()}
-                  onValueChange={setProjectLinkValue}
-                  placeholder="Search projects..."
-                  disabled={!selectedProjectLink}
-                  onAdd={() => {
-                    if (
-                      !selectedProjectLink ||
-                      projectLinks.some((p) => p.id === selectedProjectLink.id)
-                    )
-                      return;
-                    setProjectLinks((prev) => [...prev, selectedProjectLink]);
-                    setProjectLinkValue('');
-                    toast.success(`${selectedProjectLink.name} linked.`);
-                  }}
-                  renderItem={(p) => (
-                    <span className="flex items-center gap-2">
-                      <ProjectIcon icon={p.icon} color={p.color} className="w-6 h-6 rounded-md" />
-                      <span className="flex flex-col">
-                        <span>{p.name}</span>
-                        <span className="text-xs text-muted-foreground">{p.description}</span>
-                      </span>
-                    </span>
-                  )}
-                />
-                <LinkDetectionTable
-                  pageSize={4}
-                  data={projectLinks}
-                  onDelete={(id) => {
-                    setProjectLinks((prev) => prev.filter((p) => p.id !== id));
-                    toast.success('Project unlinked.');
-                  }}
-                  onOpen={(id) => console.log(id)}
-                />
-              </CardContent>
-            </Card>
-
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => onOpenChange(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleSave}>
-                {mode === 'create' ? 'Save role' : 'Update role'}
-              </Button>
-            </div>
-          </div>
-        </ScrollArea>
-      </DialogContent>
-    </Dialog>
-  );
-}
+import { RoleDialog } from '@/components/dialogs/role-dialog';
 
 export default function Members() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   const [roles, setRoles] = useState<Role[]>(getRoles());
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(searchParams.get('search') ?? '');
 
   const [createOpen, setCreateOpen] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (search.trim()) params.set('search', search);
+    else params.delete('search');
+
+    router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, { scroll: false });
+  }, [search]);
+
+  useEffect(() => {
+    setSearch(searchParams.get('search') ?? '');
+  }, [searchParams]);
 
   const [editOpen, setEditOpen] = useState(false);
   const [editingRole, setEditingRole] = useState<Role>(emptyRole());
@@ -309,6 +166,8 @@ export default function Members() {
         initial={emptyRole()}
         onSave={handleCreate}
         mode="create"
+        projectsList={projectsList}
+        roleSettings={roleSettingsOptions()}
       />
 
       <RoleDialog
@@ -317,6 +176,8 @@ export default function Members() {
         initial={editingRole}
         onSave={handleSaveEdit}
         mode="edit"
+        projectsList={projectsList}
+        roleSettings={roleSettingsOptions()}
       />
 
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>

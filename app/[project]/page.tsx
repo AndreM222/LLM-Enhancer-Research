@@ -15,12 +15,32 @@ import { DetectionSession } from '@/components/tables/detection-columns';
 
 import { getDetectionSessionsByProject } from '@/lib/mockApi';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { usePathname, useRouter, useParams } from 'next/navigation';
+import { usePathname, useRouter, useParams, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 export default function Project() {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { project } = useParams<{ project: string }>();
+
+  const [search, setSearch] = useState(searchParams.get('search') ?? '');
+  const [status, setStatus] = useState(searchParams.get('status') ?? 'none');
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (search.trim()) params.set('search', search);
+    else params.delete('search');
+    if (status && status !== 'none') params.set('status', status);
+    else params.delete('status');
+    router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, { scroll: false });
+  }, [search, status]);
+
+  useEffect(() => {
+    setSearch(searchParams.get('search') ?? '');
+    setStatus(searchParams.get('status') ?? 'none');
+  }, [searchParams]);
+
   const detectionList: DetectionSession[] = project ? getDetectionSessionsByProject(project) : [];
 
   return (
@@ -35,7 +55,7 @@ export default function Project() {
 
         <CardContent className="space-y-6">
           <div className="flex space-x-2">
-            <Select defaultValue="none">
+            <Select value={status} onValueChange={setStatus}>
               <SelectTrigger className="w-45">
                 <SelectValue />
               </SelectTrigger>
@@ -50,7 +70,12 @@ export default function Project() {
               </SelectContent>
             </Select>
             <Field>
-              <Input id="input-button-group" placeholder="Type to search..." />
+              <Input
+                id="input-button-group"
+                placeholder="Type to search..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </Field>
           </div>
           <CreateDetectionTable

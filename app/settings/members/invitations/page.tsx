@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { CreateInvitationTable } from '@/components/tables/users-table';
 import { Field } from '@/components/ui/field';
@@ -13,13 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { InvitationDialog } from '@/components/dialogs/invitation-dialog';
+// Invitation dialog moved to components/dialogs/invitation-dialog.tsx
 import {
   AlertDialog,
   AlertDialogAction,
@@ -64,11 +60,30 @@ function statusVariant(status: string) {
 }
 
 export default function Members() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   const [users, setUsers] = useState<User[]>(userData);
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('none');
+  const [search, setSearch] = useState(searchParams.get('search') ?? '');
+  const [statusFilter, setStatusFilter] = useState(searchParams.get('status') ?? 'none');
 
   const [openUser, setOpenUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (search.trim()) params.set('search', search);
+    else params.delete('search');
+    if (statusFilter && statusFilter !== 'none') params.set('status', statusFilter);
+    else params.delete('status');
+
+    router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, { scroll: false });
+  }, [search, statusFilter]);
+
+  useEffect(() => {
+    setSearch(searchParams.get('search') ?? '');
+    setStatusFilter(searchParams.get('status') ?? 'none');
+  }, [searchParams]);
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -186,80 +201,7 @@ export default function Members() {
         </CardContent>
       </Card>
 
-      <Dialog
-        open={!!openUser}
-        onOpenChange={(v) => {
-          if (!v) setOpenUser(null);
-        }}
-      >
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Invitation details</DialogTitle>
-            <DialogDescription>Full details for this workspace invitation.</DialogDescription>
-          </DialogHeader>
-
-          {openUser && (
-            <div className="space-y-4 py-2">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">To</p>
-                  <p className="font-medium">{openUser.name || '—'}</p>
-                  <p className="text-sm text-muted-foreground">{openUser.email}</p>
-                </div>
-
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">Status</p>
-                  <Badge variant={statusVariant(openUser.status)}>{openUser.status}</Badge>
-                </div>
-
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">Role</p>
-                  <p className="font-medium">{openUser.roleId ?? '—'}</p>
-                </div>
-
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">Sent at</p>
-                  <p className="text-sm">
-                    {openUser.time ? new Date(openUser.time).toLocaleString() : '—'}
-                  </p>
-                </div>
-              </div>
-
-              {openUser.status.toUpperCase() === 'REJECTED' && (
-                <div className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 space-y-1">
-                  <p className="text-xs font-medium text-destructive">Rejection reason</p>
-                  <p className="text-sm text-muted-foreground">
-                    The user declined this invitation.
-                  </p>
-                </div>
-              )}
-
-              <div className="flex justify-end gap-2 pt-2">
-                {openUser.status.toUpperCase() !== 'ACCEPTED' && (
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      handleResend(openUser.id);
-                      setOpenUser(null);
-                    }}
-                  >
-                    Resend
-                  </Button>
-                )}
-                <Button
-                  variant="destructive"
-                  onClick={() => {
-                    setOpenUser(null);
-                    handleDeleteRequest(openUser.id);
-                  }}
-                >
-                  Delete
-                </Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      <InvitationDialog openUser={openUser} onOpenChange={(v) => !v && setOpenUser(null)} />
 
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <AlertDialogContent>

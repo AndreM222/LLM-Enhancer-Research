@@ -6,6 +6,7 @@ import { FaCircle } from 'react-icons/fa6';
 import { AnimatePresence, motion } from 'motion/react';
 
 import { Button } from '@/components/ui/button';
+import NotificationDialog from '@/components/dialogs/notification-dialog';
 import {
   Dialog,
   DialogContent,
@@ -313,33 +314,12 @@ export default function Notifications() {
         </PopoverContent>
       </Popover>
 
-      <Dialog open={!!activeNotification} onOpenChange={(v) => !v && setActiveNotification(null)}>
-        <DialogContent className="sm:max-w-md">
-          {activeNotification ? (
-            <>
-              <DialogHeader>
-                <DialogTitle>{activeNotification.title}</DialogTitle>
-                <DialogDescription>
-                  {activeNotification.env} • {activeNotification.date}
-                </DialogDescription>
-              </DialogHeader>
-
-              <div className="space-y-4 text-sm">
-                <p>
-                  This notification can open a dialog with more details, actions, or a deployment
-                  log.
-                </p>
-                <div className="flex items-center justify-end gap-2">
-                  <Button variant="outline" onClick={() => setActiveNotification(null)}>
-                    Close
-                  </Button>
-                  <Button onClick={() => archiveNotification(activeNotification)}>Archive</Button>
-                </div>
-              </div>
-            </>
-          ) : null}
-        </DialogContent>
-      </Dialog>
+      <NotificationDialog
+        open={!!activeNotification}
+        notification={activeNotification}
+        onClose={() => setActiveNotification(null)}
+        onArchive={(n) => archiveNotification(n)}
+      />
     </>
   );
 }

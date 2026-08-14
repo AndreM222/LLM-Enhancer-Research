@@ -167,6 +167,10 @@ const navList: {
         url: '/global-data',
         icon: <Earth />,
         isActive: true,
+        subItems: [
+          { title: 'Global Activity', url: '/global-data', isActive: true },
+          { title: 'Server Activity', url: '/global-data/servers', isActive: true },
+        ],
       },
       {
         title: 'Logs',

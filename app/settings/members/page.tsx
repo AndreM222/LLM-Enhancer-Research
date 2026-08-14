@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { toast } from 'sonner';
 import { UsersListTable } from '@/components/tables/users-table';
 import { Field } from '@/components/ui/field';
@@ -13,23 +13,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+import { ChangeRoleDialog } from '@/components/dialogs/change-role-dialog';
+import { MemberConfirmDialog } from '@/components/dialogs/member-confirm-dialog';
+// Dialogs moved to components/dialogs/*
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { getProjectLinks, getRoles, getUsers } from '@/lib/mockApi';
@@ -38,14 +24,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import LinkGraph from '@/components/linkGraph';
 import { AccountBanner } from '@/components/account-banner';
 import { Role } from './roles/page';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 const userData: User[] = getUsers();
+const roles: Role[] = getRoles();
 
 export default function Members() {
   const [users, setUsers] = useState<User[]>(userData);
-  const [search, setSearch] = useState('');
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [search, setSearch] = useState(searchParams.get('search') ?? '');
   const [roleFilter, setRoleFilter] = useState('none');
-  const roles: Role[] = getRoles();
 
   const { nodes, groups, links } = getProjectLinks(undefined, 'users');
 
@@ -128,6 +118,30 @@ export default function Members() {
   const suspendingUser = users.find((u) => u.id === suspendingId);
   const isSuspendingCurrentlySuspended = (suspendingUser as any)?.suspended ?? false;
 
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (search.trim()) {
+      params.set('search', search);
+    } else {
+      params.delete('search');
+    }
+
+    if (roleFilter !== 'none') {
+      params.set('role', roleFilter);
+    } else {
+      params.delete('role');
+    }
+
+    router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, {
+      scroll: false,
+    });
+  }, [search, roleFilter]);
+
+  useEffect(() => {
+    setSearch(searchParams.get('search') ?? '');
+  }, [searchParams]);
+
   return (
     <div className="grid lg:grid-cols-[1fr_390px] gap-6">
       <Card>
@@ -178,103 +192,50 @@ export default function Members() {
 
       <LinkGraph nodes={nodes} groups={groups} links={links} />
 
-      <Dialog open={editOpen} onOpenChange={setEditOpen}>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Change role</DialogTitle>
-            <DialogDescription>Update the workspace role for this member.</DialogDescription>
-          </DialogHeader>
-
-          {editingUser && (
-            <div className="space-y-4 py-2">
-              <AccountBanner user={editingUser} size="sm" />
-
-              <div className="space-y-2">
-                <Label>Role</Label>
-                <Select value={selectedRole} onValueChange={setSelectedRole}>
-                  <SelectTrigger className="py-6">
-                    <SelectValue placeholder="Select a role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {roles.map((role) => (
-                      <SelectItem key={role.id} value={role.name}>
-                        <div className="flex flex-col justify-start">
-                          <span className="mr-auto">{role.name}</span>
-                          {role.description && (
-                            <span className="mr-auto text-xs text-muted-foreground">
-                              {role.description}
-                            </span>
-                          )}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-2">
-                <Button variant="outline" onClick={() => setEditOpen(false)}>
-                  Cancel
-                </Button>
-                <Button disabled={!selectedRole} onClick={handleSaveRole}>
-                  Save
-                </Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      <ChangeRoleDialog
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        editingUser={editingUser}
+        roles={roles}
+        selectedRole={selectedRole}
+        setSelectedRole={(v) => setSelectedRole(v)}
+        onSave={handleSaveRole}
+      />
 
       {/* Delete confirmation */}
-      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Remove member?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will permanently remove <b>{deletingUser?.name}</b> from the workspace. They will
-              lose access immediately.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={handleConfirmDelete}
-            >
-              Remove member
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <MemberConfirmDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        title="Remove member?"
+        description={
+          <>
+            This will permanently remove <b>{deletingUser?.name}</b> from the workspace. This action
+            cannot be undone.
+          </>
+        }
+        actionLabel="Delete"
+        onConfirm={handleConfirmDelete}
+        destructive
+      />
 
       {/* Suspend confirmation */}
-      <AlertDialog open={suspendOpen} onOpenChange={setSuspendOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {isSuspendingCurrentlySuspended ? 'Unsuspend' : 'Suspend'} member?
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {isSuspendingCurrentlySuspended ? (
-                <>
-                  This will restore full access for <b>{suspendingUser?.name}</b>.
-                </>
-              ) : (
-                <>
-                  <b>{suspendingUser?.name}</b> will be limited to read-only access. They won't be
-                  able to make any changes until unsuspended.
-                </>
-              )}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmSuspend}>
-              {isSuspendingCurrentlySuspended ? 'Unsuspend' : 'Suspend'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <MemberConfirmDialog
+        open={suspendOpen}
+        onOpenChange={setSuspendOpen}
+        title={isSuspendingCurrentlySuspended ? 'Unsuspend member?' : 'Suspend member?'}
+        description={
+          isSuspendingCurrentlySuspended ? (
+            'This will restore the member to active state.'
+          ) : (
+            <>
+              <b>{suspendingUser?.name}</b> will be limited to read-only access. They won't be able
+              to make any changes until unsuspended.
+            </>
+          )
+        }
+        actionLabel={isSuspendingCurrentlySuspended ? 'Unsuspend' : 'Suspend'}
+        onConfirm={handleConfirmSuspend}
+      />
     </div>
   );
 }

@@ -53,12 +53,23 @@ const truncateText = (str: string, limit: number): string => {
 export function ProjectSwitcher({
   projects: projects,
   onChange,
+  selectedProjectId,
 }: {
   projects: Project[];
   onChange?: (project: Project) => void;
+  selectedProjectId?: string;
 }) {
   const { isMobile } = useSidebar();
-  const [activeProject, setActiveProject] = React.useState(projects[0]);
+  const [activeProject, setActiveProject] = React.useState(
+    projects.find((p) => p.id === selectedProjectId) ?? projects[0]
+  );
+
+  React.useEffect(() => {
+    if (selectedProjectId) {
+      const p = projects.find((p) => p.id === selectedProjectId);
+      if (p) setActiveProject(p);
+    }
+  }, [selectedProjectId, projects]);
 
   React.useEffect(() => {
     if (onChange && activeProject) onChange(activeProject);

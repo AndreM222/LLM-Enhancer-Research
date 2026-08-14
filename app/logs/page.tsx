@@ -1,19 +1,13 @@
 'use client';
 
-import { useState } from 'react';
-import { CircleAlert, Clock3, Hash, Server, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { Log } from '@/components/tables/logs-columns';
 import { LogsTable } from '@/components/tables/logs-table';
-import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { LogDialog } from '@/components/dialogs/log-dialog';
+import { CodeBlock } from '@/components/ui/code-block';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import {
@@ -25,10 +19,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { getLogs } from '@/lib/mockApi';
-import { PageHeader } from '@/components/app-navigation';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { CodeBlock } from '@/components/ui/code-block';
-import { cn } from '@/lib/utils';
 
 const data: Log[] = getLogs();
 
@@ -56,7 +46,7 @@ function JsonBlock({
     );
   }
 
-  return <CodeBlock code={code} language="json" filename="ya" />;
+  return <CodeBlock code={code} language="json" />;
 }
 
 export function methodVariant(method: string): BadgeVariant {
@@ -148,7 +138,27 @@ function formatDate(value: string) {
 }
 
 export default function Logs() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   const [openLog, setOpenLog] = useState<Log | null>(null);
+  const [search, setSearch] = useState(searchParams.get('search') ?? '');
+  const [status, setStatus] = useState(searchParams.get('status') ?? 'none');
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (search.trim()) params.set('search', search);
+    else params.delete('search');
+    if (status && status !== 'none') params.set('status', status);
+    else params.delete('status');
+    router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, { scroll: false });
+  }, [search, status]);
+
+  useEffect(() => {
+    setSearch(searchParams.get('search') ?? '');
+    setStatus(searchParams.get('status') ?? 'none');
+  }, [searchParams]);
 
   const handleOpen = (id: string) => {
     const log = data.find((logItem) => logItem.id === id);
@@ -157,6 +167,17 @@ export default function Logs() {
       setOpenLog(log);
     }
   };
+
+  const filtered = data.filter((l) => {
+    const q = search.trim().toLowerCase();
+    const matchesSearch =
+      !q ||
+      l.request.toLowerCase().includes(q) ||
+      l.id.toLowerCase().includes(q) ||
+      String(l.status).includes(q);
+    const matchesStatus = status === 'none' || String(l.status) === status;
+    return matchesSearch && matchesStatus;
+  });
 
   return (
     <div className="space-y-6">
@@ -170,7 +191,7 @@ export default function Logs() {
 
         <CardContent className="space-y-6">
           <div className="flex flex-col gap-2 sm:flex-row">
-            <Select defaultValue="none">
+            <Select value={status} onValueChange={(v) => setStatus(v)}>
               <SelectTrigger className="w-full sm:w-45">
                 <SelectValue />
               </SelectTrigger>
@@ -186,213 +207,20 @@ export default function Logs() {
             </Select>
 
             <Field className="flex-1">
-              <Input id="log-search" placeholder="Search requests, methods, or log IDs..." />
+              <Input
+                id="log-search"
+                placeholder="Search requests, methods, or log IDs..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </Field>
           </div>
 
-          <LogsTable data={data} pageSize={15} onOpen={handleOpen} />
+          <LogsTable data={filtered} pageSize={15} onOpen={handleOpen} />
         </CardContent>
       </Card>
 
-      <Dialog
-        open={!!openLog}
-        onOpenChange={(value) => {
-          if (!value) setOpenLog(null);
-        }}
-      >
-        <DialogContent className="p-0 sm:max-w-xl">
-          <DialogHeader className="border-b bg-muted/20 px-6 py-5 -mb-4">
-            <PageHeader
-              setTitle="Request details"
-              setDescription="Information about this workspace activity."
-              setIcon={<Server />}
-              size="sm"
-              iconClassName={
-                openLog
-                  ? [
-                      'border-transparent',
-                      getStatusTone(openLog.status) === 'success' &&
-                        'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
-                      getStatusTone(openLog.status) === 'info' &&
-                        'bg-blue-500/10 text-blue-600 dark:text-blue-400',
-                      getStatusTone(openLog.status) === 'warning' &&
-                        'bg-amber-500/10 text-amber-600 dark:text-amber-400',
-                      getStatusTone(openLog.status) === 'error' &&
-                        'bg-red-500/10 text-red-600 dark:text-red-400',
-                      getStatusTone(openLog.status) === 'default' &&
-                        'bg-muted text-muted-foreground',
-                    ]
-                      .filter(Boolean)
-                      .join(' ')
-                  : undefined
-              }
-            />
-          </DialogHeader>
-
-          <ScrollArea className="max-h-[80vh]" type="scroll">
-            {openLog && (
-              <>
-                <div className="space-y-6 px-6 py-5">
-                  <div className="space-y-2">
-                    <DialogTitle className="text-sm">Request</DialogTitle>
-
-                    <div className="flex items-center gap-3 rounded-lg border bg-muted/40 p-3">
-                      <Badge
-                        variant={methodVariant(openLog.type)}
-                        className="shrink-0 font-mono text-xs"
-                      >
-                        {openLog.type.toUpperCase()}
-                      </Badge>
-
-                      <code className="min-w-0 flex-1 truncate text-sm">{openLog.request}</code>
-                    </div>
-                  </div>
-
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="rounded-lg border p-4">
-                      <div className="mb-2 flex items-center gap-2 text-muted-foreground">
-                        <CircleAlert className="h-4 w-4" />
-                        <p className="text-xs font-medium uppercase tracking-wide">
-                          Response status
-                        </p>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <p className="text-xl font-semibold tabular-nums">{openLog.status}</p>
-
-                        <Badge variant="outline" className={statusBadgeClass(openLog.status)}>
-                          {statusLabel(openLog.status)}
-                        </Badge>
-                      </div>
-                    </div>
-
-                    <div className="rounded-lg border p-4">
-                      <div className="mb-2 flex items-center gap-2 text-muted-foreground">
-                        <Clock3 className="h-4 w-4" />
-                        <p className="text-xs font-medium uppercase tracking-wide">Timestamp</p>
-                      </div>
-
-                      <p className="text-sm font-medium">{formatDate(openLog.time)}</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <DialogTitle className="text-sm">Response body</DialogTitle>
-                        <DialogDescription>Data returned by the server.</DialogDescription>
-                      </div>
-                    </div>
-
-                    <JsonBlock
-                      value={openLog.response}
-                      emptyMessage="No response body was recorded for this request."
-                    />
-                  </div>
-
-                  {openLog.error && (
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2">
-                        <X className={cn('h-4 w-4', statusIconClass(openLog.status))} />
-                        <p
-                          className={cn(
-                            'text-sm font-medium',
-                            openLog.status >= 500
-                              ? 'text-red-600 dark:text-red-400'
-                              : 'text-amber-700 dark:text-amber-400'
-                          )}
-                        >
-                          Error information
-                        </p>
-                      </div>
-
-                      <div
-                        className={cn(
-                          'space-y-4 rounded-lg border p-4',
-                          openLog.status >= 500
-                            ? 'border-red-500/30 bg-red-500/10'
-                            : 'border-amber-500/40 bg-amber-500/10'
-                        )}
-                      >
-                        <div className="space-y-1">
-                          <p
-                            className={cn(
-                              'text-xs font-medium uppercase tracking-wide',
-                              openLog.status >= 500
-                                ? 'text-red-700/80 dark:text-red-400/80'
-                                : 'text-amber-700/80 dark:text-amber-400/80'
-                            )}
-                          >
-                            Message
-                          </p>
-                          <DialogDescription>{openLog.error.message}</DialogDescription>
-                        </div>
-
-                        {openLog.error.code && (
-                          <div className="space-y-1">
-                            <p
-                              className={cn(
-                                'text-xs font-medium uppercase tracking-wide',
-                                openLog.status >= 500
-                                  ? 'text-red-700/80 dark:text-red-400/80'
-                                  : 'text-amber-700/80 dark:text-amber-400/80'
-                              )}
-                            >
-                              Error code
-                            </p>
-                            <code className="text-sm">{openLog.error.code}</code>
-                          </div>
-                        )}
-
-                        {openLog.error.details !== undefined && (
-                          <div className="space-y-2">
-                            <p
-                              className={cn(
-                                'text-xs font-medium uppercase tracking-wide',
-                                openLog.status >= 500
-                                  ? 'text-red-700/80 dark:text-red-400/80'
-                                  : 'text-amber-700/80 dark:text-amber-400/80'
-                              )}
-                            >
-                              Error details
-                            </p>
-
-                            <JsonBlock value={openLog.error.details} />
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="rounded-lg border">
-                    <div className="flex items-center gap-2 border-b px-4 py-3">
-                      <Hash className="h-4 w-4 text-muted-foreground" />
-                      <DialogTitle className="text-sm">Log metadata</DialogTitle>
-                    </div>
-
-                    <div className="grid gap-4 p-4 sm:grid-cols-2">
-                      <div className="space-y-1">
-                        <p className="text-xs text-muted-foreground">Log ID</p>
-                        <p className="break-all font-mono text-sm">{openLog.id}</p>
-                      </div>
-
-                      <div className="space-y-1">
-                        <p className="text-xs text-muted-foreground">Request type</p>
-                        <p className="text-sm font-medium">{openLog.type.toUpperCase()}</p>
-                      </div>
-
-                      <div className="space-y-1 sm:col-span-2">
-                        <p className="text-xs text-muted-foreground">Recorded at</p>
-                        <p className="break-all text-sm">{openLog.time}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
+      <LogDialog openLog={openLog} onOpenChange={(v) => !v && setOpenLog(null)} />
     </div>
   );
 }

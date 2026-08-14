@@ -1,11 +1,18 @@
 'use client';
 
-import { createElement, type ComponentType, useCallback, useEffect, useRef } from 'react';
+import { createElement, type ComponentType, useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import * as d3 from 'd3';
 import * as LucideIcons from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from '@/components/ui/context-menu';
 
 export type GraphNode = d3.SimulationNodeDatum & {
   id: string;
@@ -23,8 +30,15 @@ export type NodeCategory = {
   id: string;
   color: string;
   icon?: string;
-  url?: string;
+  urlQuery?: string;
+  urlRoute?: string;
 };
+
+type NodeMenuState = {
+  node: GraphNode;
+  x: number;
+  y: number;
+} | null;
 
 function getIconMarkup(iconName: string | undefined, size: number): string {
   if (!iconName) {
@@ -48,6 +62,23 @@ function getIconMarkup(iconName: string | undefined, size: number): string {
   );
 }
 
+function getNodeDestinations(node: GraphNode, groups: NodeCategory[]) {
+  const group = groups.find((item) => item.id === node.group);
+
+  if (!group) {
+    return {
+      route: undefined,
+      query: undefined,
+    };
+  }
+
+  return {
+    route: group.urlRoute ? `${group.urlRoute}${node.id}` : undefined,
+
+    query: group.urlQuery ? `${group.urlQuery}${encodeURIComponent(node.label)}` : undefined,
+  };
+}
+
 export default function LinkGraph({
   className = '',
   nodes,
@@ -59,9 +90,30 @@ export default function LinkGraph({
   links: GraphLink[];
   groups: NodeCategory[];
 }) {
+  const [nodeMenu, setNodeMenu] = useState<NodeMenuState>(null);
   const router = useRouter();
   const svgRef = useRef<SVGSVGElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
+
+  const openRoute = (node: GraphNode) => {
+    const { route } = getNodeDestinations(node, groups);
+
+    if (route) {
+      router.push(route);
+    }
+
+    setNodeMenu(null);
+  };
+
+  const openQuery = (node: GraphNode) => {
+    const { query } = getNodeDestinations(node, groups);
+
+    if (query) {
+      router.push(query);
+    }
+
+    setNodeMenu(null);
+  };
 
   const build = useCallback(() => {
     const wrap = wrapRef.current;
@@ -135,11 +187,29 @@ export default function LinkGraph({
       .on('click', (event, d) => {
         event.stopPropagation();
 
-        const group = groups.find((item) => item.id === d.group);
+        const { route, query } = getNodeDestinations(d, groups);
 
-        if (group?.url) {
-          router.push(group.url);
+        if (route) {
+          router.push(route);
+        } else if (query) {
+          router.push(query);
         }
+      })
+      .on('contextmenu', (event, d) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const { route, query } = getNodeDestinations(d, groups);
+
+        if (!route && !query) {
+          return;
+        }
+
+        setNodeMenu({
+          node: d,
+          x: event.clientX,
+          y: event.clientY,
+        });
       })
       .attr('cursor', 'grab')
       .call(
@@ -253,6 +323,62 @@ export default function LinkGraph({
     >
       <div className="absolute inset-0">
         <svg ref={svgRef} className="h-full w-full" style={{ background: 'var(--card)' }} />
+        {nodeMenu && (
+          <ContextMenu
+            open
+            onOpenChange={(open) => {
+              if (!open) {
+                setNodeMenu(null);
+              }
+            }}
+          >
+            <ContextMenuTrigger
+              asChild
+              className="pointer-events-none fixed h-0 w-0"
+              style={{
+                left: nodeMenu.x,
+                top: nodeMenu.y,
+              }}
+            >
+              <span />
+            </ContextMenuTrigger>
+
+            <ContextMenuContent
+              className="w-52"
+              style={{
+                position: 'fixed',
+                left: nodeMenu.x,
+                top: nodeMenu.y,
+              }}
+            >
+              <div className="px-2 py-1.5">
+                <p className="truncate text-sm font-medium">{nodeMenu.node.label}</p>
+                <p className="text-xs text-muted-foreground">Choose where to open this item</p>
+              </div>
+
+              <ContextMenuSeparator />
+
+              {getNodeDestinations(nodeMenu.node, groups).route && (
+                <ContextMenuItem onSelect={() => openRoute(nodeMenu.node)}>
+                  <LucideIcons.FolderOpen className="mr-2 h-4 w-4" />
+                  Open details
+                </ContextMenuItem>
+              )}
+
+              {getNodeDestinations(nodeMenu.node, groups).query && (
+                <ContextMenuItem onSelect={() => openQuery(nodeMenu.node)}>
+                  <LucideIcons.Search className="mr-2 h-4 w-4" />
+                  View related items
+                </ContextMenuItem>
+              )}
+
+              <ContextMenuItem onSelect={() => setNodeMenu(null)}>
+                <LucideIcons.ExternalLink className="mr-2 h-4 w-4" />
+                Cancel
+              </ContextMenuItem>
+            </ContextMenuContent>
+          </ContextMenu>
+        )}
       </div>
     </div>
   );

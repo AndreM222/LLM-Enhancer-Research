@@ -8,14 +8,30 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { getProjectLinks, getProjectTags } from '@/lib/mockApi';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 const data: TagGroup[] = getProjectTags();
 
 export default function Tags() {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const [search, setSearch] = useState(searchParams.get('search') ?? '');
+
   const { nodes, groups, links } = getProjectLinks(undefined, 'tags');
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (search.trim()) params.set('search', search);
+    else params.delete('search');
+    router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, { scroll: false });
+  }, [search]);
+
+  useEffect(() => {
+    setSearch(searchParams.get('search') ?? '');
+  }, [searchParams]);
 
   const handleCreate = (input: TagGroupInput) => {
     console.log('Creating tag group:', input);
@@ -23,6 +39,13 @@ export default function Tags() {
     const tempId = `tg-${Date.now()}`;
     router.push(`${pathname}/${tempId}`);
   };
+
+  const filtered = data.filter((d) => {
+    const q = search.trim().toLowerCase();
+    const matchesSearch =
+      !q || d.name.toLowerCase().includes(q) || (d.description || '').toLowerCase().includes(q);
+    return matchesSearch;
+  });
 
   return (
     <div className="grid lg:grid-cols-[1fr_390px] gap-6">
@@ -37,7 +60,12 @@ export default function Tags() {
         <CardContent className="space-y-6">
           <div className="flex gap-2 w-full justify-end">
             <Field>
-              <Input id="input-button-group" placeholder="Type to search..." />
+              <Input
+                id="input-button-group"
+                placeholder="Type to search..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </Field>
 
             <CreateTagGroupDialog onCreate={handleCreate} />
@@ -45,7 +73,7 @@ export default function Tags() {
 
           <CreateTagGroupTable
             pageSize={15}
-            data={data}
+            data={filtered}
             onDuplicate={() => console.log('Duplicate')}
             onDelete={() => console.log('Deleted')}
             onOpen={(id) => router.push(`${pathname}/${id}`)}

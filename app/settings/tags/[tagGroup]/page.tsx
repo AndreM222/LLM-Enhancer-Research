@@ -14,6 +14,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Field } from '@/components/ui/field';
+import TagDialog from '@/components/dialogs/tag-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -136,76 +137,19 @@ export default function TagGroupPage() {
             <Field>
               <Input id="input-button-group" placeholder="Type to search..." />
             </Field>
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <DialogTrigger asChild>
-                <Button size="sm" variant="outline">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Tag
-                </Button>
-              </DialogTrigger>
+            <Button size="sm" variant="outline" onClick={() => setDialogOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Add Tag
+            </Button>
 
-              <DialogContent className="sm:max-w-106.25">
-                <form onSubmit={handleAddTag}>
-                  <DialogHeader>
-                    <DialogTitle>Add Tag to Group</DialogTitle>
-                    <DialogDescription>
-                      Define a new detection tag inside this group.
-                    </DialogDescription>
-                  </DialogHeader>
-
-                  <div className="grid gap-4 py-4">
-                    <Field>
-                      <Label htmlFor="tag-name">Name</Label>
-                      <Input
-                        id="tag-name"
-                        value={tagName}
-                        onChange={(e) => setTagName(e.target.value)}
-                        placeholder="e.g. Clip"
-                        required
-                      />
-                    </Field>
-
-                    <Field>
-                      <Label htmlFor="tag-description">Description</Label>
-                      <Textarea
-                        id="tag-description"
-                        value={tagDescription}
-                        onChange={(e) => setTagDescription(e.target.value)}
-                        placeholder="What does this tag detect?"
-                        rows={3}
-                      />
-                    </Field>
-
-                    <Field>
-                      <Label htmlFor="tag-color">Color</Label>
-                      <div className="flex items-center gap-3">
-                        <input
-                          id="tag-color"
-                          type="color"
-                          value={tagColor}
-                          onChange={(e) => setTagColor(e.target.value)}
-                          className="h-9 w-12 cursor-pointer rounded border bg-transparent p-0"
-                        />
-                        <Input
-                          value={tagColor}
-                          onChange={(e) => setTagColor(e.target.value)}
-                          className="w-28"
-                          maxLength={7}
-                          placeholder="#000000"
-                        />
-                      </div>
-                    </Field>
-                  </div>
-
-                  <DialogFooter>
-                    <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
-                      Cancel
-                    </Button>
-                    <Button type="submit">Add Tag</Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
+            <TagDialog
+              mode="add"
+              open={dialogOpen}
+              onOpenChange={setDialogOpen}
+              onAdd={(t) => {
+                setGroup((prev) => ({ ...prev, tags: [...prev.tags, t] }));
+              }}
+            />
           </div>
 
           <CreateTagItemTable
@@ -216,81 +160,18 @@ export default function TagGroupPage() {
           />
 
           {/* Edit dialog */}
-          <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-            <DialogContent className="sm:max-w-106.25">
-              <form onSubmit={handleSaveEdit}>
-                <DialogHeader>
-                  <DialogTitle>Edit Tag</DialogTitle>
-                  <DialogDescription>Update the tag details.</DialogDescription>
-                </DialogHeader>
-
-                <div className="grid gap-4 py-4">
-                  <Field>
-                    <Label htmlFor="edit-tag-name">Name</Label>
-                    <Input
-                      id="edit-tag-name"
-                      value={editingTag?.name ?? ''}
-                      onChange={(e) =>
-                        setEditingTag((prev) => (prev ? { ...prev, name: e.target.value } : prev))
-                      }
-                      placeholder="e.g. Clip"
-                      required
-                    />
-                  </Field>
-
-                  <Field>
-                    <Label htmlFor="edit-tag-description">Description</Label>
-                    <Textarea
-                      id="edit-tag-description"
-                      value={editingTag?.description ?? ''}
-                      onChange={(e) =>
-                        setEditingTag((prev) =>
-                          prev ? { ...prev, description: e.target.value } : prev
-                        )
-                      }
-                      placeholder="What does this tag detect?"
-                      rows={3}
-                    />
-                  </Field>
-
-                  <Field>
-                    <Label htmlFor="edit-tag-color">Color</Label>
-                    <div className="flex items-center gap-3">
-                      <input
-                        id="edit-tag-color"
-                        type="color"
-                        value={editingTag?.color ?? '#3b82f6'}
-                        onChange={(e) =>
-                          setEditingTag((prev) =>
-                            prev ? { ...prev, color: e.target.value } : prev
-                          )
-                        }
-                        className="h-9 w-12 cursor-pointer rounded border bg-transparent p-0"
-                      />
-                      <Input
-                        value={editingTag?.color ?? ''}
-                        onChange={(e) =>
-                          setEditingTag((prev) =>
-                            prev ? { ...prev, color: e.target.value } : prev
-                          )
-                        }
-                        className="w-28"
-                        maxLength={7}
-                        placeholder="#000000"
-                      />
-                    </div>
-                  </Field>
-                </div>
-
-                <DialogFooter>
-                  <Button type="button" variant="outline" onClick={() => setEditDialogOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button type="submit">Save changes</Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
+          <TagDialog
+            mode="edit"
+            open={editDialogOpen}
+            onOpenChange={setEditDialogOpen}
+            initial={editingTag}
+            onSave={(t) => {
+              setGroup((prev) => ({
+                ...prev,
+                tags: prev.tags.map((tg) => (tg.id === t.id ? t : tg)),
+              }));
+            }}
+          />
         </CardContent>
       </Card>
     </div>
