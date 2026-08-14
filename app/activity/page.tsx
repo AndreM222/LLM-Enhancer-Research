@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import ActivityCanvas from '@/components/activity-canvas';
 import { Project } from '@/components/project-cards';
 import { ProjectSwitcher } from '@/components/project-switcher';
@@ -9,7 +9,7 @@ import { getProjects, getActivityForProject, getLogs } from '@/lib/mockApi';
 import { FaFileExport } from 'react-icons/fa6';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-export default function Activity() {
+function ActivityContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -30,10 +30,6 @@ export default function Activity() {
   const activity = getActivityForProject(selectedProject?.id);
   const logs = getLogs(selectedProject?.id);
 
-  useEffect(() => {
-    console.log('Project Id: ' + selectedProject?.id);
-  }, [selectedProject]);
-
   return (
     <div className="h-full w-full space-y-6 overflow-hidden">
       <div className="flex items-center justify-between gap-4">
@@ -42,7 +38,6 @@ export default function Activity() {
           selectedProjectId={selectedProject?.id}
           onChange={(p) => setSelectedProject(p)}
         />
-
         <Button variant="outline" title="Export activity">
           <FaFileExport className="mr-2 h-4 w-4" />
           Export
@@ -56,5 +51,19 @@ export default function Activity() {
         className="h-180"
       />
     </div>
+  );
+}
+
+export default function Activity() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-full w-full flex items-center justify-center text-muted-foreground text-sm">
+          Loading activity...
+        </div>
+      }
+    >
+      <ActivityContent />
+    </Suspense>
   );
 }
