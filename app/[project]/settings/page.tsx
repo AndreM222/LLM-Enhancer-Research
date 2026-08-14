@@ -68,6 +68,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { ProjectBanner } from '@/components/project-switcher';
 
 const tagsList: TagGroup[] = getProjectTags();
 const MODEL_OPTIONS = getModelOptions();
@@ -741,15 +742,7 @@ export default function ProjectSettings() {
               setProjectLinkValue('');
               toast.success(`${selectedProjectLink.name} linked.`);
             }}
-            renderItem={(p) => (
-              <span className="flex items-center gap-2">
-                <ProjectIcon icon={p.icon} color={p.color} className="w-6 h-6 rounded-md" />
-                <span className="flex flex-col">
-                  <span>{p.name}</span>
-                  <span className="text-xs text-muted-foreground">{p.description}</span>
-                </span>
-              </span>
-            )}
+            renderItem={(p) => <ProjectBanner project={p} />}
           />
           <LinkDetectionTable
             pageSize={4}

@@ -15,7 +15,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { InvitationDialog } from '@/components/dialogs/invitation-dialog';
-// Invitation dialog moved to components/dialogs/invitation-dialog.tsx
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,8 +25,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { getUsers } from '@/lib/mockApi';
 import { InviteUserDialog } from '@/components/dialogs/invite-user-dialog';
 import { User } from '@/components/tables/users-columns';
@@ -45,19 +42,6 @@ const mockUsers: User[] = userData.map((user) => ({
   time: user.time,
   roleId: (user.roleId as string) ?? 'MEMBER',
 }));
-
-function statusVariant(status: string) {
-  switch (status.toUpperCase()) {
-    case 'ACCEPTED':
-      return 'default';
-    case 'REJECTED':
-      return 'destructive';
-    case 'SENT':
-      return 'secondary';
-    default:
-      return 'outline';
-  }
-}
 
 export default function Members() {
   const router = useRouter();

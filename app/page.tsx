@@ -59,7 +59,12 @@ export default function Home() {
         </Select>
 
         <Field>
-          <Input id="input-button-group" placeholder="Type to search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+          <Input
+            id="input-button-group"
+            placeholder="Type to search..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </Field>
 
         <Button>Create project</Button>

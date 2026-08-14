@@ -17,9 +17,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { cn } from '@/lib/utils';
-import { pictureFallback } from './account-banner';
 import { Project, ProjectIcon } from './project-cards';
 import { ChevronsUpDown, Plus } from 'lucide-react';
 
@@ -31,16 +28,31 @@ const sizeConfig = {
   lg: { avatar: 'h-16 w-16', name: 'text-xl', email: 'text-base' },
 } as const;
 
-export function ProjectBanner({ project, size = 'sm' }: { project: Project; size?: BannerSize }) {
+export function ProjectBanner({
+  project,
+  size = 'sm',
+  maxDescription,
+}: {
+  project: Project;
+  size?: BannerSize;
+  maxDescription?: number;
+}) {
   const s = sizeConfig[size];
 
   return (
-    <div className="flex items-center gap-3">
-      <Avatar className={cn('m-[-7]', s.avatar)}>
-        <AvatarImage src="" alt="shadcn" />
-        <AvatarFallback className={cn(s.name)}>{pictureFallback(project.name)}</AvatarFallback>
-      </Avatar>
-      <span className={cn('truncate font-medium', s.name)}>{project.name}</span>
+    <div className="flex items-center gap-2">
+      <ProjectIcon
+        icon={project.icon}
+        color={project.color}
+        className="h-7 w-7 rounded-md"
+        iconClassName="h-4 w-4"
+      />
+      <div className="grid">
+        {project.name}
+        <span className="text-xs text-muted-foreground">
+          {maxDescription ? truncateText(project.description, maxDescription) : project.description}
+        </span>
+      </div>
     </div>
   );
 }
@@ -88,17 +100,7 @@ export function ProjectSwitcher({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <ProjectIcon
-                icon={activeProject.icon}
-                color={activeProject.color}
-                className="h-10 w-10 rounded-xl"
-              />
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{activeProject.name}</span>
-                <span className="truncate text-xs text-gray-500">
-                  {truncateText(activeProject.description, 30)}
-                </span>
-              </div>
+              <ProjectBanner project={activeProject} maxDescription={30} />
               <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
@@ -118,17 +120,7 @@ export function ProjectSwitcher({
                   onClick={() => setActiveProject(team)}
                   className="gap-2 p-2"
                 >
-                  <ProjectIcon
-                    icon={team.icon}
-                    color={team.color}
-                    className="rounded-xl h-10 w-10"
-                  />
-                  <div>
-                    {team.name}
-                    <div className="truncate text-xs text-gray-500">
-                      {truncateText(activeProject.description, 30)}
-                    </div>
-                  </div>
+                  <ProjectBanner project={team} maxDescription={30} />
                   <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
                 </DropdownMenuItem>
               );

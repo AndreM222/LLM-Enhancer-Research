@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowUpRight, Network } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 
 import LinkGraph from '@/components/linkGraph';
 import { getProjectLinks } from '@/lib/mockApi';

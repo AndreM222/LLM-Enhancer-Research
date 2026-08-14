@@ -4,20 +4,10 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { Plus, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
 import { Field } from '@/components/ui/field';
 import TagDialog from '@/components/dialogs/tag-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { CreateTagItemTable } from '@/components/tables/tags-table';
 import { PageHeader } from '@/components/app-navigation';
 import { getTags } from '@/lib/mockApi';
@@ -52,27 +42,6 @@ export default function TagGroupPage() {
   const [group, setGroup] = useState<TagGroupDetail>(getTags()[0]);
 
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [tagName, setTagName] = useState('');
-  const [tagDescription, setTagDescription] = useState('');
-  const [tagColor, setTagColor] = useState('#3b82f6');
-
-  const handleAddTag = (e: React.SubmitEvent) => {
-    e.preventDefault();
-    if (!tagName.trim()) return;
-
-    const newTag: Tag = {
-      id: `t-${Date.now()}`,
-      name: tagName.trim(),
-      description: tagDescription.trim(),
-      color: tagColor,
-    };
-
-    setGroup((prev) => ({ ...prev, tags: [...prev.tags, newTag] }));
-    setTagName('');
-    setTagDescription('');
-    setTagColor('#3b82f6');
-    setDialogOpen(false);
-  };
 
   const handleDeleteTag = (id: string) => {
     setGroup((prev) => ({ ...prev, tags: prev.tags.filter((t) => t.id !== id) }));
@@ -86,17 +55,6 @@ export default function TagGroupPage() {
     if (!tag) return;
     setEditingTag(tag);
     setEditDialogOpen(true);
-  };
-
-  const handleSaveEdit = (e: React.SubmitEvent) => {
-    e.preventDefault();
-    if (!editingTag) return;
-    setGroup((prev) => ({
-      ...prev,
-      tags: prev.tags.map((t) => (t.id === editingTag.id ? editingTag : t)),
-    }));
-    setEditDialogOpen(false);
-    setEditingTag(null);
   };
 
   return (

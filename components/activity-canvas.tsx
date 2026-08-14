@@ -211,12 +211,16 @@ export default function ActivityCanvas({
             // remove service param when closing
             const params = new URLSearchParams(searchParams.toString());
             params.delete('service');
-            router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, { scroll: false });
+            router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, {
+              scroll: false,
+            });
           } else if (selectedNode) {
             // when opening, ensure url contains service id
             const params = new URLSearchParams(searchParams.toString());
             params.set('service', selectedNode.id as string);
-            router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, { scroll: false });
+            router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, {
+              scroll: false,
+            });
           }
         }}
         direction="right"

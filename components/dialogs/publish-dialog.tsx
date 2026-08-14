@@ -17,7 +17,6 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { getProjects } from '@/lib/mockApi';
-import Image from 'next/image';
 import {
   Combobox,
   ComboboxContent,
@@ -26,6 +25,7 @@ import {
   ComboboxList,
   ComboboxEmpty,
 } from '@/components/ui/combobox';
+import { ProjectBanner } from '../project-switcher';
 
 type PublishForm = {
   projectId: string;
@@ -116,13 +116,7 @@ export default function PublishDialog({
                     {!allProjects.length && <ComboboxEmpty>No projects found.</ComboboxEmpty>}
                     {allProjects.map((p) => (
                       <ComboboxItem key={p.id} value={p.id}>
-                        <span className="flex items-center gap-2">
-                          <div className={`w-6 h-6 rounded-md bg-${p.color}`} />
-                          <span className="flex flex-col">
-                            <span>{p.name}</span>
-                            <span className="text-xs text-muted-foreground">{p.description}</span>
-                          </span>
-                        </span>
+                        <ProjectBanner project={p} />
                       </ComboboxItem>
                     ))}
                   </ComboboxList>

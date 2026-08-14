@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { format } from 'date-fns';
 import { type DateRange } from 'react-day-picker';
 import {
@@ -14,7 +14,6 @@ import {
   SlidersHorizontal,
   Star,
   Tag,
-  Upload,
   Users,
   X,
 } from 'lucide-react';
@@ -32,29 +31,11 @@ import {
   DropdownMenuCheckboxItem,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Textarea } from '@/components/ui/textarea';
-import { toast } from 'sonner';
-import {
-  getMarketplaceTemplates,
-  getMarketplaceFilters,
-  getProjects,
-  MarketplaceTemplate,
-} from '@/lib/mockApi';
-import { ProjectIcon, type Project } from '@/components/project-cards';
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from '@/components/ui/combobox';
+import { getMarketplaceTemplates, getMarketplaceFilters, MarketplaceTemplate } from '@/lib/mockApi';
 
 const templates: MarketplaceTemplate[] = getMarketplaceTemplates();
 const filters = getMarketplaceFilters();
-const allProjects: Project[] = getProjects();
 
 // ── template card ────────────────────────────────────────────────────────────
 
@@ -174,8 +155,8 @@ function TemplateCard({
     </Link>
   );
 }
-
 import PublishDialog from '@/components/dialogs/publish-dialog';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 // ── main page ─────────────────────────────────────────────────────────────────
 
@@ -200,7 +181,7 @@ export default function Marketplace() {
     const params = new URLSearchParams(searchParams.toString());
     if (query.trim()) params.set('search', query);
     else params.delete('search');
-    router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, { scroll: false });
+    router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`);
   }, [query]);
 
   const onImgError = (key: string) => setImgErrors((prev) => ({ ...prev, [key]: true }));
