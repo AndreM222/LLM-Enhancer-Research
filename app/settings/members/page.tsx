@@ -15,14 +15,10 @@ import {
 } from '@/components/ui/select';
 import { ChangeRoleDialog } from '@/components/dialogs/change-role-dialog';
 import { MemberConfirmDialog } from '@/components/dialogs/member-confirm-dialog';
-// Dialogs moved to components/dialogs/*
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import { getProjectLinks, getRoles, getUsers } from '@/lib/mockApi';
 import { User } from '@/components/tables/users-columns';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import LinkGraph from '@/components/linkGraph';
-import { AccountBanner } from '@/components/account-banner';
 import { Role } from './roles/page';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
@@ -133,14 +129,32 @@ export default function Members() {
       params.delete('role');
     }
 
+    // keep the currently open edit user in the URL so links can open the same dialog
+    if (editOpen && editingUser) {
+      params.set('user', editingUser.id);
+    } else {
+      params.delete('user');
+    }
+
     router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, {
       scroll: false,
     });
-  }, [search, roleFilter]);
+  }, [search, roleFilter, editOpen, editingUser]);
 
   useEffect(() => {
     setSearch(searchParams.get('search') ?? '');
-  }, [searchParams]);
+
+    // if a ?user=ID param is present, open the change-role dialog for that user
+    const userParam = searchParams.get('user');
+    if (userParam) {
+      const user = users.find((u) => u.id === userParam);
+      if (user) {
+        setEditingUser(user);
+        setSelectedRole((user.roleId as string) ?? roles.at(0)?.name);
+        setEditOpen(true);
+      }
+    }
+  }, [searchParams, users]);
 
   return (
     <div className="grid lg:grid-cols-[1fr_390px] gap-6">

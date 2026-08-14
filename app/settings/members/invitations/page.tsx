@@ -77,13 +77,26 @@ export default function Members() {
     if (statusFilter && statusFilter !== 'none') params.set('status', statusFilter);
     else params.delete('status');
 
+    // keep currently open invitation dialog in URL as ?user=ID so links can share
+    if (openUser) {
+      params.set('user', openUser.id);
+    } else {
+      params.delete('user');
+    }
+
     router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, { scroll: false });
-  }, [search, statusFilter]);
+  }, [search, statusFilter, openUser]);
 
   useEffect(() => {
     setSearch(searchParams.get('search') ?? '');
     setStatusFilter(searchParams.get('status') ?? 'none');
-  }, [searchParams]);
+
+    const userParam = searchParams.get('user');
+    if (userParam) {
+      const user = users.find((u) => u.id === userParam);
+      if (user) setOpenUser(user);
+    }
+  }, [searchParams, users]);
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);

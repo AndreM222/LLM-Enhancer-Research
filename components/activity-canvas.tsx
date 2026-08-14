@@ -22,6 +22,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useMemo, useState } from 'react';
 import type { Log } from '@/components/tables/logs-columns';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import {
   Drawer,
@@ -147,6 +148,19 @@ export default function ActivityCanvas({
   const [edges, setEdges, onEdgesChange] = useEdgesState(normalizedInitialEdges);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
 
+  // URL sync for opened service drawer
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // if a service is specified in the URL, open that node's drawer
+  useEffect(() => {
+    const svc = searchParams.get('service');
+    if (!svc) return;
+    const node = nodes.find((n) => n.id === svc);
+    if (node) setSelectedNode(node as Node);
+  }, [searchParams, nodes]);
+
   const selectedLogs = useMemo(() => {
     if (!selectedNode) {
       return [];
@@ -192,7 +206,18 @@ export default function ActivityCanvas({
       <Drawer
         open={!!selectedNode}
         onOpenChange={(open) => {
-          if (!open) setSelectedNode(null);
+          if (!open) {
+            setSelectedNode(null);
+            // remove service param when closing
+            const params = new URLSearchParams(searchParams.toString());
+            params.delete('service');
+            router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, { scroll: false });
+          } else if (selectedNode) {
+            // when opening, ensure url contains service id
+            const params = new URLSearchParams(searchParams.toString());
+            params.set('service', selectedNode.id as string);
+            router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, { scroll: false });
+          }
         }}
         direction="right"
       >

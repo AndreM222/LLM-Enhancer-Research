@@ -180,11 +180,28 @@ import PublishDialog from '@/components/dialogs/publish-dialog';
 // ── main page ─────────────────────────────────────────────────────────────────
 
 export default function Marketplace() {
-  const [query, setQuery] = useState('');
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const [query, setQuery] = useState(searchParams.get('search') ?? '');
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
-  const [publishOpen, setPublishOpen] = useState(false);
+  const [publishOpen, setPublishOpen] = useState(searchParams.get('dialog') === 'publish');
   const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    const dialog = searchParams.get('dialog');
+    setPublishOpen(dialog === 'publish');
+    setQuery(searchParams.get('search') ?? '');
+  }, [searchParams]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (query.trim()) params.set('search', query);
+    else params.delete('search');
+    router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, { scroll: false });
+  }, [query]);
 
   const onImgError = (key: string) => setImgErrors((prev) => ({ ...prev, [key]: true }));
 

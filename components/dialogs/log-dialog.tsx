@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { CircleAlert, Clock3, Hash, Server, X } from 'lucide-react';
 
 import { Log } from '@/components/tables/logs-columns';
@@ -139,8 +138,6 @@ export function LogDialog({
   openLog: Log | null;
   onOpenChange: (v: boolean) => void;
 }) {
-  const [isOpen, setIsOpen] = useState(Boolean(openLog));
-
   if (!openLog) {
     return null;
   }
@@ -149,7 +146,6 @@ export function LogDialog({
     <Dialog
       open={!!openLog}
       onOpenChange={(value) => {
-        setIsOpen(Boolean(value));
         if (!value) onOpenChange(false);
       }}
     >

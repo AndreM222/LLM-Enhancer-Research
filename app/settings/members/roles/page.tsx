@@ -7,13 +7,6 @@ import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { getProjectLinks, getProjects, getRoles, roleSettingsOptions } from '@/lib/mockApi';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -24,17 +17,10 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import { CreateRolesTable } from '@/components/tables/roles-table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import LinkGraph from '@/components/linkGraph';
-import { Project, ProjectIcon } from '@/components/project-cards';
-import { AddRow } from '@/app/[project]/settings/page';
-import { LinkDetectionTable } from '@/components/tables/detection-table';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { SingleSetting, updateSettingValue } from '@/components/tables/settings-columns';
-import { SingleSettingsTable } from '@/components/tables/settings-table';
+import { Project } from '@/components/project-cards';
 
 const projectsList: Project[] = getProjects();
 
@@ -68,20 +54,36 @@ export default function Members() {
 
   const [createOpen, setCreateOpen] = useState(false);
 
+  const [editOpen, setEditOpen] = useState(false);
+  const [editingRole, setEditingRole] = useState<Role>(emptyRole());
+
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
     if (search.trim()) params.set('search', search);
     else params.delete('search');
 
+    // reflect the currently edited role in the URL so it can be opened by link
+    if (editOpen && editingRole?.id) {
+      params.set('role', editingRole.id);
+    } else {
+      params.delete('role');
+    }
+
     router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, { scroll: false });
-  }, [search]);
+  }, [search, editOpen, editingRole]);
 
   useEffect(() => {
     setSearch(searchParams.get('search') ?? '');
-  }, [searchParams]);
 
-  const [editOpen, setEditOpen] = useState(false);
-  const [editingRole, setEditingRole] = useState<Role>(emptyRole());
+    const roleParam = searchParams.get('role');
+    if (roleParam) {
+      const role = roles.find((r) => r.id === roleParam);
+      if (role) {
+        setEditingRole(role);
+        setEditOpen(true);
+      }
+    }
+  }, [searchParams, roles]);
 
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);

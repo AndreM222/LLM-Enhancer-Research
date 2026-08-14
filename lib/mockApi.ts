@@ -1506,13 +1506,14 @@ export const getAllGraphGroups = (): GraphGroups[] => [
     id: 'roles',
     color: '#3ecf8e',
     icon: 'Key',
-    urlRoute: '/settings/members/roles/',
-    urlQuery: '/settings/members/roles/?search=',
+    urlRoute: '/settings/members/roles?role=',
+    urlQuery: '/settings/members/roles?search=',
   },
   {
     id: 'users',
     color: '#f97316',
     icon: 'User',
+    urlRoute: '/settings/members?user=',
     urlQuery: '/settings/members?search=',
   },
   {
@@ -1520,6 +1521,7 @@ export const getAllGraphGroups = (): GraphGroups[] => [
     color: '#ba32c7',
     icon: 'Box',
     urlRoute: '/',
+    urlQuery: '/?search=',
   },
 ];
 

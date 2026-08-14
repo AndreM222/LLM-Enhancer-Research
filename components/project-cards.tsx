@@ -35,12 +35,9 @@ export type Project = {
   linkedProjectIds?: string[];
 };
 
-import { getProjects } from '@/lib/mockApi';
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
-
-const data: Project[] = getProjects();
 
 export const ProjectIcon = ({
   icon,
@@ -126,7 +123,7 @@ const ProjectCard = ({ item }: { item: Project }) => {
   );
 };
 
-export function Projects() {
+export function Projects({ data }: { data: Project[] }) {
   return (
     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
       {data.map((item) => (

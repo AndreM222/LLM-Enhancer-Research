@@ -156,6 +156,9 @@ export default function Logs() {
   }, [search, status]);
 
   useEffect(() => {
+    const logId = searchParams.get('log');
+    const log = logId ? data.find((logItem) => logItem.id === logId) ?? null : null;
+    setOpenLog(log);
     setSearch(searchParams.get('search') ?? '');
     setStatus(searchParams.get('status') ?? 'none');
   }, [searchParams]);
@@ -164,6 +167,9 @@ export default function Logs() {
     const log = data.find((logItem) => logItem.id === id);
 
     if (log) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('log', log.id);
+      router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, { scroll: false });
       setOpenLog(log);
     }
   };

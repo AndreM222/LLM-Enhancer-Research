@@ -45,7 +45,7 @@ export type NavItem = {
   items?: NavItem[];
 };
 
-const navList: {
+export const navList: {
   group: string;
   tabs: NavItem[];
 }[] = [
