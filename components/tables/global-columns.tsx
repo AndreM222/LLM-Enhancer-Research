@@ -14,11 +14,20 @@ export type GlobeActivity = {
   bandwidth: string;
 };
 
+export type Status =
+  | 'online'
+  | 'healthy'
+  | 'processing'
+  | 'degraded'
+  | 'down'
+  | 'offline'
+  | 'error';
+
 export type ServerActivity = {
   id: string;
   region: string;
   countryCode: string;
-  status: 'healthy' | 'degraded' | 'down';
+  status: Status;
   requests: number;
   dataTransferred: string;
   avgResponseMs: number;
@@ -26,16 +35,17 @@ export type ServerActivity = {
   lon: number;
 };
 
-const STATUS_STYLE: Record<
-  ServerActivity['status'],
-  { dot: string; text: string; label: string; pulse: boolean }
-> = {
+const STATUS_STYLE: Record<Status, { dot: string; text: string; label: string; pulse: boolean }> = {
   healthy: { dot: 'bg-emerald-500', text: 'text-emerald-600', label: 'Healthy', pulse: false },
+  online: { dot: 'bg-emerald-500', text: 'text-emerald-600', label: 'Online', pulse: true },
+  processing: { dot: 'bg-blue-500', text: 'text-blue-600', label: 'Processing', pulse: false },
+  offline: { dot: 'bg-zinc-500', text: 'text-zinc-600', label: 'Offline', pulse: false },
   degraded: { dot: 'bg-amber-500', text: 'text-amber-600', label: 'Degraded', pulse: true },
   down: { dot: 'bg-red-500', text: 'text-red-600', label: 'Down', pulse: true },
+  error: { dot: 'bg-red-500', text: 'text-red-600', label: 'Error', pulse: true },
 };
 
-export function ServerIndicator({ status }: { status: ServerActivity['status'] }) {
+export function StatusIndicator({ status }: { status: ServerActivity['status'] }) {
   const style = STATUS_STYLE[status];
   return (
     <div className="flex items-center gap-2">
@@ -97,7 +107,7 @@ export const getServerActivityColumns: ColumnDef<ServerActivity>[] = [
     id: 'status',
     accessorKey: 'status',
     header: 'Status',
-    cell: ({ row }) => <ServerIndicator status={row.original.status} />,
+    cell: ({ row }) => <StatusIndicator status={row.original.status} />,
   },
   {
     accessorKey: 'requests',
@@ -136,7 +146,7 @@ export function linkServerColumns(
       id: 'status',
       accessorKey: 'status',
       header: 'Status',
-      cell: ({ row }) => <ServerIndicator status={row.original.status} />,
+      cell: ({ row }) => <StatusIndicator status={row.original.status} />,
     },
     {
       accessorKey: 'requests',

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import {
   ReactFlow,
   Background,
@@ -136,8 +136,15 @@ export default function ActivityCanvas({
   initialEdges: Edge<ActivityEdgeData>[];
   logs: Log[];
 }) {
-  const [nodes, , onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+
+  const normalizedInitialEdges = initialEdges.map((e) => ({
+    ...e,
+    type: 'step',
+    data: { ...(e.data || {}) },
+  }));
+
+  const [edges, setEdges, onEdgesChange] = useEdgesState(normalizedInitialEdges);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
 
   const selectedLogs = useMemo(() => {
@@ -152,6 +159,13 @@ export default function ActivityCanvas({
     (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
     [setEdges]
   );
+
+  useEffect(() => {
+    setNodes(initialNodes);
+    setEdges(normalizedInitialEdges);
+
+    setSelectedNode(null);
+  }, [initialNodes, initialEdges, setNodes, setEdges]);
 
   return (
     <div className={cn('h-full w-full', className)} {...props}>

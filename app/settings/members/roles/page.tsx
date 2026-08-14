@@ -74,7 +74,6 @@ function RoleDialog({
   const [projectLinks, setProjectLinks] = useState<Project[]>(projectsList ?? []);
   const [projectLinkValue, setProjectLinkValue] = useState('');
 
-  // reset form when dialog opens with new initial value
   const handleOpenChange = (v: boolean) => {
     if (v) setForm(initial);
     onOpenChange(v);
@@ -273,7 +272,7 @@ export default function Members() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="grid lg:grid-cols-[1fr_390px] gap-6">
       <Card>
         <CardHeader>
           <CardTitle>Roles List</CardTitle>

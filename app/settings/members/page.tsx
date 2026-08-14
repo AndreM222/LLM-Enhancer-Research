@@ -73,7 +73,6 @@ export default function Members() {
     });
   }, [users, search, roleFilter, roles]);
 
-  // edit
   const handleEdit = (id: string) => {
     const user = users.find((u) => u.id === id);
     if (!user) return;
@@ -94,7 +93,6 @@ export default function Members() {
     setEditingUser(null);
   };
 
-  // delete
   const handleDeleteRequest = (id: string) => {
     setDeletingId(id);
     setDeleteOpen(true);
@@ -109,7 +107,6 @@ export default function Members() {
     toast.success(`${user?.name ?? 'User'} removed from workspace.`);
   };
 
-  // suspend
   const handleSuspendRequest = (id: string) => {
     setSuspendingId(id);
     setSuspendOpen(true);
@@ -132,7 +129,7 @@ export default function Members() {
   const isSuspendingCurrentlySuspended = (suspendingUser as any)?.suspended ?? false;
 
   return (
-    <div className="space-y-6">
+    <div className="grid lg:grid-cols-[1fr_390px] gap-6">
       <Card>
         <CardHeader>
           <CardTitle>Workspace members</CardTitle>

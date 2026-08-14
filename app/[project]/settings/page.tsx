@@ -33,9 +33,10 @@ import {
   getRoles,
   getProjects,
   getProjectLinks,
+  getProjectLayers,
 } from '@/lib/mockApi';
 import { LinkServerTable } from '@/components/tables/global-table';
-import { ServerActivity, ServerIndicator } from '@/components/tables/global-columns';
+import { ServerActivity, StatusIndicator } from '@/components/tables/global-columns';
 import { Project, ProjectIcon } from '@/components/project-cards';
 import { ChevronLeft, ChevronRight, GripHorizontal, Layers, Plus, X } from 'lucide-react';
 import { LinkDetectionTable } from '@/components/tables/detection-table';
@@ -329,9 +330,12 @@ export default function ProjectSettings() {
   const [projectName, setProjectName] = useState('');
   const [projectDesc, setProjectDesc] = useState('');
 
-  const [layers, setLayers] = useState<DetectionLayer[]>([
-    { id: crypto.randomUUID(), position: 1, model: 'YOLOv8', tags: tagsList ?? [] },
-  ]);
+  const initialLayers = getProjectLayers(project ?? '');
+  const [layers, setLayers] = useState<DetectionLayer[]>(
+    initialLayers && initialLayers.length
+      ? initialLayers
+      : [{ id: crypto.randomUUID(), position: 1, model: 'YOLOv8', tags: tagsList ?? [] }]
+  );
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
 
@@ -697,7 +701,7 @@ export default function ProjectSettings() {
                 <Flag code={s.countryCode} className="w-4 h-4" />
                 <span className="flex flex-col">
                   <span>{s.region}</span>
-                  <ServerIndicator status={s.status} />
+                  <StatusIndicator status={s.status} />
                 </span>
               </span>
             )}

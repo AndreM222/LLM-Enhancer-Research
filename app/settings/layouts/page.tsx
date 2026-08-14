@@ -34,7 +34,7 @@ export default function Layouts() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="grid lg:grid-cols-[1fr_390px] gap-6">
       <Card>
         <CardHeader>
           <CardTitle>Sessions Setup</CardTitle>

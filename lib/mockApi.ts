@@ -10,6 +10,7 @@ import { ServerActivity } from '@/components/tables/global-columns';
 import { SingleSetting } from '@/components/tables/settings-columns';
 import { Invoice } from '@/components/tables/invoice-table';
 import { GraphLink, GraphNode, NodeCategory as GraphGroups } from '@/components/linkGraph';
+import { Edge, Node } from '@xyflow/react';
 
 export type UsageItem = {
   label: string;
@@ -89,6 +90,14 @@ export type LayoutStep = {
 export type SessionLayout = {
   id: string;
   layoutStep: LayoutStep[];
+};
+
+export type DetectionLayer = {
+  id: string;
+  projectId: string;
+  position: number;
+  model: string;
+  tagIds: string[];
 };
 
 export type Workspace = {
@@ -776,6 +785,34 @@ const ALL_PROJECTS: Project[] = [
   },
 ];
 
+const ALL_DETECTION_LAYERS: DetectionLayer[] = [
+  { id: 'layer-area-1', projectId: 'area', position: 1, model: 'Gemini', tagIds: ['japanese-1'] },
+  { id: 'layer-area-2', projectId: 'area', position: 2, model: 'GPT', tagIds: ['japanese-1'] },
+  { id: 'layer-simple-1', projectId: 'simple', position: 1, model: 'GPT', tagIds: ['scratches-1'] },
+  {
+    id: 'layer-tags-1',
+    projectId: 'tags',
+    position: 1,
+    model: 'Gemini',
+    tagIds: ['japanese-1', 'scratches-1'],
+  },
+];
+
+export const getProjectLayers = (projectId?: string) => {
+  const layers = projectId
+    ? ALL_DETECTION_LAYERS.filter((l) => l.projectId === projectId)
+    : ALL_DETECTION_LAYERS;
+
+  return layers.map((l) => ({
+    id: l.id,
+    position: l.position,
+    model: l.model,
+    tags: (l.tagIds || [])
+      .map((tid) => ALL_TAG_GROUPS.find((t) => t.id === tid))
+      .filter((t): t is TagGroup => Boolean(t)),
+  }));
+};
+
 const ALL_SESSIONS: DetectionSession[] = [
   {
     id: 'S-1042',
@@ -1192,7 +1229,7 @@ export const getGraphNodes = (): GraphNode[] => [
   { id: 'api', label: 'API Server', group: 'layout', radius: 16 },
   { id: 'detection', label: 'Detection Service', group: 'layout', radius: 12 },
   { id: 'prompt-engine', label: 'Prompt Engine', group: 'layout', radius: 12 },
-  { id: 'gemini', label: 'Gemini Flash', group: 'roles', radius: 14 },
+  { id: 'agent', label: 'AI Agent', group: 'roles', radius: 14 },
   { id: 'llm-optimizer', label: 'LLM Optimizer', group: 'roles', radius: 12 },
   { id: 'image-store', label: 'Image Storage', group: 'roles', radius: 10 },
   { id: 'users-detections', label: 'Detections users', group: 'users', radius: 12 },
@@ -1207,15 +1244,248 @@ export const getGraphLinks = (): GraphLink[] => [
   { source: 'api', target: 'llm-optimizer' },
   { source: 'api', target: 'users-detections' },
   { source: 'api', target: 'image-store' },
-  { source: 'detection', target: 'gemini' },
+  { source: 'detection', target: 'agent' },
   { source: 'prompt-engine', target: 'api' },
-  { source: 'prompt-engine', target: 'gemini' },
+  { source: 'prompt-engine', target: 'agent' },
   { source: 'prompt-engine', target: 'users-prompts' },
   { source: 'llm-optimizer', target: 'prompt-engine' },
   { source: 'llm-optimizer', target: 'users-prompts' },
   { source: 'users-detections', target: 'canvas' },
   { source: 'image-store', target: 'detection' },
 ];
+
+const EDGE_TOPOLOGY: { id: string; source: string; target: string }[] = [
+  { id: 'fe-api', source: 'frontend', target: 'api' },
+  { id: 'fe-canvas', source: 'frontend', target: 'canvas' },
+  { id: 'canvas-api', source: 'canvas', target: 'api' },
+  { id: 'api-det', source: 'api', target: 'detection' },
+  { id: 'api-img', source: 'api', target: 'image-store' },
+  { id: 'api-dbd', source: 'api', target: 'db-detections' },
+  { id: 'api-dbp', source: 'api', target: 'db-prompts' },
+  { id: 'api-llm', source: 'api', target: 'llm-optimizer' },
+  { id: 'img-det', source: 'image-store', target: 'detection' },
+  { id: 'dbd-canvas', source: 'db-detections', target: 'canvas' },
+  { id: 'llm-pe', source: 'llm-optimizer', target: 'prompt-engine' },
+  { id: 'llm-dbp', source: 'llm-optimizer', target: 'db-prompts' },
+  { id: 'pe-api', source: 'prompt-engine', target: 'api' },
+  { id: 'pe-dbp', source: 'prompt-engine', target: 'db-prompts' },
+];
+
+function getLayerEdges(layers: ReturnType<typeof getProjectLayers>) {
+  const edges: { id: string; source: string; target: string }[] = [];
+  layers.forEach((layer) => {
+    const llmId = `llm-${layer.id}`;
+    edges.push({ id: `det-${llmId}`, source: 'detection', target: llmId });
+    edges.push({ id: `${llmId}-llmopt`, source: llmId, target: 'llm-optimizer' });
+    edges.push({ id: `pe-${llmId}`, source: 'prompt-engine', target: llmId });
+  });
+  return edges;
+}
+
+function findPath(
+  targetId: string,
+  allEdges: { id: string; source: string; target: string }[]
+): string[] {
+  if (targetId === 'frontend') return [];
+
+  const queue: { node: string; path: string[] }[] = [{ node: 'frontend', path: [] }];
+  const visited = new Set<string>();
+
+  while (queue.length > 0) {
+    const { node, path } = queue.shift()!;
+    if (visited.has(node)) continue;
+    visited.add(node);
+
+    for (const edge of allEdges) {
+      if (edge.source === node) {
+        const newPath = [...path, edge.id];
+        if (edge.target === targetId) return newPath;
+        queue.push({ node: edge.target, path: newPath });
+      }
+    }
+  }
+
+  return [];
+}
+
+function deriveNodeStatus(serviceId: string, logs: Log[]): 'online' | 'offline' | 'error' {
+  const serviceLogs = logs.filter((l) => l.serviceId === serviceId);
+  if (serviceLogs.length === 0) return 'offline';
+  const latest = serviceLogs.sort(
+    (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()
+  )[0];
+  if (latest.status >= 500) return 'error';
+  return 'online';
+}
+
+export const getActivityForProject = (projectId?: string) => {
+  const project = projectId ? getProjectById(projectId) : undefined;
+  const projectLayers = projectId ? getProjectLayers(projectId) : [];
+  const projectServers = project ? getProjectServers(projectId) : [];
+  const logs = getLogs(projectId);
+
+  const layerEdgeDefs = getLayerEdges(projectLayers);
+  const allEdgeDefs = [...EDGE_TOPOLOGY, ...layerEdgeDefs];
+
+  const edgeRefCount = new Map<string, Set<string>>();
+
+  logs.forEach((log) => {
+    if (!log.serviceId) return;
+    const path = findPath(log.serviceId, allEdgeDefs);
+    path.forEach((edgeId) => {
+      if (!edgeRefCount.has(edgeId)) edgeRefCount.set(edgeId, new Set());
+      edgeRefCount.get(edgeId)!.add(log.id);
+    });
+  });
+
+  const activeEdgeIds = new Set(
+    [...edgeRefCount.entries()].filter(([, procs]) => procs.size > 0).map(([id]) => id)
+  );
+
+  const COL = { ui: 100, api: 500, ai: 900, db: 1300, server: 1700 };
+  const ROW_START = 80;
+  const ROW_GAP = 200;
+
+  const staticNodes = [
+    { id: 'frontend', name: 'Next.js Frontend', icon: 'Globe', col: COL.ui, row: 0 },
+    {
+      id: 'canvas',
+      name: 'Konva Canvas',
+      icon: 'Layers',
+      col: COL.ui,
+      row: 1,
+      volume: 'bbox editor',
+    },
+    { id: 'api', name: 'API Server', icon: 'Server', col: COL.api, row: 1 },
+    { id: 'detection', name: 'Detection Service', icon: 'FlaskConical', col: COL.api, row: 2 },
+    {
+      id: 'prompt-engine',
+      name: 'Prompt Engine',
+      icon: 'GitBranch',
+      col: COL.ai,
+      row: 0,
+      volume: 'best + last prompt',
+    },
+    { id: 'llm-optimizer', name: 'LLM Optimizer', icon: 'Cpu', col: COL.ai, row: 1 },
+    {
+      id: 'image-store',
+      name: 'Image Storage',
+      icon: 'FileImage',
+      col: COL.api,
+      row: 3,
+      volume: 'car photos',
+    },
+    {
+      id: 'db-detections',
+      name: 'Detections DB',
+      icon: 'Database',
+      col: COL.db,
+      row: 1,
+      volume: 'ver A + B',
+    },
+    {
+      id: 'db-prompts',
+      name: 'Prompts DB',
+      icon: 'ScrollText',
+      col: COL.db,
+      row: 2,
+      volume: 'best + last',
+    },
+  ];
+
+  const nodes: Node[] = staticNodes.map((n) => ({
+    id: n.id,
+    type: 'service',
+    position: { x: n.col, y: ROW_START + n.row * ROW_GAP },
+    data: {
+      name: n.name,
+      icon: n.icon,
+      volume: n.volume,
+      status: deriveNodeStatus(n.id, logs),
+    },
+  }));
+
+  projectLayers.forEach((layer, i) => {
+    const llmId = `llm-${layer.id}`;
+    nodes.push({
+      id: llmId,
+      type: 'service',
+      position: { x: COL.ai, y: ROW_START + (2 + i) * ROW_GAP },
+      data: {
+        name: `Layer ${layer.position} · ${layer.model}`,
+        icon: 'Brain',
+        volume: layer.tags.map((t) => t.name).join(', ') || undefined,
+        status: deriveNodeStatus(llmId, logs),
+      },
+    });
+  });
+
+  projectServers.forEach((server, i) => {
+    nodes.push({
+      id: server.id,
+      type: 'service',
+      position: { x: COL.server, y: ROW_START + i * ROW_GAP },
+      data: {
+        name: server.region,
+        icon: 'Server',
+        volume: server.status,
+        status: server.status === 'healthy' ? 'online' : 'error',
+      },
+    });
+  });
+
+  const edges: Edge[] = [];
+
+  const makeEdge = (
+    id: string,
+    source: string,
+    sourceHandle: string,
+    target: string,
+    targetHandle: string
+  ) => ({
+    id,
+    source,
+    sourceHandle,
+    target,
+    targetHandle,
+    type: 'step',
+    animated: activeEdgeIds.has(id),
+    data: {
+      active: activeEdgeIds.has(id),
+      label: target,
+    },
+  });
+
+  edges.push(makeEdge('fe-api', 'frontend', 'right', 'api', 'left'));
+  edges.push(makeEdge('fe-canvas', 'frontend', 'bottom', 'canvas', 'top'));
+  edges.push(makeEdge('canvas-api', 'canvas', 'right', 'api', 'left'));
+  edges.push(makeEdge('api-det', 'api', 'bottom', 'detection', 'top'));
+  edges.push(makeEdge('api-img', 'api', 'bottom', 'image-store', 'top'));
+  edges.push(makeEdge('api-dbd', 'api', 'right', 'db-detections', 'left'));
+  edges.push(makeEdge('api-dbp', 'api', 'right', 'db-prompts', 'left'));
+  edges.push(makeEdge('api-llm', 'api', 'right', 'llm-optimizer', 'left'));
+  edges.push(makeEdge('img-det', 'image-store', 'top', 'detection', 'bottom'));
+  edges.push(makeEdge('dbd-canvas', 'db-detections', 'bottom', 'canvas', 'right'));
+  edges.push(makeEdge('llm-pe', 'llm-optimizer', 'left', 'prompt-engine', 'right'));
+  edges.push(makeEdge('llm-dbp', 'llm-optimizer', 'right', 'db-prompts', 'left'));
+  edges.push(makeEdge('pe-api', 'prompt-engine', 'bottom', 'api', 'top'));
+  edges.push(makeEdge('pe-dbp', 'prompt-engine', 'right', 'db-prompts', 'left'));
+
+  projectLayers.forEach((layer) => {
+    const llmId = `llm-${layer.id}`;
+    edges.push(makeEdge(`det-${llmId}`, 'detection', 'right', llmId, 'left'));
+    edges.push(makeEdge(`${llmId}-llmopt`, llmId, 'right', 'llm-optimizer', 'left'));
+    edges.push(makeEdge(`pe-${llmId}`, 'prompt-engine', 'bottom', llmId, 'top'));
+  });
+
+  projectServers.forEach((server) => {
+    edges.push(makeEdge(`server-${server.id}-api`, server.id, 'left', 'api', 'right'));
+    edges.push(makeEdge(`server-${server.id}-dbd`, server.id, 'left', 'db-detections', 'right'));
+    edges.push(makeEdge(`server-${server.id}-dbp`, server.id, 'left', 'db-prompts', 'right'));
+  });
+
+  return { nodes, edges };
+};
 
 export const getAllGraphGroups = (): GraphGroups[] => [
   {
@@ -1250,73 +1520,108 @@ export const getAllGraphGroups = (): GraphGroups[] => [
   },
 ];
 
-export const getLogs = (): Log[] => [
+const ALL_LOGS: (Log & { projectId?: string })[] = [
   {
     id: 'log-gemini-001',
     serviceId: 'gemini',
+    projectId: 'area',
     type: 'POST',
     request: '/internal/gemini/process-image',
     status: 200,
     time: '2026-08-12T03:20:00.000Z',
-    response: {
-      processed: true,
-      detections: 4,
-      model: 'gemini-2.5-flash',
-    },
+    response: { processed: true, detections: 4, model: 'gemini-2.5-flash' },
   },
   {
     id: 'log-gemini-002',
     serviceId: 'gemini',
+    projectId: 'area',
     type: 'POST',
     request: '/internal/gemini/process-image',
     status: 500,
     time: '2026-08-12T03:18:00.000Z',
-    response: {
-      processed: false,
-    },
+    response: { processed: false },
     error: {
       code: 'MODEL_TIMEOUT',
       message: 'The model did not respond before the timeout limit.',
-      details: {
-        timeoutMs: 30000,
-        retryable: true,
-      },
+      details: { timeoutMs: 30000, retryable: true },
     },
   },
   {
-    id: 'log-detections-db-001',
+    id: 'log-db-detections-001',
     serviceId: 'db-detections',
+    projectId: 'area',
     type: 'GET',
     request: '/api/detections/session-1044',
     status: 200,
     time: '2026-08-12T03:19:58.000Z',
-    response: {
-      records: 148,
-      version: 'B',
-    },
+    response: { records: 148, version: 'B' },
   },
   {
     id: 'log-api-001',
     serviceId: 'api',
+    projectId: 'area',
     type: 'POST',
     request: '/api/sessions/run-detection',
     status: 200,
     time: '2026-08-12T03:19:50.000Z',
-    response: {
-      sessionId: 'session-1044',
-      status: 'processing',
-    },
+    response: { sessionId: 'session-1044', status: 'processing' },
   },
   {
     id: 'log-image-store-001',
     serviceId: 'image-store',
+    projectId: 'area',
     type: 'GET',
     request: '/storage/session-1044/images',
     status: 200,
     time: '2026-08-12T03:19:55.000Z',
-    response: {
-      images: 7,
-      bucket: 'project-images',
-    },
+    response: { images: 7, bucket: 'project-images' },
+  },
+  {
+    id: 'log-api-002',
+    serviceId: 'api',
+    projectId: 'simple',
+    type: 'POST',
+    request: '/api/sessions/run-detection',
+    status: 200,
+    time: '2026-08-12T03:21:00.000Z',
+    response: { sessionId: 'session-1045', status: 'processing' },
+  },
+  {
+    id: 'log-llm-opt-001',
+    serviceId: 'llm-optimizer',
+    projectId: 'simple',
+    type: 'POST',
+    request: '/internal/llm-optimizer/improve-prompt',
+    status: 200,
+    time: '2026-08-12T03:21:10.000Z',
+    response: { improved: true, version: 'v3.9' },
+  },
+  {
+    id: 'log-db-prompts-001',
+    serviceId: 'db-prompts',
+    projectId: 'tags',
+    type: 'POST',
+    request: '/api/prompts/save',
+    status: 200,
+    time: '2026-08-12T03:22:00.000Z',
+    response: { saved: true, promptId: 'p-005' },
+  },
+  {
+    id: 'log-detection-001',
+    serviceId: 'detection',
+    projectId: 'tags',
+    type: 'POST',
+    request: '/internal/detection/run',
+    status: 200,
+    time: '2026-08-12T03:22:05.000Z',
+    response: { detections: 12, sessionId: 'S-1045' },
   },
 ];
+
+export const getLogs = (projectId?: string, serviceId?: string): Log[] => {
+  return ALL_LOGS.filter((log) => {
+    if (projectId && log.projectId !== projectId) return false;
+    if (serviceId && log.serviceId !== serviceId) return false;
+    return true;
+  });
+};

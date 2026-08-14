@@ -47,12 +47,22 @@ export function ProjectBanner({ project, size = 'sm' }: { project: Project; size
 
 const truncateText = (str: string, limit: number): string => {
   if (str.length <= limit) return str;
-  return str.slice(0, limit) + '...'; // optional trailing dots
+  return str.slice(0, limit) + '...';
 };
 
-export function ProjectSwitcher({ projects: projects }: { projects: Project[] }) {
+export function ProjectSwitcher({
+  projects: projects,
+  onChange,
+}: {
+  projects: Project[];
+  onChange?: (project: Project) => void;
+}) {
   const { isMobile } = useSidebar();
   const [activeProject, setActiveProject] = React.useState(projects[0]);
+
+  React.useEffect(() => {
+    if (onChange && activeProject) onChange(activeProject);
+  }, [activeProject, onChange]);
 
   if (!activeProject) {
     return null;

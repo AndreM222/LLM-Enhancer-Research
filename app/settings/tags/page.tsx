@@ -25,7 +25,7 @@ export default function Tags() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="grid lg:grid-cols-[1fr_390px] gap-6">
       <Card>
         <CardHeader>
           <CardTitle>Group Tags</CardTitle>
@@ -52,7 +52,7 @@ export default function Tags() {
           />
         </CardContent>
       </Card>
-      <LinkGraph nodes={nodes} groups={groups} links={links} />
+      <LinkGraph className="" nodes={nodes} groups={groups} links={links} />
     </div>
   );
 }

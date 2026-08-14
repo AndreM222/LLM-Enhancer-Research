@@ -2,21 +2,20 @@
 
 import { type NodeProps, Handle, Position } from '@xyflow/react';
 import { HardDrive } from 'lucide-react';
-import type { ReactNode } from 'react';
-import { Card, CardFooter } from './ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './ui/card';
+import { ProjectIcon } from './project-cards';
+import { IconName } from './dialogs/project-icon';
+import { Status, StatusIndicator } from './tables/global-columns';
 
 type ServiceData = {
   name: string;
-  status: 'online' | 'offline' | 'error';
+  status: Status;
   volume?: string;
-  icon: ReactNode;
+  icon: IconName;
 };
 
 export function ServiceNode({ data }: NodeProps) {
   const { name, status, volume, icon } = data as ServiceData;
-
-  const statusColor =
-    status === 'online' ? 'text-green-400' : status === 'error' ? 'text-red-400' : 'text-zinc-400';
 
   return (
     <Card className="w-70 overflow-hidden shadow-xl contrast-96">
@@ -45,15 +44,14 @@ export function ServiceNode({ data }: NodeProps) {
         className="bg-zinc-900! border-zinc-800! w-3! h-3!"
       />
 
-      <div className="p-5">
-        <div className="flex items-center gap-3 mb-6">
-          <span className="text-2xl">{icon}</span>
-          <span className="font-semibold text-white text-lg">{name}</span>
-        </div>
-        <div className={`flex items-center gap-2 text-sm ${statusColor}`}>
-          <span className="w-2 h-2 rounded-full bg-current" />
-          <span className="capitalize">{status}</span>
-        </div>
+      <div className="px-3 py-1">
+        <CardHeader className="flex items-center px-0 space-y-3">
+          <ProjectIcon icon={icon} color="" />
+          <CardTitle>{name}</CardTitle>
+        </CardHeader>
+        <CardContent className={`flex items-center gap-2 text-sm`}>
+          <StatusIndicator status={status} />
+        </CardContent>
       </div>
 
       {volume && (
