@@ -425,3 +425,17 @@ function MarketplacePageContent() {
     </div>
   );
 }
+
+export default function MarketplacePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-full w-full flex items-center justify-center text-muted-foreground text-sm">
+          Loading marketplace...
+        </div>
+      }
+    >
+      <MarketplacePageContent />
+    </Suspense>
+  );
+}
