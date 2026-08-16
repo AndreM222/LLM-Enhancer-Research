@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { Suspense, useState, useMemo, useEffect } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { CreateInvitationTable } from '@/components/tables/users-table';
@@ -43,7 +43,7 @@ const mockUsers: User[] = userData.map((user) => ({
   roleId: (user.roleId as string) ?? 'MEMBER',
 }));
 
-export default function Members() {
+function InvitationsPageContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -221,5 +221,19 @@ export default function Members() {
         </AlertDialogContent>
       </AlertDialog>
     </div>
+  );
+}
+
+export default function InvitationsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-full w-full flex items-center justify-center text-muted-foreground text-sm">
+          Loading invitations...
+        </div>
+      }
+    >
+      <InvitationsPageContent />
+    </Suspense>
   );
 }

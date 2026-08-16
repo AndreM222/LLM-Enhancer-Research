@@ -5,7 +5,8 @@ import { Badge } from '../ui/badge';
 import { ButtonGroup } from '../ui/button-group';
 import { Button } from '../ui/button';
 import { ChevronRight, Pause, Pen, Play, RotateCcw, Trash, X } from 'lucide-react';
-import { AccountPicture } from '../account-banner';
+import { AccountBanner } from '../account-banner';
+import { getRoles } from '@/lib/mockApi';
 
 export type User = {
   id: string;
@@ -112,18 +113,7 @@ export function usersListColumns(
     {
       accessorKey: 'name',
       header: 'User',
-      cell: ({ row }) => {
-        const { name, email, avatar: avatarUrl } = row.original;
-        return (
-          <div className="flex gap-2 items-center">
-            <AccountPicture name={name} avatar={avatarUrl} size="sm" />
-            <div className="grid flex-1 text-left leading-tight">
-              <span className={'truncate font-medium'}>{name}</span>
-              <span className={'truncate text-muted-foreground'}>{email}</span>
-            </div>
-          </div>
-        );
-      },
+      cell: ({ row }) => <AccountBanner user={row.original} size="sm" />,
     },
     {
       accessorKey: 'role',
@@ -131,7 +121,9 @@ export function usersListColumns(
       cell: ({ row }) => {
         const { roleId: role } = row.original;
 
-        return <Badge variant="outline">{role}</Badge>;
+        return (
+          <Badge variant="outline">{getRoles().filter((item) => item.id === role)[0].name}</Badge>
+        );
       },
     },
     {
@@ -187,26 +179,18 @@ export function linkUserColumns(
     {
       accessorKey: 'name',
       header: 'User',
-      cell: ({ row }) => {
-        const { name, email, avatar: avatarUrl } = row.original;
-        return (
-          <div className="flex gap-2 items-center">
-            <AccountPicture name={name} avatar={avatarUrl} size="sm" />
-            <div className="grid flex-1 text-left leading-tight">
-              <span className={'truncate font-medium'}>{name}</span>
-              <span className={'truncate text-muted-foreground'}>{email}</span>
-            </div>
-          </div>
-        );
-      },
+      cell: ({ row }) => <AccountBanner user={row.original} />,
     },
     {
       accessorKey: 'role',
       header: 'Role',
-    },
-    {
-      accessorKey: 'time',
-      header: 'Time',
+      cell: ({ row }) => {
+        const { roleId: role } = row.original;
+
+        return (
+          <Badge variant="outline">{getRoles().filter((item) => item.id === role)[0].name}</Badge>
+        );
+      },
     },
     {
       accessorKey: 'id',

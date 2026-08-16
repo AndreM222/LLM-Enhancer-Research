@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Project, Projects } from '@/components/project-cards';
 import { Button } from '@/components/ui/button';
@@ -18,7 +18,7 @@ import { getProjects } from '@/lib/mockApi';
 
 const data: Project[] = getProjects();
 
-export default function Home() {
+function HomePageContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -71,5 +71,19 @@ export default function Home() {
       </div>
       <Projects data={data} />
     </div>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-full w-full flex items-center justify-center text-muted-foreground text-sm">
+          Loading home...
+        </div>
+      }
+    >
+      <HomePageContent />
+    </Suspense>
   );
 }

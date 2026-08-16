@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense, useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -16,9 +17,8 @@ import { DetectionSession } from '@/components/tables/detection-columns';
 import { getDetectionSessionsByProject } from '@/lib/mockApi';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { usePathname, useRouter, useParams, useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
 
-export default function Project() {
+function ProjectPageContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -87,5 +87,19 @@ export default function Project() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function ProjectPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-full w-full flex items-center justify-center text-muted-foreground text-sm">
+          Loading project...
+        </div>
+      }
+    >
+      <ProjectPageContent />
+    </Suspense>
   );
 }

@@ -40,7 +40,7 @@ type NodeMenuState = {
   y: number;
 } | null;
 
-function getIconMarkup(iconName: string | undefined, size: number): string {
+export function getIconMarkup(iconName: string | undefined, size: number): string {
   if (!iconName) {
     return '';
   }

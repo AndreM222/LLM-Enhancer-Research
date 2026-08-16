@@ -1,6 +1,6 @@
 'use client';
 
-import { CircleAlert, Clock3, Hash, Server, X } from 'lucide-react';
+import { CircleAlert, Clock3, Hash, X } from 'lucide-react';
 
 import { Log } from '@/components/tables/logs-columns';
 import { Badge } from '@/components/ui/badge';
@@ -40,7 +40,7 @@ function JsonBlock({
     );
   }
 
-  return <CodeBlock code={code} language="json" filename="ya" />;
+  return <CodeBlock code={code} language="json" />;
 }
 
 export function methodVariant(method: string): BadgeVariant {
@@ -154,7 +154,7 @@ export function LogDialog({
           <PageHeader
             setTitle="Request details"
             setDescription="Information about this workspace activity."
-            setIcon={<Server />}
+            setIcon="Server"
             size="sm"
             iconClassName={
               openLog

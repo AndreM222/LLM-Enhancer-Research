@@ -1,46 +1,27 @@
 'use client';
 
-import {
-  ArrowLeft,
-  Bell,
-  Box,
-  BriefcaseBusiness,
-  ChartArea,
-  CirclePile,
-  Earth,
-  FlaskConical,
-  Layers,
-  LayoutTemplate,
-  Logs,
-  MessagesSquare,
-  Settings,
-  SquareActivity,
-  Store,
-  Tags,
-  User,
-  Wallet,
-} from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenu } from './ui/sidebar';
 import { NavUser } from './account-banner';
-import { NavContent } from './sidebarContent';
+import { NameToIcon, NavContent } from './sidebarContent';
 import { usePathname, useRouter } from 'next/navigation';
 import { WorkspaceSwitcher } from './team-switcher';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
-import React from 'react';
 import { getAccountUser, getWorkspace } from '@/lib/mockApi';
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
+import { IconName } from './dialogs/project-icon';
+import { ProjectIcon } from './project-cards';
 
 export type NavItem = {
   title: string;
   url: string;
   description?: string;
-  icon?: React.JSX.Element;
+  icon?: IconName;
   isActive: boolean;
-  iconBg?: string;
-  iconFg?: string;
+  color?: string;
   subItems?: NavItem[];
   items?: NavItem[];
 };
@@ -56,42 +37,42 @@ export const navList: {
         title: 'Projects',
         description: 'List of projects with unique setup for different cases.',
         url: '/',
-        icon: <Box />,
+        icon: 'Box',
         isActive: true,
       },
       {
         title: 'Settings',
         description: 'Configuration of workspace and account.',
         url: '/settings',
-        icon: <Settings />,
+        icon: 'Settings',
         isActive: true,
         items: [
           {
             title: 'General',
             description: 'Configure defaults.',
             url: '/settings/general',
-            icon: <Layers />,
+            icon: 'Layers',
             isActive: true,
           },
           {
             title: 'Workspace',
             description: 'Configure workspace-wide behavior.',
             url: '/settings/workspace',
-            icon: <BriefcaseBusiness />,
+            icon: 'BriefcaseBusiness',
             isActive: true,
           },
           {
             title: 'Account',
             description: 'Update your personal profile and security settings.',
             url: '/settings/account',
-            icon: <User />,
+            icon: 'User',
             isActive: true,
           },
           {
             title: 'Members',
             description: 'Manage access, roles, members, and account actions.',
             url: '/settings/members',
-            icon: <CirclePile />,
+            icon: 'CirclePile',
             isActive: true,
             subItems: [
               { title: 'Team Members', url: '/settings/members', isActive: true },
@@ -107,21 +88,21 @@ export const navList: {
             title: 'Notifications',
             description: 'Configure notifications to keep yourself updated.',
             url: '/settings/notifications',
-            icon: <Bell />,
+            icon: 'Bell',
             isActive: true,
           },
           {
             title: 'Layout',
             description: 'Configure session layouts for project behavior.',
             url: '/settings/layouts',
-            icon: <LayoutTemplate />,
+            icon: 'LayoutTemplate',
             isActive: true,
           },
           {
             title: 'Tags',
             description: 'Configure tags for project behavior.',
             url: '/settings/tags',
-            icon: <Tags />,
+            icon: 'Tags',
             isActive: true,
           },
           {
@@ -129,7 +110,7 @@ export const navList: {
             description:
               'Review your current plan, payment method, invoice history, and usage limits in one place.',
             url: '/billing',
-            icon: <Wallet />,
+            icon: 'Wallet',
             isActive: true,
           },
         ],
@@ -139,7 +120,7 @@ export const navList: {
         description:
           'Publish your model mode, tags, rules, and workflow as a reusable starting point for others to clone and customize.',
         url: '/marketplace',
-        icon: <Store />,
+        icon: 'Store',
         isActive: true,
       },
     ],
@@ -151,21 +132,21 @@ export const navList: {
         title: 'Analytics',
         description: 'Monitor detection quality and the model performance overall.',
         url: '/analytics',
-        icon: <ChartArea />,
+        icon: 'ChartArea',
         isActive: true,
       },
       {
         title: 'Activity',
         description: 'Monitor connection activity.',
         url: '/activity',
-        icon: <SquareActivity />,
+        icon: 'SquareActivity',
         isActive: true,
       },
       {
         title: 'Global Data',
         description: 'Monitor worlwide activity per country.',
         url: '/global-data',
-        icon: <Earth />,
+        icon: 'Earth',
         isActive: true,
         subItems: [
           { title: 'Global Activity', url: '/global-data', isActive: true },
@@ -176,14 +157,14 @@ export const navList: {
         title: 'Logs',
         description: 'See the history of changed made withing this account.',
         url: '/logs',
-        icon: <Logs />,
+        icon: 'Logs',
         isActive: true,
       },
       {
         title: 'Experiments',
         url: '/experiments',
         description: 'Monitor experiments activity.',
-        icon: <FlaskConical />,
+        icon: 'FlaskConical',
         isActive: true,
         items: [
           {
@@ -191,7 +172,7 @@ export const navList: {
             description:
               'Manage prompt versions generated from image detections and human corrections.',
             url: '/experiments/prompts',
-            icon: <MessagesSquare />,
+            icon: 'MessagesSquare',
             isActive: true,
           },
         ],
@@ -275,8 +256,6 @@ const headerSizeStyles: Record<
     content: string;
     title: string;
     description: string;
-    icon: string;
-    iconInner: string;
     gap: string;
     tabs: string;
   }
@@ -286,8 +265,6 @@ const headerSizeStyles: Record<
     content: 'gap-3',
     title: 'text-xl font-semibold tracking-tight',
     description: 'text-xs text-muted-foreground',
-    icon: 'h-10 w-10 rounded-lg',
-    iconInner: 'h-4 w-4 m-auto',
     gap: 'gap-2',
     tabs: 'text-xs',
   },
@@ -296,8 +273,6 @@ const headerSizeStyles: Record<
     content: 'gap-3',
     title: 'text-2xl font-semibold tracking-tight',
     description: 'text-sm text-muted-foreground',
-    icon: 'h-11 w-11 rounded-xl',
-    iconInner: 'h-5 w-5',
     gap: 'gap-3',
     tabs: 'text-sm',
   },
@@ -306,8 +281,6 @@ const headerSizeStyles: Record<
     content: 'gap-4',
     title: 'text-3xl font-semibold tracking-tight',
     description: 'text-base text-muted-foreground',
-    icon: 'h-16 w-16 rounded-2xl',
-    iconInner: 'h-6 w-6',
     gap: 'gap-3',
     tabs: 'text-sm',
   },
@@ -318,8 +291,7 @@ export const PageHeader = ({
   setDescription,
   setIcon,
   className,
-  iconBg,
-  iconFg,
+  color,
   iconClassName,
   useIndex = false,
   setSubItem,
@@ -327,11 +299,10 @@ export const PageHeader = ({
 }: {
   setTitle?: string;
   setDescription?: string;
-  setIcon?: React.JSX.Element;
+  setIcon?: IconName;
   className?: string;
   iconClassName?: string;
-  iconBg?: string;
-  iconFg?: string;
+  color?: string;
   useIndex?: boolean;
   setSubItem?: NavItem[];
   size?: PageHeaderSize;
@@ -368,25 +339,7 @@ export const PageHeader = ({
     <div className={cn('w-full', styles.wrapper)}>
       <div className={cn('flex w-full items-start justify-between', styles.content, className)}>
         <div className={cn('flex min-w-0 items-start', styles.gap)}>
-          {icon && (
-            <div
-              className={cn(
-                'flex shrink-0 items-center justify-center border',
-                styles.icon,
-                iconClassName
-              )}
-              style={{
-                backgroundColor: iconBg ? `${iconBg}20` : undefined,
-                color: iconFg,
-              }}
-            >
-              <span
-                className={cn('flex items-center justify-center h-full w-full', styles.iconInner)}
-              >
-                {icon}
-              </span>
-            </div>
-          )}
+          {icon && <ProjectIcon color={color} icon={icon} size={size} className={iconClassName} />}
 
           <div className="min-w-0">
             <h1 className={cn('truncate', styles.title)}>{title}</h1>
@@ -500,7 +453,7 @@ export default function SubNavigator() {
           >
             {item.icon && (
               <div className="flex min-h-12 min-w-12 items-center justify-center size-6 rounded-2xl border">
-                {item.icon}
+                <NameToIcon name={item.icon} />
               </div>
             )}
             <div className="flex w-full flex-col items-start gap-1">

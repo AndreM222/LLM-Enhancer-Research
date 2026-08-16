@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { Suspense, useState, useMemo, useEffect } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { Field } from '@/components/ui/field';
@@ -44,7 +44,7 @@ function emptyRole(): Role {
 
 import { RoleDialog } from '@/components/dialogs/role-dialog';
 
-export default function Members() {
+function RolesPageContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -204,5 +204,19 @@ export default function Members() {
         </AlertDialogContent>
       </AlertDialog>
     </div>
+  );
+}
+
+export default function RolesPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-full w-full flex items-center justify-center text-muted-foreground text-sm">
+          Loading roles...
+        </div>
+      }
+    >
+      <RolesPageContent />
+    </Suspense>
   );
 }

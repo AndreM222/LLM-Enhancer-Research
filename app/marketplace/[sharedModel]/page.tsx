@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { CalendarDays, Copy, Download, ImageOff, Package, Star, Tag, Users } from 'lucide-react';
+import { CalendarDays, Copy, Download, ImageOff, Star, Tag, Users } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -28,7 +28,7 @@ export default function SharedModel() {
 
   return (
     <div className="space-y-6">
-      <PageHeader setTitle={model.name} setIcon={<Package />} setDescription={model.description} />
+      <PageHeader setTitle={model.name} setIcon="Package" setDescription={model.description} />
 
       <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
         <Card className="overflow-hidden">

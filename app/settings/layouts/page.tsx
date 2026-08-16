@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense, useState, useEffect } from 'react';
 import { CreateLayoutDialog, LayoutInput } from '@/components/dialogs/layout-dialog';
 import LinkGraph from '@/components/linkGraph';
 import { LayoutTableData } from '@/components/tables/layouts-columns';
@@ -17,11 +18,10 @@ import {
 } from '@/components/ui/select';
 import { getProjectLayouts, getProjectLinks } from '@/lib/mockApi';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
 
 const data: LayoutTableData[] = getProjectLayouts();
 
-export default function Layouts() {
+function LayoutsPageContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -110,5 +110,19 @@ export default function Layouts() {
 
       <LinkGraph nodes={nodes} groups={groups} links={links} />
     </div>
+  );
+}
+
+export default function LayoutsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-full w-full flex items-center justify-center text-muted-foreground text-sm">
+          Loading layouts...
+        </div>
+      }
+    >
+      <LayoutsPageContent />
+    </Suspense>
   );
 }

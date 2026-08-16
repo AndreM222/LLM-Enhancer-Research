@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import {
   Card,
@@ -30,7 +31,11 @@ import {
 
 const initialWorkspace: Workspace = getWorkspace()[0];
 
-export default function GeneralSettingsPage() {
+function GeneralSettingsPageContent() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   const [workspace, setWorkspace] = useState<Workspace>(initialWorkspace);
   const [preview, setPreview] = useState<string | null>(null);
   const currentLogo = preview ?? workspace.logo;
@@ -40,16 +45,28 @@ export default function GeneralSettingsPage() {
 
   const [deleteConfirm, setDeleteConfirm] = useState('');
   const canDelete = deleteConfirm === workspace.name;
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(
+    searchParams.get('dialog') === 'delete-workspace'
+  );
+
+  useEffect(() => {
+    setDeleteDialogOpen(searchParams.get('dialog') === 'delete-workspace');
+  }, [searchParams]);
 
   const handleDeleteWorkspace = () => {
     if (!canDelete) return;
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('dialog', 'delete-workspace');
+    router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, { scroll: false });
     setDeleteDialogOpen(true);
   };
 
   const handleConfirmDelete = () => {
     toast.error('Workspace deleted.');
     setDeleteDialogOpen(false);
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('dialog');
+    router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, { scroll: false });
   };
 
   const handleSaveLogo = () => {
@@ -197,7 +214,18 @@ export default function GeneralSettingsPage() {
             Delete Workspace
           </Button>
 
-          <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialog
+            open={deleteDialogOpen}
+            onOpenChange={(open) => {
+              setDeleteDialogOpen(open);
+              const params = new URLSearchParams(searchParams.toString());
+              if (open) params.set('dialog', 'delete-workspace');
+              else params.delete('dialog');
+              router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, {
+                scroll: false,
+              });
+            }}
+          >
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
@@ -220,5 +248,19 @@ export default function GeneralSettingsPage() {
         </CardFooter>
       </Card>
     </div>
+  );
+}
+
+export default function GeneralSettingsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-full w-full flex items-center justify-center text-muted-foreground text-sm">
+          Loading workspace settings...
+        </div>
+      }
+    >
+      <GeneralSettingsPageContent />
+    </Suspense>
   );
 }

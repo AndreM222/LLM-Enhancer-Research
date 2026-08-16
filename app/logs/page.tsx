@@ -1,13 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { Log } from '@/components/tables/logs-columns';
 import { LogsTable } from '@/components/tables/logs-table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { LogDialog } from '@/components/dialogs/log-dialog';
-import { CodeBlock } from '@/components/ui/code-block';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import {
@@ -23,31 +22,6 @@ import { getLogs } from '@/lib/mockApi';
 const data: Log[] = getLogs();
 
 type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline';
-
-function JsonBlock({
-  value,
-  emptyMessage = 'No response body was recorded.',
-}: {
-  value: unknown;
-  emptyMessage?: string;
-}) {
-  const code =
-    value === undefined || value === null
-      ? ''
-      : typeof value === 'string'
-        ? value
-        : JSON.stringify(value, null, 2);
-
-  if (!code) {
-    return (
-      <div className="rounded-lg border border-dashed bg-muted/30 p-4 text-sm text-muted-foreground">
-        {emptyMessage}
-      </div>
-    );
-  }
-
-  return <CodeBlock code={code} language="json" />;
-}
 
 export function methodVariant(method: string): BadgeVariant {
   switch (method.toUpperCase()) {
@@ -95,49 +69,7 @@ export function statusBadgeClass(status: number) {
   }
 }
 
-function statusIconClass(status: number) {
-  switch (getStatusTone(status)) {
-    case 'success':
-      return 'text-emerald-600 dark:text-emerald-400';
-
-    case 'info':
-      return 'text-blue-600 dark:text-blue-400';
-
-    case 'warning':
-      return 'text-amber-600 dark:text-amber-400';
-
-    case 'error':
-      return 'text-red-600 dark:text-red-400';
-
-    default:
-      return 'text-muted-foreground';
-  }
-}
-
-function statusLabel(status: number) {
-  if (status >= 500) return 'Server error';
-  if (status >= 400) return 'Client error';
-  if (status >= 300) return 'Redirect';
-  if (status >= 200) return 'Successful';
-  if (status >= 100) return 'Informational';
-
-  return 'Unknown';
-}
-
-function formatDate(value: string) {
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return 'Invalid date';
-  }
-
-  return new Intl.DateTimeFormat('en-US', {
-    dateStyle: 'medium',
-    timeStyle: 'long',
-  }).format(date);
-}
-
-export default function Logs() {
+function LogsPageContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -226,7 +158,33 @@ export default function Logs() {
         </CardContent>
       </Card>
 
-      <LogDialog openLog={openLog} onOpenChange={(v) => !v && setOpenLog(null)} />
+      <LogDialog
+        openLog={openLog}
+        onOpenChange={(v) => {
+          if (!v) {
+            const params = new URLSearchParams(searchParams.toString());
+            params.delete('log');
+            router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, {
+              scroll: false,
+            });
+            setOpenLog(null);
+          }
+        }}
+      />
     </div>
+  );
+}
+
+export default function LogsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-full w-full flex items-center justify-center text-muted-foreground text-sm">
+          Loading logs...
+        </div>
+      }
+    >
+      <LogsPageContent />
+    </Suspense>
   );
 }

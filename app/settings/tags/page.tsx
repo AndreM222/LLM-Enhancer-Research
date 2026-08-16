@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense, useState, useEffect } from 'react';
 import { CreateTagGroupDialog, TagGroupInput } from '@/components/dialogs/tag-group-dialog';
 import LinkGraph from '@/components/linkGraph';
 import { TagGroup } from '@/components/tables/tags-columns';
@@ -9,11 +10,10 @@ import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { getProjectLinks, getProjectTags } from '@/lib/mockApi';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
 
 const data: TagGroup[] = getProjectTags();
 
-export default function Tags() {
+function TagsPageContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -82,5 +82,19 @@ export default function Tags() {
       </Card>
       <LinkGraph className="" nodes={nodes} groups={groups} links={links} />
     </div>
+  );
+}
+
+export default function TagsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-full w-full flex items-center justify-center text-muted-foreground text-sm">
+          Loading tags...
+        </div>
+      }
+    >
+      <TagsPageContent />
+    </Suspense>
   );
 }

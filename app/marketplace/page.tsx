@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import { format } from 'date-fns';
 import { type DateRange } from 'react-day-picker';
 import {
@@ -160,7 +160,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 // ── main page ─────────────────────────────────────────────────────────────────
 
-export default function Marketplace() {
+function MarketplacePageContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -296,7 +296,17 @@ export default function Marketplace() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Button className="gap-2" onClick={() => setPublishOpen(true)}>
+          <Button
+            className="gap-2"
+            onClick={() => {
+              const params = new URLSearchParams(searchParams.toString());
+              params.set('dialog', 'publish');
+              router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, {
+                scroll: false,
+              });
+              setPublishOpen(true);
+            }}
+          >
             Publish template <ArrowRight className="h-4 w-4" />
           </Button>
         </div>
@@ -371,7 +381,17 @@ export default function Marketplace() {
                 The marketplace shares configuration and preview media only, not source training
                 data.
               </p>
-              <Button className="w-full gap-2 mt-2" onClick={() => setPublishOpen(true)}>
+              <Button
+                className="w-full gap-2 mt-2"
+                onClick={() => {
+                  const params = new URLSearchParams(searchParams.toString());
+                  params.set('dialog', 'publish');
+                  router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, {
+                    scroll: false,
+                  });
+                  setPublishOpen(true);
+                }}
+              >
                 <Plus className="h-4 w-4" /> Publish template
               </Button>
             </CardContent>
@@ -392,7 +412,16 @@ export default function Marketplace() {
         </aside>
       </section>
 
-      <PublishDialog open={publishOpen} onOpenChange={setPublishOpen} />
+      <PublishDialog
+        open={publishOpen}
+        onOpenChange={(open) => {
+          setPublishOpen(open);
+          const params = new URLSearchParams(searchParams.toString());
+          if (open) params.set('dialog', 'publish');
+          else params.delete('dialog');
+          router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, { scroll: false });
+        }}
+      />
     </div>
   );
 }

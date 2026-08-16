@@ -1,7 +1,7 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
 import { Plus, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
@@ -34,32 +34,47 @@ export type TagGroupDetail = {
   tags: Tag[];
 };
 
-export default function TagGroupPage() {
+function TagGroupPageContent() {
   const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const id = pathname.split('/').filter(Boolean).pop() || '';
 
   // Replace this with real data fetch by id
   const [group, setGroup] = useState<TagGroupDetail>(getTags()[0]);
 
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(searchParams.get('dialog') === 'add-tag');
+
+  const syncTagDialog = (name: string | null) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (name) params.set('dialog', name);
+    else params.delete('dialog');
+    router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, { scroll: false });
+  };
 
   const handleDeleteTag = (id: string) => {
     setGroup((prev) => ({ ...prev, tags: prev.tags.filter((t) => t.id !== id) }));
   };
 
   const [editingTag, setEditingTag] = useState<Tag | null>(null);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(searchParams.get('dialog') === 'edit-tag');
+
+  useEffect(() => {
+    setDialogOpen(searchParams.get('dialog') === 'add-tag');
+    setEditDialogOpen(searchParams.get('dialog') === 'edit-tag');
+  }, [searchParams]);
 
   const handleEditTag = (id: string) => {
     const tag = group.tags.find((t) => t.id === id);
     if (!tag) return;
     setEditingTag(tag);
+    syncTagDialog('edit-tag');
     setEditDialogOpen(true);
   };
 
   return (
     <div className="space-y-6">
-      <PageHeader setTitle={id} setDescription={`${id} group tag`} setIcon={<Tag />} />
+      <PageHeader setTitle={id} setDescription={`${id} group tag`} setIcon="Tag" />
 
       <Card>
         <CardHeader>
@@ -95,7 +110,14 @@ export default function TagGroupPage() {
             <Field>
               <Input id="input-button-group" placeholder="Type to search..." />
             </Field>
-            <Button size="sm" variant="outline" onClick={() => setDialogOpen(true)}>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                syncTagDialog('add-tag');
+                setDialogOpen(true);
+              }}
+            >
               <Plus className="mr-2 h-4 w-4" />
               Add Tag
             </Button>
@@ -103,7 +125,10 @@ export default function TagGroupPage() {
             <TagDialog
               mode="add"
               open={dialogOpen}
-              onOpenChange={setDialogOpen}
+              onOpenChange={(open) => {
+                setDialogOpen(open);
+                if (!open) syncTagDialog(null);
+              }}
               onAdd={(t) => {
                 setGroup((prev) => ({ ...prev, tags: [...prev.tags, t] }));
               }}
@@ -121,7 +146,10 @@ export default function TagGroupPage() {
           <TagDialog
             mode="edit"
             open={editDialogOpen}
-            onOpenChange={setEditDialogOpen}
+            onOpenChange={(open) => {
+              setEditDialogOpen(open);
+              if (!open) syncTagDialog(null);
+            }}
             initial={editingTag}
             onSave={(t) => {
               setGroup((prev) => ({
@@ -133,5 +161,19 @@ export default function TagGroupPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function TagGroupPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-full w-full flex items-center justify-center text-muted-foreground text-sm">
+          Loading tag group...
+        </div>
+      }
+    >
+      <TagGroupPageContent />
+    </Suspense>
   );
 }

@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import {
   Dialog,
   DialogContent,
@@ -10,6 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { User } from '@/components/tables/users-columns';
+import { getRoles } from '@/lib/mockApi';
 
 export function InvitationDialog({
   openUser,
@@ -56,7 +56,9 @@ export function InvitationDialog({
 
             <div className="space-y-1">
               <p className="text-xs text-muted-foreground">Role</p>
-              <p className="font-medium">{openUser.roleId ?? '—'}</p>
+              <p className="font-medium">
+                {getRoles().filter((item) => item.id === openUser.roleId)[0].name ?? '—'}
+              </p>
             </div>
 
             <div className="space-y-1">

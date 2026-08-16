@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { IconName, ProjectIconDialog } from '@/components/dialogs/project-icon';
-import { useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { LinkTagGroupTable } from '@/components/tables/tags-table';
 import { TagGroup } from '@/components/tables/tags-columns';
 import { User } from '@/components/tables/users-columns';
@@ -45,7 +45,7 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { toast } from 'sonner';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   Combobox,
@@ -308,8 +308,10 @@ function LayerCard({
   );
 }
 
-export default function ProjectSettings() {
+function ProjectSettingsPageContent() {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { project } = useParams<{ project: string }>();
   const { nodes, groups, links } = getProjectLinks(project);
   const allUsers: User[] = getUsers();
@@ -325,7 +327,7 @@ export default function ProjectSettings() {
   const projectServers: ServerActivity[] = getProjectServers(project ?? '');
   const projectLinksData: Project[] = project ? getProjectLinkedProjects(project) : [];
 
-  const [openIcon, setOpenIcon] = useState(false);
+  const [openIcon, setOpenIcon] = useState(searchParams.get('dialog') === 'project-icon');
   const [selectedIcon, setSelectedIcon] = useState<IconName>(projectItems?.icon ?? 'Folder');
   const [selectedColor, setSelectedColor] = useState(projectItems?.color ?? '');
   const [projectName, setProjectName] = useState('');
@@ -357,16 +359,29 @@ export default function ProjectSettings() {
 
   const [deleteConfirm, setDeleteConfirm] = useState('');
   const canDelete = deleteConfirm === projectItems?.name;
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(
+    searchParams.get('dialog') === 'delete-project'
+  );
+
+  useEffect(() => {
+    setOpenIcon(searchParams.get('dialog') === 'project-icon');
+    setDeleteDialogOpen(searchParams.get('dialog') === 'delete-project');
+  }, [searchParams]);
 
   const handleDeleteProject = () => {
     if (!canDelete) return;
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('dialog', 'delete-project');
+    router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, { scroll: false });
     setDeleteDialogOpen(true);
   };
 
   const handleConfirmDelete = () => {
     toast.error('Project deleted.');
     setDeleteDialogOpen(false);
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('dialog');
+    router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, { scroll: false });
   };
 
   const swapLayers = (indexA: number, indexB: number) => {
@@ -461,18 +476,36 @@ export default function ProjectSettings() {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center gap-4">
-            <ProjectIcon icon={selectedIcon} color={selectedColor} className="h-16 w-16" />
+            <ProjectIcon icon={selectedIcon} color={selectedColor} size="md" />
             <div className="space-y-1">
               <p className="font-medium">Current icon: {selectedIcon}</p>
               <p className="text-sm text-muted-foreground">Color: {selectedColor}</p>
             </div>
             <div className="ml-auto">
-              <Button variant="outline" onClick={() => setOpenIcon(true)}>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  const params = new URLSearchParams(searchParams.toString());
+                  params.set('dialog', 'project-icon');
+                  router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, {
+                    scroll: false,
+                  });
+                  setOpenIcon(true);
+                }}
+              >
                 Change icon
               </Button>
               <ProjectIconDialog
                 open={openIcon}
-                onOpenChange={setOpenIcon}
+                onOpenChange={(open) => {
+                  setOpenIcon(open);
+                  const params = new URLSearchParams(searchParams.toString());
+                  if (open) params.set('dialog', 'project-icon');
+                  else params.delete('dialog');
+                  router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, {
+                    scroll: false,
+                  });
+                }}
                 value={{ icon: selectedIcon, color: selectedColor }}
                 onSave={(next) => {
                   setSelectedIcon(next.icon);
@@ -742,7 +775,16 @@ export default function ProjectSettings() {
               setProjectLinkValue('');
               toast.success(`${selectedProjectLink.name} linked.`);
             }}
-            renderItem={(p) => <ProjectBanner project={p} />}
+            renderItem={(p) => (
+              <ProjectBanner
+                icon={p.icon}
+                name={p.name}
+                description={p.description}
+                color={p.color}
+                maxDescription={30}
+                size="xs"
+              />
+            )}
           />
           <LinkDetectionTable
             pageSize={4}
@@ -777,7 +819,18 @@ export default function ProjectSettings() {
             Delete Project
           </Button>
 
-          <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialog
+            open={deleteDialogOpen}
+            onOpenChange={(open) => {
+              setDeleteDialogOpen(open);
+              const params = new URLSearchParams(searchParams.toString());
+              if (open) params.set('dialog', 'delete-project');
+              else params.delete('dialog');
+              router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, {
+                scroll: false,
+              });
+            }}
+          >
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
@@ -802,5 +855,19 @@ export default function ProjectSettings() {
 
       <LinkGraph nodes={nodes} groups={groups} links={links} />
     </div>
+  );
+}
+
+export default function ProjectSettingsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-full w-full flex items-center justify-center text-muted-foreground text-sm">
+          Loading project settings...
+        </div>
+      }
+    >
+      <ProjectSettingsPageContent />
+    </Suspense>
   );
 }

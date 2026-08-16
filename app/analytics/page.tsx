@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense, useEffect } from 'react';
 import { ChartAreaInteractive } from '@/components/charts';
 import { Project } from '@/components/project-cards';
 import { ProjectSwitcher } from '@/components/project-switcher';
@@ -10,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { getProjects, getTags } from '@/lib/mockApi';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
 import { FaFileExport } from 'react-icons/fa6';
 
 type MetricProps = {
@@ -51,7 +51,7 @@ const MetricItem = ({ label, value, hint }: MetricProps) => (
   </div>
 );
 
-export default function AnalyticsPage() {
+function AnalyticsPageContent() {
   const projects: Project[] = getProjects();
   const router = useRouter();
   const pathname = usePathname();
@@ -192,5 +192,19 @@ export default function AnalyticsPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function AnalyticsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-full w-full flex items-center justify-center text-muted-foreground text-sm">
+          Loading analytics...
+        </div>
+      }
+    >
+      <AnalyticsPageContent />
+    </Suspense>
   );
 }

@@ -78,7 +78,7 @@ export default function PublishDialog({
 
   const [imgInput, setImgInput] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.SubmitEvent) => {
     e.preventDefault();
     if (!form.projectId) {
       toast.error('Select a project to publish.');
@@ -116,7 +116,13 @@ export default function PublishDialog({
                     {!allProjects.length && <ComboboxEmpty>No projects found.</ComboboxEmpty>}
                     {allProjects.map((p) => (
                       <ComboboxItem key={p.id} value={p.id}>
-                        <ProjectBanner project={p} />
+                        <ProjectBanner
+                          icon={p.icon}
+                          name={p.name}
+                          description={p.description}
+                          color={p.color}
+                          maxDescription={30}
+                        />
                       </ComboboxItem>
                     ))}
                   </ComboboxList>

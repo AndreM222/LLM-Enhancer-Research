@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronRight } from 'lucide-react';
+import * as LucideIcons from 'lucide-react';
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
@@ -16,6 +16,16 @@ import {
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
 import { NavItem } from './app-navigation';
+import { IconName } from './dialogs/project-icon';
+import { ComponentType } from 'react';
+
+export const NameToIcon = ({ name, ...props }: { name?: IconName } & LucideIcons.LucideProps) => {
+  const Icon = (LucideIcons as unknown as Record<string, ComponentType<LucideIcons.LucideProps>>)[
+    name ?? 'Folder'
+  ];
+
+  return <Icon {...props} />;
+};
 
 function Groups({ items }: { items: NavItem[] }) {
   return (
@@ -25,7 +35,7 @@ function Groups({ items }: { items: NavItem[] }) {
           <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip={item.title}>
               <a href={item.url}>
-                {item.icon}
+                <NameToIcon name={item.icon} />
                 <span>{item.title}</span>
               </a>
             </SidebarMenuButton>
@@ -33,7 +43,7 @@ function Groups({ items }: { items: NavItem[] }) {
               <>
                 <CollapsibleTrigger asChild>
                   <SidebarMenuAction className="data-[state=open]:rotate-90">
-                    <ChevronRight />
+                    <LucideIcons.ChevronRight />
                     <span className="sr-only">Toggle</span>
                   </SidebarMenuAction>
                 </CollapsibleTrigger>
@@ -43,7 +53,7 @@ function Groups({ items }: { items: NavItem[] }) {
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild>
                           <a href={subItem.url}>
-                            {subItem.icon}
+                            <NameToIcon name={subItem.icon} />
                             <span>{subItem.title}</span>
                           </a>
                         </SidebarMenuSubButton>

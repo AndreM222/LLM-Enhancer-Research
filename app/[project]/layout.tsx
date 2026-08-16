@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { NavItem, PageHeader } from '@/components/app-navigation';
-import * as LucideIcons from 'lucide-react';
 import { IconName } from '@/components/dialogs/project-icon';
 import { Project } from '@/components/project-cards';
 import { getProjects } from '@/lib/mockApi';
@@ -17,8 +16,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   const [selectedColor, setSelectedColor] = useState(currProject?.color);
   const [selectedIcon, setSelectedIcon] = useState<IconName>(currProject?.icon as IconName);
 
-  const Selected = LucideIcons[selectedIcon] as React.ComponentType<{ className?: string }>;
-
   const navTabs: NavItem[] | undefined = session
     ? undefined
     : [
@@ -30,9 +27,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <div className="space-y-6">
       <PageHeader
-        setIcon={<Selected />}
-        iconBg={selectedColor}
-        iconFg={selectedColor}
+        setIcon={selectedIcon}
+        color={selectedColor}
         setTitle={
           session
             ? session?.length > 0

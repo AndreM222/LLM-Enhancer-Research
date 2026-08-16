@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { AlertTriangle, CreditCard, ShieldCheck, Wallet } from 'lucide-react';
+import { AlertTriangle, ShieldCheck, Wallet } from 'lucide-react';
 import { toast } from 'sonner';
 import { AnimatePresence, motion } from 'motion/react';
 
@@ -16,49 +16,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import { getGlobalActivity, getInvoices, getPlanUsage } from '@/lib/mockApi';
+import { getInvoices, getPlanUsage } from '@/lib/mockApi';
 import { Progress } from '@/components/ui/progress';
 import { InvoiceTable } from '@/components/tables/invoice-columns';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import Flag from 'react-world-flags';
-import {
-  CardBrand,
-  CardBrandIcon,
-  PaymentCardVisual,
-  detectBrand,
-  getBrandLabel,
-} from '@/components/card-brand';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { useAvailableWallets } from '@/hooks/payment-method';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { CardBrand, PaymentCardVisual, getBrandLabel } from '@/components/card-brand';
 import AddPaymentDialog from '@/components/dialogs/add-payment-dialog';
 import ConfirmRemoveCardDialog from '@/components/dialogs/confirm-remove-card-dialog';
 
@@ -74,55 +36,32 @@ type PaymentCard = {
   name: string;
 };
 
-type CardForm = {
-  number: string;
-  expiry: string;
-  cvc: string;
-  name: string;
-  country: string;
-  address1: string;
-  taxType: string;
-  taxId: string;
-  useBillingAsTeamPrimary: boolean;
-};
-
 const INITIAL_CARDS: PaymentCard[] = [
   { id: 'card-1', last4: '4242', brand: 'visa', expiry: '09/28', isDefault: true, name: 'Jerry' },
 ];
 
-const EMPTY_FORM: CardForm = {
-  number: '',
-  expiry: '',
-  cvc: '',
-  name: '',
-  country: 'US',
-  address1: '',
-  taxType: 'VAT',
-  taxId: '',
-  useBillingAsTeamPrimary: true,
-};
+function BillingPageContent() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-function maskNumber(raw: string) {
-  const digits = raw.replace(/\D/g, '').slice(0, 16);
-  return digits.replace(/(.{4})/g, '$1 ').trim();
-}
-
-export default function BillingPage() {
   const [cards, setCards] = useState<PaymentCard[]>(INITIAL_CARDS);
-  const [addOpen, setAddOpen] = useState(false);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [form, setForm] = useState<CardForm>(EMPTY_FORM);
-  const { wallets, loading } = useAvailableWallets();
-  const [paymentTab, setPaymentTab] = useState<'card' | 'apple_pay' | 'google_pay'>('card');
+  const [addOpen, setAddOpen] = useState(searchParams.get('dialog') === 'add-card');
+  const [deleteId, setDeleteId] = useState<string | null>(searchParams.get('remove-card'));
 
-  // reset to card if selected wallet becomes unavailable
   useEffect(() => {
-    if (paymentTab !== 'card' && !wallets.includes(paymentTab)) {
-      setPaymentTab('card');
-    }
-  }, [wallets, paymentTab]);
+    const dialog = searchParams.get('dialog');
+    const removeCard = searchParams.get('remove-card');
+    setAddOpen(dialog === 'add-card');
+    setDeleteId(removeCard || null);
+  }, [searchParams]);
 
-  const { countries } = getGlobalActivity();
+  const syncDialogParam = (key: string, value: string | null) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value) params.set(key, value);
+    else params.delete(key);
+    router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, { scroll: false });
+  };
 
   const totalUsage = useMemo(
     () => Math.round((usage.reduce((sum, i) => sum + i.value / i.limit, 0) / usage.length) * 100),
@@ -130,7 +69,6 @@ export default function BillingPage() {
   );
 
   const defaultCard = cards.find((c) => c.isDefault);
-  const liveBrand = detectBrand(form.number);
   const deletingCard = cards.find((c) => c.id === deleteId);
 
   const setDefault = (id: string) => {
@@ -148,38 +86,8 @@ export default function BillingPage() {
       return next;
     });
     setDeleteId(null);
+    syncDialogParam('remove-card', null);
     toast.success('Card removed.');
-  };
-
-  const handleAdd = (e: React.SubmitEvent) => {
-    e.preventDefault();
-
-    if (paymentTab === 'apple_pay' || paymentTab === 'google_pay') {
-      const newCard: PaymentCard = {
-        id: `card-${Date.now()}`,
-        last4: '0000',
-        brand: paymentTab,
-        expiry: '——',
-        isDefault: cards.length === 0,
-        name: form.name,
-      };
-      setCards((prev) => [...prev, newCard]);
-      setAddOpen(false);
-      toast.success(`${getBrandLabel(paymentTab)} added.`);
-      return;
-    }
-
-    const digits = form.number.replace(/\D/g, '');
-    if (digits.length < 13) {
-      toast.error('Enter a valid card number.');
-      return;
-    }
-
-    const name = form.name.trim();
-    if (name.length < 4) {
-      toast.error('Enter a valid name.');
-      return;
-    }
   };
 
   return (
@@ -285,7 +193,14 @@ export default function BillingPage() {
                   <PaymentCardVisual
                     card={card}
                     onSetDefault={() => setDefault(card.id)}
-                    onRemove={() => setDeleteId(card.id)}
+                    onRemove={() => {
+                      const params = new URLSearchParams(searchParams.toString());
+                      params.set('remove-card', card.id);
+                      router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, {
+                        scroll: false,
+                      });
+                      setDeleteId(card.id);
+                    }}
                   />
                 </motion.div>
               ))}
@@ -297,7 +212,18 @@ export default function BillingPage() {
               </p>
             )}
 
-            <Button variant="outline" className="w-full gap-2" onClick={() => setAddOpen(true)}>
+            <Button
+              variant="outline"
+              className="w-full gap-2"
+              onClick={() => {
+                const params = new URLSearchParams(searchParams.toString());
+                params.set('dialog', 'add-card');
+                router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, {
+                  scroll: false,
+                });
+                setAddOpen(true);
+              }}
+            >
               <Wallet className="h-4 w-4" /> Add payment method
             </Button>
           </CardContent>
@@ -324,18 +250,39 @@ export default function BillingPage() {
 
       <AddPaymentDialog
         open={addOpen}
-        onOpenChange={setAddOpen}
+        onOpenChange={(open) => {
+          setAddOpen(open);
+          if (open) syncDialogParam('dialog', 'add-card');
+          else syncDialogParam('dialog', null);
+        }}
         onAdd={(card) => setCards((prev) => [...prev, card])}
       />
 
       <ConfirmRemoveCardDialog
         open={!!deleteId}
         onOpenChange={(v) => {
-          if (!v) setDeleteId(null);
+          if (!v) {
+            setDeleteId(null);
+            syncDialogParam('remove-card', null);
+          }
         }}
         deletingCard={deletingCard}
         onConfirm={confirmRemove}
       />
     </div>
+  );
+}
+
+export default function BillingPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-full w-full flex items-center justify-center text-muted-foreground text-sm">
+          Loading billing...
+        </div>
+      }
+    >
+      <BillingPageContent />
+    </Suspense>
   );
 }

@@ -32,9 +32,19 @@ import {
   DrawerTitle,
 } from '@/components/ui/drawer';
 
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { LogsTable } from './tables/logs-table';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
+import { Field } from './ui/field';
+import { Input } from './ui/input';
+import { LogDialog } from './dialogs/log-dialog';
 
 const nodeTypes = { service: ServiceNode };
 
@@ -148,18 +158,24 @@ export default function ActivityCanvas({
   const [edges, setEdges, onEdgesChange] = useEdgesState(normalizedInitialEdges);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
 
-  // URL sync for opened service drawer
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // if a service is specified in the URL, open that node's drawer
-  useEffect(() => {
-    const svc = searchParams.get('service');
-    if (!svc) return;
-    const node = nodes.find((n) => n.id === svc);
-    if (node) setSelectedNode(node as Node);
-  }, [searchParams, nodes]);
+  const [openLog, setOpenLog] = useState<Log | null>(null);
+  const [search, setSearch] = useState(searchParams.get('search') ?? '');
+  const [status, setStatus] = useState(searchParams.get('status') ?? 'none');
+
+  const handleOpen = (id: string) => {
+    const log = selectedLogs.find((logItem) => logItem.id === id);
+
+    if (log) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('log', log.id);
+      router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, { scroll: false });
+      setOpenLog(log);
+    }
+  };
 
   const selectedLogs = useMemo(() => {
     if (!selectedNode) {
@@ -168,6 +184,17 @@ export default function ActivityCanvas({
 
     return logs.filter((log) => log.serviceId === selectedNode.id);
   }, [logs, selectedNode]);
+
+  const filtered = selectedLogs.filter((l) => {
+    const q = search.trim().toLowerCase();
+    const matchesSearch =
+      !q ||
+      l.request.toLowerCase().includes(q) ||
+      l.id.toLowerCase().includes(q) ||
+      String(l.status).includes(q);
+    const matchesStatus = status === 'none' || String(l.status) === status;
+    return matchesSearch && matchesStatus;
+  });
 
   const onConnect = useCallback(
     (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
@@ -180,6 +207,20 @@ export default function ActivityCanvas({
 
     setSelectedNode(null);
   }, [initialNodes, initialEdges, setNodes, setEdges]);
+
+  useEffect(() => {
+    const svc = searchParams.get('service');
+    if (!svc) return;
+    const node = nodes.find((n) => n.id === svc);
+    if (node) setSelectedNode(node as Node);
+  }, [searchParams, nodes]);
+
+  useEffect(() => {
+    const logId = searchParams.get('log');
+    if (!logId) return;
+    const log = logs.find((l) => l.id === logId);
+    if (log) setOpenLog(log);
+  }, [searchParams, logs]);
 
   return (
     <div className={cn('h-full w-full', className)} {...props}>
@@ -225,7 +266,21 @@ export default function ActivityCanvas({
         }}
         direction="right"
       >
-        <DrawerContent>
+        <DrawerContent
+          onInteractOutside={(e) => {
+            if (
+              openLog ||
+              (e.target instanceof HTMLElement && e.target.closest('[data-radix-select-viewport]'))
+            ) {
+              e.preventDefault();
+            }
+          }}
+          onEscapeKeyDown={(e) => {
+            if (openLog) {
+              e.preventDefault();
+            }
+          }}
+        >
           <div className="mx-auto w-full max-w-3xl">
             <DrawerHeader>
               <DrawerTitle>
@@ -236,72 +291,65 @@ export default function ActivityCanvas({
               </DrawerDescription>
             </DrawerHeader>
 
-            <ScrollArea className="max-h-[65vh] px-6 pb-8">
-              {selectedLogs.length === 0 ? (
-                <div className="rounded-lg border border-dashed p-8 text-center">
-                  <p className="font-medium">No logs found</p>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    No activity has been recorded for this service.
-                  </p>
+            <ScrollArea className="max-h-[65vh] px-4">
+              <div className="grid grid-cols-1 gap-2">
+                <div className="grid grid-cols-[0.15fr_1.0fr] gap-2">
+                  <Select value={status} onValueChange={(v) => setStatus(v)}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+
+                    <SelectContent position="popper">
+                      <SelectGroup>
+                        <SelectItem value="none">All</SelectItem>
+                        <SelectItem value="500">500</SelectItem>
+                        <SelectItem value="400">400</SelectItem>
+                        <SelectItem value="200">200</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+
+                  <Field className="flex-1">
+                    <Input
+                      id="log-search"
+                      placeholder="Search requests, methods, or log IDs..."
+                      value={search}
+                      onChange={(e) => {
+                        if (!e) {
+                          const params = new URLSearchParams(search.toString());
+                          params.delete('search');
+                          router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, {
+                            scroll: false,
+                          });
+                          setSearch('');
+                        }
+
+                        setSearch(e.target.value);
+                      }}
+                    />
+                  </Field>
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  {selectedLogs.map((log) => (
-                    <div
-                      key={log.id}
-                      className="rounded-xl border p-4 max-w-80 justify-self-center"
-                    >
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="flex min-w-0 items-center gap-2">
-                          <Badge variant="outline">{log.type}</Badge>
-                          <code className="truncate text-sm">{log.request}</code>
-                        </div>
 
-                        <Badge
-                          variant={
-                            log.status >= 500
-                              ? 'destructive'
-                              : log.status >= 400
-                                ? 'secondary'
-                                : 'default'
-                          }
-                        >
-                          {log.status}
-                        </Badge>
-                      </div>
-
-                      <p className="mt-3 text-xs text-muted-foreground">
-                        {new Date(log.time).toLocaleString()}
-                      </p>
-
-                      {log.response !== undefined && (
-                        <>
-                          <Separator className="my-4" />
-                          <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                            Response
-                          </p>
-                          <pre className="overflow-x-auto rounded-lg bg-muted p-3 text-xs">
-                            {JSON.stringify(log.response, null, 2)}
-                          </pre>
-                        </>
-                      )}
-
-                      {log.error && (
-                        <div className="mt-4 rounded-lg border border-destructive/30 bg-destructive/10 p-3">
-                          <p className="text-sm font-medium text-destructive">
-                            {log.error.code ?? 'Request error'}
-                          </p>
-                          <p className="mt-1 text-sm text-muted-foreground">{log.error.message}</p>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
+                <LogsTable data={filtered} pageSize={15} onOpen={handleOpen} />
+              </div>
             </ScrollArea>
           </div>
         </DrawerContent>
       </Drawer>
+
+      <LogDialog
+        openLog={openLog}
+        onOpenChange={(v) => {
+          if (!v) {
+            const params = new URLSearchParams(searchParams.toString());
+            params.delete('log');
+            router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, {
+              scroll: false,
+            });
+            setOpenLog(null);
+          }
+        }}
+      />
     </div>
   );
 }

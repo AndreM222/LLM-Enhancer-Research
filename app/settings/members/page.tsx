@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { Suspense, useState, useMemo, useEffect } from 'react';
 import { toast } from 'sonner';
 import { UsersListTable } from '@/components/tables/users-table';
 import { Field } from '@/components/ui/field';
@@ -25,7 +25,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 const userData: User[] = getUsers();
 const roles: Role[] = getRoles();
 
-export default function Members() {
+function MembersPageContent() {
   const [users, setUsers] = useState<User[]>(userData);
   const router = useRouter();
   const pathname = usePathname();
@@ -251,5 +251,19 @@ export default function Members() {
         onConfirm={handleConfirmSuspend}
       />
     </div>
+  );
+}
+
+export default function MembersPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-full w-full flex items-center justify-center text-muted-foreground text-sm">
+          Loading members...
+        </div>
+      }
+    >
+      <MembersPageContent />
+    </Suspense>
   );
 }

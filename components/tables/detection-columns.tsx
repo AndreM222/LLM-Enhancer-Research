@@ -5,8 +5,9 @@ import { Badge } from '../ui/badge';
 import { ButtonGroup } from '../ui/button-group';
 import { Button } from '../ui/button';
 import { CheckCheck, ChevronRight, CloudSync, Trash, X } from 'lucide-react';
-import { Project, ProjectIcon } from '../project-cards';
+import { Project } from '../project-cards';
 import { CircularProgress } from '../ui/circular-progress';
+import { ProjectBanner } from '../project-switcher';
 
 export type DetectionSession = {
   id: string;
@@ -112,25 +113,15 @@ export function linkedDetectionColumns(
     {
       accessorKey: 'title',
       header: 'Title',
-      cell: ({ row }) => {
-        const { name: title, icon, color } = row.original;
-
-        return (
-          <div className="flex items-center gap-2">
-            <ProjectIcon
-              icon={icon}
-              color={color}
-              className="h-7 w-7 rounded-md"
-              iconClassName="h-4 w-4"
-            />
-            {title}
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: 'description',
-      header: 'Description',
+      cell: ({ row }) => (
+        <ProjectBanner
+          icon={row.original.icon}
+          name={row.original.name}
+          description={row.original.description}
+          color={row.original.color}
+          size="xs"
+        />
+      ),
     },
     {
       accessorKey: 'state',

@@ -14,12 +14,12 @@ import {
   CommandSeparator,
 } from '@/components/ui/command';
 import { InputGroup, InputGroupAddon } from './ui/input-group';
-import { Kbd, KbdGroup } from './ui/kbd';
 import { getNavigationItems, NavItem } from './app-navigation';
 import { useRouter } from 'next/navigation';
-import * as LucideIcons from 'lucide-react';
 import { getProjects } from '@/lib/mockApi';
-import { Project } from './project-cards';
+import { Project, ProjectIcon } from './project-cards';
+import { Box, ChevronRight, SearchIcon } from 'lucide-react';
+import { ShortcutView } from './shortcuts';
 
 const SEARCHBAR_KEYBOARD_SHORTCUT = 'k';
 const CLEAN_COMMAND_SHORTCUT = 'Backspace';
@@ -54,15 +54,13 @@ function getSearchItems(
       };
 
       projectItems.map((item) => {
-        const CurrIcon = LucideIcons[item.icon] as React.ComponentType<{ className?: string }>;
         currItem.tabs.push({
           title: item.name,
           description: item.description,
           url: `/${item.id}`,
-          icon: <CurrIcon />,
+          icon: item.icon,
           isActive: true,
-          iconBg: item.color,
-          iconFg: item.color,
+          color: item.color,
         });
       });
 
@@ -144,10 +142,10 @@ export function SearchBar() {
   function SearchIndicator({ command }: { command: string }) {
     switch (command) {
       case '>':
-        return <LucideIcons.Box />;
+        return <Box />;
 
       default:
-        return <LucideIcons.SearchIcon />;
+        return <SearchIcon />;
     }
   }
 
@@ -156,16 +154,10 @@ export function SearchBar() {
       <Button onClick={() => setOpen(true)} variant="outline" className="w-fit" asChild>
         <InputGroup>
           <InputGroupAddon align="inline-start">
-            <LucideIcons.SearchIcon />
+            <SearchIcon />
           </InputGroupAddon>
           <InputGroupAddon align="inline-start" className="mr-10">
-            Type{' '}
-            <KbdGroup>
-              <Kbd>
-                <LucideIcons.Command />{' '}
-              </Kbd>
-              <Kbd>K</Kbd>
-            </KbdGroup>
+            Type <ShortcutView shortcut="Meta+k" />
             to search
           </InputGroupAddon>
         </InputGroup>
@@ -176,10 +168,7 @@ export function SearchBar() {
             placeholderContent={
               command ? (
                 <span className="flex items-center gap-1">
-                  Type <Kbd>/</Kbd> +{' '}
-                  <Kbd>
-                    <LucideIcons.Space />{' '}
-                  </Kbd>
+                  Type <ShortcutView shortcut="slash+space" />
                   to search all...
                 </span>
               ) : (
@@ -208,18 +197,13 @@ export function SearchBar() {
                       }}
                       className="gap-2"
                     >
-                      <div
-                        className="flex min-h-10 min-w-10 items-center justify-center size-6 rounded-xl border"
-                        style={{ backgroundColor: `${currItem.iconBg}20`, color: currItem.iconFg }}
-                      >
-                        {currItem.icon}
-                      </div>
+                      <ProjectIcon icon={currItem.icon} color={currItem.color} size="sm" />
                       <div className="flex w-full space-x-1 justify-between">
                         <span className="block">
                           {currItem.title}
                           <div className="opacity-40">{currItem.description}</div>
                         </span>
-                        <LucideIcons.ChevronRight className="self-center" />
+                        <ChevronRight className="self-center" />
                       </div>
                     </CommandItem>
                   ))}

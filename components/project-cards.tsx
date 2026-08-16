@@ -5,17 +5,21 @@ import {
   Card,
   CardAction,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import * as LucideIcons from 'lucide-react';
 import { IconName } from './dialogs/project-icon';
 import { CircularProgress } from './ui/circular-progress';
 import { UsageTable } from './tables/usage-table';
 import { Usage } from './tables/usage-columns';
+import React from 'react';
+import { cn } from '@/lib/utils';
+import { usePathname } from 'next/navigation';
+import { NameToIcon } from './sidebarContent';
+import { CheckCheck, CloudSync } from 'lucide-react';
+import { cva, VariantProps } from 'class-variance-authority';
+import { ProjectBanner } from './project-switcher';
 
 export type Project = {
   id: string;
@@ -35,27 +39,61 @@ export type Project = {
   linkedProjectIds?: string[];
 };
 
-import React from 'react';
-import { cn } from '@/lib/utils';
-import { usePathname } from 'next/navigation';
+const projectIconVariants = cva('flex items-center justify-center border shrink-0', {
+  variants: {
+    size: {
+      xs: 'h-8 w-8 rounded-lg [&_svg]:size-4',
+      sm: 'h-10 w-10 rounded-xl [&_svg]:size-5',
+      md: 'h-12 w-12 rounded-2xl [&_svg]:size-6',
+      lg: 'h-16 w-16 rounded-2xl [&_svg]:size-8',
+      xl: 'h-20 w-20 rounded-3xl [&_svg]:size-10',
+    },
+  },
+  defaultVariants: {
+    size: 'md',
+  },
+});
 
-export const ProjectIcon = ({
+type ProjectIconProps = React.ComponentProps<'div'> &
+  VariantProps<typeof projectIconVariants> & {
+    icon?: IconName;
+    color?: string;
+    iconClassName?: string;
+  };
+
+export function ProjectIcon({
   icon,
   color,
+  size,
   className,
   iconClassName,
-}: React.ComponentProps<'div'> & { icon: IconName; color: string; iconClassName?: string }) => {
-  const Selected = LucideIcons[icon] as React.ComponentType<{ className?: string }>;
-
+  style,
+  ...props
+}: ProjectIconProps) {
   return (
     <div
-      className={cn('flex h-12 w-12 items-center justify-center rounded-2xl border', className)}
-      style={{ backgroundColor: `${color}20`, color: color }}
+      {...props}
+      className={cn(projectIconVariants({ size }), className)}
+      style={{
+        backgroundColor: color ? `${color}20` : undefined,
+        color,
+        ...style,
+      }}
     >
-      <Selected className={iconClassName} />
+      <NameToIcon
+        name={icon}
+        className={cn(
+          size === 'xs' && 'size-4',
+          size === 'sm' && 'size-5',
+          size === 'md' && 'size-6',
+          size === 'lg' && 'size-8',
+          size === 'xl' && 'size-10',
+          iconClassName
+        )}
+      />
     </div>
   );
-};
+}
 
 const ProjectCard = ({ item }: { item: Project }) => {
   const currState: boolean = item.state === 'online';
@@ -67,12 +105,13 @@ const ProjectCard = ({ item }: { item: Project }) => {
         <CardHeader className="space-y-3">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <div className="flex gap-2 items-center">
-                <ProjectIcon color={item.color} icon={item.icon} />
-
-                <CardTitle className="text-xl">{item.name}</CardTitle>
-              </div>
-              <CardDescription className="mt-1 line-clamp-2">{item.description}</CardDescription>
+              <ProjectBanner
+                icon={item.icon}
+                color={item.color}
+                name={item.name}
+                description={item.description}
+                size='md'
+              />
             </div>
 
             <CardAction>
@@ -82,9 +121,9 @@ const ProjectCard = ({ item }: { item: Project }) => {
                 strokeWidth={11}
                 showLabel
                 renderLabel={() => {
-                  if (currState) return <LucideIcons.CheckCheck className="size-5" />;
+                  if (currState) return <CheckCheck className="size-5" />;
 
-                  return <LucideIcons.CloudSync className="size-5" />;
+                  return <CloudSync className="size-5" />;
                 }}
                 gaugePrimaryColor={currState ? 'var(--color-sky-600)' : 'var(--color-yellow-600)'}
                 value={currState ? 100 : 50}

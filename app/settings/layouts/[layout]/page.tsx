@@ -1,18 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   ChevronDown,
   ChevronUp,
   GripVertical,
   Image as ImageIcon,
-  LayoutTemplate,
   Plus,
   ScanText,
   Settings2,
   Tag,
   Trash2,
-  X,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 
@@ -26,25 +25,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 import StepDialog from '@/components/dialogs/step-dialog';
 import { Separator } from '@/components/ui/separator';
 import { PageHeader } from '@/components/app-navigation';
@@ -93,10 +73,18 @@ function getModeDescription(mode: CaptureMode) {
     : 'Find configured tags and objects in the image.';
 }
 
-export default function LayoutManager() {
+function LayoutManagerPageContent() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   const [steps, setSteps] = useState<LayoutStep[]>(getSessionsData()[0].layoutStep);
   const [form, setForm] = useState<StepForm>(EMPTY_FORM);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(searchParams.get('dialog') === 'step');
+
+  useEffect(() => {
+    setDialogOpen(searchParams.get('dialog') === 'step');
+  }, [searchParams]);
   const [editingStepId, setEditingStepId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
   const [draggedId, setDraggedId] = useState<string | null>(null);
@@ -136,9 +124,17 @@ export default function LayoutManager() {
     toast.success('Step removed.');
   };
 
+  const syncLayoutDialog = (open: boolean) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (open) params.set('dialog', 'step');
+    else params.delete('dialog');
+    router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, { scroll: false });
+  };
+
   const openCreate = () => {
     setEditingStepId(null);
     setForm(EMPTY_FORM);
+    syncLayoutDialog(true);
     setDialogOpen(true);
   };
   const openEdit = (step: LayoutStep) => {
@@ -150,10 +146,12 @@ export default function LayoutManager() {
       required: step.required,
       mode: step.mode,
     });
+    syncLayoutDialog(true);
     setDialogOpen(true);
   };
   const closeDialog = () => {
     setDialogOpen(false);
+    syncLayoutDialog(false);
     setEditingStepId(null);
     setForm(EMPTY_FORM);
   };
@@ -200,7 +198,7 @@ export default function LayoutManager() {
   return (
     <div className="space-y-6">
       <PageHeader
-        setIcon={<LayoutTemplate />}
+        setIcon="LayoutTemplate"
         setTitle="Session layout"
         setDescription="Define the pictures users must capture for this session."
       />
@@ -435,7 +433,10 @@ export default function LayoutManager() {
 
       <StepDialog
         open={dialogOpen}
-        onOpenChange={setDialogOpen}
+        onOpenChange={(open) => {
+          setDialogOpen(open);
+          if (!open) syncLayoutDialog(false);
+        }}
         form={form}
         setForm={(f) => setForm(f)}
         isEditing={isEditing}
@@ -443,5 +444,19 @@ export default function LayoutManager() {
         closeDialog={closeDialog}
       />
     </div>
+  );
+}
+
+export default function LayoutManagerPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-full w-full flex items-center justify-center text-muted-foreground text-sm">
+          Loading layout...
+        </div>
+      }
+    >
+      <LayoutManagerPageContent />
+    </Suspense>
   );
 }
