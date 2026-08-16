@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import { ChartAreaInteractive } from '@/components/charts';
 import { Project } from '@/components/project-cards';
 import { ProjectSwitcher } from '@/components/project-switcher';
@@ -52,35 +52,42 @@ const MetricItem = ({ label, value, hint }: MetricProps) => (
 );
 
 function AnalyticsPageContent() {
-  const projects: Project[] = getProjects();
+  const projects = useMemo(() => getProjects(), []);
+
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const initialProjectId = searchParams.get('project');
-  const initialProject = projects.find((p) => p.id === initialProjectId) ?? projects[0];
+  const initialProject: Project = projects.find((p) => p.id === searchParams.get('project')) ?? projects[0];
+  const [selectedProject, setSelectedProject] = useState(initialProject);
 
   useEffect(() => {
-    // ensure url has project param when page mounts
-    const params = new URLSearchParams(searchParams.toString());
-    if (initialProject?.id) params.set('project', initialProject.id);
-    router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, { scroll: false });
-  }, []);
+    if (searchParams.get('project') === selectedProject.id) return;
+
+    const params = new URLSearchParams(searchParams);
+
+    params.set('project', selectedProject.id);
+
+    router.replace(`${pathname}?${params}`, {
+      scroll: false,
+    });
+  }, [selectedProject, pathname, router, searchParams]);
+
+  useEffect(() => {
+    const project = projects.find((p) => p.id === searchParams.get('project')) ?? projects[0];
+
+    if (project.id !== selectedProject.id) {
+      setSelectedProject(project);
+    }
+  }, [searchParams, projects]);
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
         <ProjectSwitcher
           projects={projects}
-          selectedProjectId={initialProject.id}
-          onChange={(p) => {
-            const params = new URLSearchParams(searchParams.toString());
-            if (p?.id) params.set('project', p.id);
-            else params.delete('project');
-            router.replace(`${pathname}${params.toString() ? `?${params}` : ''}`, {
-              scroll: false,
-            });
-          }}
+          selectedProjectId={selectedProject.id}
+          onChange={setSelectedProject}
         />
         <Button variant="outline" title="Export analytics">
           <FaFileExport className="mr-2 h-4 w-4" />
@@ -187,7 +194,7 @@ function AnalyticsPageContent() {
             <CardDescription>Summary of data usage throughout the project.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-            <UsageTable data={initialProject.usage} pageSize={4} />
+            <UsageTable data={selectedProject.usage} pageSize={4} />
           </CardContent>
         </Card>
       </div>
