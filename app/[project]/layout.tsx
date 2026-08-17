@@ -22,6 +22,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         { title: 'Processed images', url: `/${project}`, isActive: true },
         { title: 'Project settings', url: `/${project}/settings`, isActive: true },
         { title: 'Project analytics', url: `/${project}/analytics`, isActive: true },
+        { title: 'Secret keys', url: `/${project}/secrets`, isActive: true },
       ];
 
   return (

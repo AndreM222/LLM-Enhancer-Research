@@ -18,9 +18,9 @@ import {
 } from '@/components/ui/sheet';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { Command, PanelLeftIcon } from 'lucide-react';
+import { PanelLeftIcon } from 'lucide-react';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from './hover-card';
-import { Kbd, KbdGroup } from './kbd';
+import { ShortcutView } from '../shortcuts';
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state';
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -268,14 +268,7 @@ function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<t
         </Button>
       </HoverCardTrigger>
       <HoverCardContent className="w-fit text-xs">
-        Open Sidebar{' '}
-        <KbdGroup>
-          {' '}
-          <Kbd>
-            <Command />
-          </Kbd>{' '}
-          <Kbd>B</Kbd>
-        </KbdGroup>
+        Open Sidebar <ShortcutView shortcut="Meta+B" />
       </HoverCardContent>
     </HoverCard>
   );

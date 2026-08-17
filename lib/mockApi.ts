@@ -11,6 +11,7 @@ import { SingleSetting } from '@/components/tables/settings-columns';
 import { Invoice } from '@/components/tables/invoice-table';
 import { GraphLink, GraphNode, NodeCategory as GraphGroups } from '@/components/linkGraph';
 import { Edge, Node } from '@xyflow/react';
+import { SecretKey } from '@/components/tables/secrets-columns';
 
 export type UsageItem = {
   label: string;
@@ -111,6 +112,117 @@ export type ProjectLinkedSession = {
   projectId: string;
   sessionId: string;
 };
+
+export function getSecretKeys(): SecretKey[] {
+  return [
+    {
+      id: 'key-001',
+      name: 'Development worker',
+      description: 'Used by the local detection worker.',
+      prefix: 'sk_test_',
+      lastFour: 'a91f',
+      environment: 'development',
+      createdAt: '2026-08-01T12:00:00.000Z',
+      lastUsedAt: '2026-08-12T18:42:00.000Z',
+      status: 'active',
+      permissions: ['view-detections', 'view-sessions', 'create-sessions', 'run-detection'],
+    },
+    {
+      id: 'key-002',
+      name: 'Analytics dashboard',
+      description: 'Read-only access for reporting.',
+      prefix: 'sk_live_',
+      lastFour: 'c204',
+      environment: 'production',
+      createdAt: '2026-07-20T09:30:00.000Z',
+      lastUsedAt: '2026-08-10T15:20:00.000Z',
+      status: 'active',
+      permissions: ['view-detections', 'view-sessions', 'view-analytics'],
+    },
+  ];
+}
+
+export function secretKeySettingsOptions(): SingleSetting[] {
+  return [
+    {
+      id: 'view-detections',
+      name: 'View detections',
+      description: 'Read detection results and bounding-box information.',
+      type: 'switch',
+      value: true,
+    },
+    {
+      id: 'create-sessions',
+      name: 'Create sessions',
+      description: 'Create new sessions and submit images for processing.',
+      type: 'switch',
+      value: false,
+    },
+    {
+      id: 'view-sessions',
+      name: 'View sessions',
+      description: 'Read session metadata, status, and processing results.',
+      type: 'switch',
+      value: true,
+    },
+    {
+      id: 'update-detections',
+      name: 'Update detections',
+      description: 'Modify, correct, add, or remove detection results.',
+      type: 'switch',
+      value: false,
+    },
+    {
+      id: 'run-detection',
+      name: 'Run detection',
+      description: 'Start detection processing for an existing session.',
+      type: 'switch',
+      value: false,
+    },
+    {
+      id: 'view-project',
+      name: 'View project',
+      description: 'Read project details and configured resources.',
+      type: 'switch',
+      value: true,
+    },
+    {
+      id: 'manage-layouts',
+      name: 'Manage layouts',
+      description: 'Create, update, and delete session layouts.',
+      type: 'switch',
+      value: false,
+    },
+    {
+      id: 'manage-tags',
+      name: 'Manage tags',
+      description: 'Create, update, and delete detection tags.',
+      type: 'switch',
+      value: false,
+    },
+    {
+      id: 'view-analytics',
+      name: 'View analytics',
+      description: 'Read project analytics and usage metrics.',
+      type: 'switch',
+      value: false,
+    },
+    {
+      id: 'export-data',
+      name: 'Export data',
+      description: 'Export sessions, detections, and analytics data.',
+      type: 'switch',
+      value: false,
+    },
+    {
+      id: 'manage-settings',
+      name: 'Manage settings',
+      description: 'Update project and workspace settings.',
+      type: 'switch',
+      value: false,
+    },
+  ];
+}
 
 export function notificationAllOptions(): SingleSetting[] {
   return [

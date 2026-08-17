@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Bell, AlertTriangle, Settings, Archive, Inbox, Command } from 'lucide-react';
+import { Bell, AlertTriangle, Settings, Archive, Inbox } from 'lucide-react';
 import { FaCircle } from 'react-icons/fa6';
 import { AnimatePresence, motion } from 'motion/react';
 
@@ -14,9 +14,9 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { Kbd, KbdGroup } from './ui/kbd';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card';
 import Link from 'next/link';
+import { ShortcutView } from './shortcuts';
 
 type notification = {
   id: number;
@@ -169,13 +169,7 @@ export default function Notifications() {
           </PopoverTrigger>
 
           <HoverCardContent className="w-fit text-xs">
-            <KbdGroup>
-              Open Inbox
-              <Kbd>
-                <Command className="size-3" />
-              </Kbd>
-              <Kbd>n</Kbd>
-            </KbdGroup>
+            Open Inbox <ShortcutView shortcut="Meta+N" />
           </HoverCardContent>
         </HoverCard>
 
