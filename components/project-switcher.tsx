@@ -1,7 +1,5 @@
 'use client';
 
-import * as React from 'react';
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -78,20 +76,8 @@ export function ProjectSwitcher({
   selectedProjectId?: string;
 }) {
   const { isMobile } = useSidebar();
-  const [activeProject, setActiveProject] = React.useState(
-    projects.find((p) => p.id === selectedProjectId) ?? projects[0]
-  );
 
-  React.useEffect(() => {
-    if (selectedProjectId) {
-      const p = projects.find((p) => p.id === selectedProjectId);
-      if (p) setActiveProject(p);
-    }
-  }, [selectedProjectId, projects]);
-
-  React.useEffect(() => {
-    if (onChange && activeProject) onChange(activeProject);
-  }, [activeProject, onChange]);
+  const activeProject = projects.find((p) => p.id === selectedProjectId) ?? projects[0];
 
   if (!activeProject) {
     return null;
@@ -129,7 +115,7 @@ export function ProjectSwitcher({
               return (
                 <DropdownMenuItem
                   key={team.name}
-                  onClick={() => setActiveProject(team)}
+                  onClick={() => onChange?.(team)}
                   className="gap-2 p-2"
                 >
                   <ProjectBanner

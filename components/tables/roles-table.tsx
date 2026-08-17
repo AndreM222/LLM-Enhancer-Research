@@ -23,7 +23,7 @@ export function CreateRolesTable({
       onRowClick={(row) => onEdit(row.id)}
       pageSize={pageSize}
       showPaging
-      height={11}
+      height={12}
     />
   );
 }
@@ -47,7 +47,7 @@ export function LinkedRolesTable({
       onRowClick={(row) => onOpen(row.id)}
       pageSize={pageSize}
       showPaging
-      height={11}
+      height={12}
     />
   );
 }

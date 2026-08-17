@@ -31,7 +31,7 @@ function MiniTrend({ data }: { data: number[] }) {
 }
 
 export default function GlobalActivityPage() {
-  const { summary, countries } = getGlobalActivity();
+    const { summary, countries } = getGlobalActivity();
 
   const maxRequests = useMemo(() => Math.max(...countries.map((c) => c.requests)), [countries]);
   const byCountryName = useMemo(() => new Map(countries.map((c) => [c.name, c])), [countries]);

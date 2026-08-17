@@ -182,64 +182,61 @@ export const navList: {
 ];
 
 function useCurrentPage() {
-  const pathname: string = usePathname();
-  const paths: string[] = pathname.split('/');
-  paths.pop();
-  let prevpath: string = paths.join('/');
+  const pathname = usePathname();
 
   for (const group of navList) {
     for (const tab of group.tabs) {
-      if (tab.items) {
-        let subMatch = tab.items.find((item) => item.url === pathname);
-        if (subMatch) {
-          return {
-            title: subMatch.title,
-            description: subMatch.description,
-            icon: subMatch.icon,
-            subItems: subMatch.subItems,
-          };
-        }
-
-        subMatch = tab.items.find((item) => item.url === prevpath);
-        if (
-          subMatch &&
-          subMatch.subItems &&
-          subMatch.subItems.find((item) => item.url === pathname)
-        ) {
-          return {
-            title: subMatch.title,
-            description: subMatch.description,
-            icon: subMatch.icon,
-            subItems: subMatch.subItems,
-          };
-        }
-      }
       if (tab.url === pathname) {
         return {
           title: tab.title,
           description: tab.description,
-          items: tab.items,
           icon: tab.icon,
+          items: tab.items,
           subItems: tab.subItems,
         };
       }
 
-      if (
-        tab.url === pathname &&
-        tab?.subItems &&
-        tab?.subItems?.find((item) => item.url === prevpath)
-      ) {
+      if (tab.subItems?.some((sub) => sub.url === pathname)) {
         return {
           title: tab.title,
           description: tab.description,
           icon: tab.icon,
+          items: tab.items,
           subItems: tab.subItems,
         };
+      }
+
+      for (const item of tab.items ?? []) {
+        if (item.url === pathname) {
+          return {
+            title: item.title,
+            description: item.description,
+            icon: item.icon,
+            items: item.items,
+            subItems: item.subItems,
+          };
+        }
+
+        if (item.subItems?.some((sub) => sub.url === pathname)) {
+          return {
+            title: item.title,
+            description: item.description,
+            icon: item.icon,
+            items: item.items,
+            subItems: item.subItems,
+          };
+        }
       }
     }
   }
 
-  return { title: '', description: '', icon: undefined };
+  return {
+    title: '',
+    description: '',
+    icon: undefined,
+    items: undefined,
+    subItems: undefined,
+  };
 }
 
 export function PageItems() {

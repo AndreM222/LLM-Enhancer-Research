@@ -21,7 +21,7 @@ export function LogsTable({
       onRowClick={(row) => onOpen(row.id)}
       pageSize={pageSize}
       showPaging
-      height={11}
+      height={12}
     />
   );
 }

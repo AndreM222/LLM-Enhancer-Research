@@ -1,13 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from '@/components/ui/card';
+import { Card, CardAction, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { IconName } from './dialogs/project-icon';
 import { CircularProgress } from './ui/circular-progress';
@@ -110,7 +104,7 @@ const ProjectCard = ({ item }: { item: Project }) => {
                 color={item.color}
                 name={item.name}
                 description={item.description}
-                size='md'
+                size="md"
               />
             </div>
 

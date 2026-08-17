@@ -40,7 +40,7 @@ export function CreateInvitationTable({
       onRowClick={(row) => onOpen(row.id)}
       pageSize={pageSize}
       showPaging
-      height={11}
+      height={12}
     />
   );
 }
@@ -71,7 +71,7 @@ export function UsersListTable({
       onRowClick={(row) => onEdit(row.id)}
       pageSize={pageSize}
       showPaging
-      height={11}
+      height={12}
     />
   );
 }
@@ -88,5 +88,5 @@ export function LinkUsersTable({
   onOpen: (id: string) => void;
 }) {
   const columns = useMemo(() => linkUserColumns(onDelete, onOpen), [onDelete, onOpen]);
-  return <DataTable columns={columns} data={data} pageSize={pageSize} showPaging height={11} />;
+  return <DataTable columns={columns} data={data} pageSize={pageSize} showPaging height={12} />;
 }

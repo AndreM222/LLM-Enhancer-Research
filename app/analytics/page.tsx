@@ -58,7 +58,8 @@ function AnalyticsPageContent() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const initialProject: Project = projects.find((p) => p.id === searchParams.get('project')) ?? projects[0];
+  const initialProject: Project =
+    projects.find((p) => p.id === searchParams.get('project')) ?? projects[0];
   const [selectedProject, setSelectedProject] = useState(initialProject);
 
   useEffect(() => {

@@ -34,7 +34,7 @@ export function CreateTagGroupTable({
       onRowClick={(row) => onOpen(row.id)}
       pageSize={pageSize}
       showPaging
-      height={11}
+      height={12}
     />
   );
 }
@@ -58,7 +58,7 @@ export function CreateTagItemTable({
       onRowClick={(row) => onEdit(row.id)}
       pageSize={pageSize}
       showPaging
-      height={11}
+      height={12}
     />
   );
 }
@@ -82,7 +82,7 @@ export function LinkTagGroupTable({
       onRowClick={(row) => onOpen(row.id)}
       pageSize={pageSize}
       showPaging
-      height={11}
+      height={12}
     />
   );
 }
