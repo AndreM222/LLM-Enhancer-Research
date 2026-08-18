@@ -78,7 +78,7 @@ function ProjectPageContent() {
                 onChange={(e) => setSearch(e.target.value)}
               />
             </Field>
-            <Button onClick={() => console.log('Creating Session')}>Create session</Button>
+            <Button onClick={() => router.push(`${pathname}/new-session`)}>Create session</Button>
           </div>
           <CreateDetectionTable
             onOpen={(id) => router.push(`${pathname}/${id}`)}
