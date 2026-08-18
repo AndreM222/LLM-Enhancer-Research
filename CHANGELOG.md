@@ -2,75 +2,89 @@
 
 ### 🚀 Features
 
-- _(infrastructure)_ Setup basic setup of infrastructure for research development
-- _(ui)_ Improve ui further
-- _(ui improvements)_ Add mroe ui elements
-- _(hooks)_ Add hooks for missing dependency
-- _(ui)_ More ui improvements
-- _(activity window)_ Ad dui for activity widnow
-- _(graph)_ Update grapg setup ui for future representation
-- _(ui)_ Add settings and users ui for setup
-- _(ui)_ Improve projects ui
-- _(colors)_ Improve colors for a modern design
-- _(ui)_ Add projects ui component
-- _(template and tags)_ Add tempalte and tags settings
-- _(ui)_ Add more UI missing pieces for navigation
-- _(ui)_ Add more elements required for user experience
-- _(search bar)_ Introduce search bar
-- _(notifications)_ Introduce ui for notifications
-- _(ui)_ Add more ui elements needed
-- _(ui)_ More ui elements
-- _(ui)_ Add mroe ui elements
-- _(mockup data)_ Organize mockup data
-- _(ui)_ More ui stuff
-- _(analytics ui)_ Add better design for analytics ui
-- _(ui)_ More ui updates
-- _(ui)_ More ui elements for planning
-- _(map analytics)_ Include map analytics
-- _(server setting)_ Add server setting epr project
-- _(ui)_ More ui elements for workflow
-- _(ui)_ Ui improvements for ux
-- _(maps)_ Improve maps tables
-- _(ui)_ Add mockup data and mockup interactions
-- _(members)_ Add functional mcokup content for members window
-- _(session layout)_ Add session layouts steps management setup
-- _(logs and layouts)_ Add layouts reorganizing and logs detail info
-- _(lgos design)_ Redesign logs
-- _(settings)_ Redesign multiple settings into tables
-- _(billing)_ Update billing design
-- _(billing)_ Remove unused button
-- _(cards)_ Improve cards design
-- _(usage table)_ Remove unused usage click button
-- _(draggable layers)_ Make draggable layers in project settings
-- _(settings and layout)_ Improve cards switching fx
-- _(image fallbacks)_ Add image fallback for amrketplace
-- _(api)_ Add more api data and organize
-- _(link graph)_ Make link graph functional
-- _(graphs)_ Add data to capabilities for graphs
-- _(activity)_ Improve actvity design for preparations
+- *(infrastructure)* Setup basic setup of infrastructure for research development
+- *(ui)* Improve ui further
+- *(ui improvements)* Add mroe ui elements
+- *(hooks)* Add hooks for missing dependency
+- *(ui)* More ui improvements
+- *(activity window)* Ad dui for activity widnow
+- *(graph)* Update grapg setup ui for future representation
+- *(ui)* Add settings and users ui for setup
+- *(ui)* Improve projects ui
+- *(colors)* Improve colors for a modern design
+- *(ui)* Add projects ui component
+- *(template and tags)* Add tempalte and tags settings
+- *(ui)* Add more UI missing pieces for navigation
+- *(ui)* Add more elements required for user experience
+- *(search bar)* Introduce search bar
+- *(notifications)* Introduce ui for notifications
+- *(ui)* Add more ui elements needed
+- *(ui)* More ui elements
+- *(ui)* Add mroe ui elements
+- *(mockup data)* Organize mockup data
+- *(ui)* More ui stuff
+- *(analytics ui)* Add better design for analytics ui
+- *(ui)* More ui updates
+- *(ui)* More ui elements for planning
+- *(map analytics)* Include map analytics
+- *(server setting)* Add server setting epr project
+- *(ui)* More ui elements for workflow
+- *(ui)* Ui improvements for ux
+- *(maps)* Improve maps tables
+- *(ui)* Add mockup data and mockup interactions
+- *(members)* Add functional mcokup content for members window
+- *(session layout)* Add session layouts steps management setup
+- *(logs and layouts)* Add layouts reorganizing and logs detail info
+- *(lgos design)* Redesign logs
+- *(settings)* Redesign multiple settings into tables
+- *(billing)* Update billing design
+- *(billing)* Remove unused button
+- *(cards)* Improve cards design
+- *(usage table)* Remove unused usage click button
+- *(draggable layers)* Make draggable layers in project settings
+- *(settings and layout)* Improve cards switching fx
+- *(image fallbacks)* Add image fallback for amrketplace
+- *(api)* Add more api data and organize
+- *(link graph)* Make link graph functional
+- *(graphs)* Add data to capabilities for graphs
+- *(activity)* Improve actvity design for preparations
+- *(activity canvas)* Make dynamic activity canvas nodes and links
+- *(travel and refactor)* Add options for traveling and refactor all dialogs for organization
+- *(analytics)* Add analytics lsit screen per project
+- *(secret leys)* Introduce secret keys for api management
+- *(secret keys and global data)* Fix global data search params usage and add edit for secret keys
+- *(secret keys)* Add delete to secret keys
+- *(projects)* Create project dialgo and searching capabilities
 
 ### 🐛 Bug Fixes
 
-- _(push action)_ Fix push action checker
-- _(linter)_ Fix linter setup
-- _(actions)_ Fix linter and spellcheck actions
-- _(actions)_ Fix actions with right setup
-- _(standard)_ Update standard setup to use checkers
-- _(package manager)_ Swithc to pnpm backage manager for ci
-- _(package caller)_ Swithc package manager caller
-- _(tables)_ Table colums and buttons within used to collide with each other
-- _(settings selectors)_ Setup names of selected items instead of id
-- _(update params)_ Update usage params
-- _(activity)_ Hydration fixed by using class card
+- *(push action)* Fix push action checker
+- *(linter)* Fix linter setup
+- *(actions)* Fix linter and spellcheck actions
+- *(actions)* Fix actions with right setup
+- *(standard)* Update standard setup to use checkers
+- *(package manager)* Swithc to pnpm backage manager for ci
+- *(package caller)* Swithc package manager caller
+- *(tables)* Table colums and buttons within used to collide with each other
+- *(settings selectors)* Setup names of selected items instead of id
+- *(update params)* Update usage params
+- *(activity)* Hydration fixed by using class card
+- *(improts)* Fix unused imports
+- *(suspense)* Add useparam inside suspense
+- *(marketplace)* Fix marketlace default exportation missing
+- *(analytics)* Rerendering happenign because of double call both in projectswitcher
+- *(project switcher)* Used to call repeatedly the change of project
 
 ### 🚜 Refactor
 
-- _(settings)_ Change component used for searching
+- *(settings)* Change component used for searching
+- *(suspense and components)* Move usesearchparams pages to suspense and abstract UI components
 
 ### ⚙️ Miscellaneous Tasks
 
-- _(changelog)_ Update CHANGELOG.md [skip ci]
-- _(changelog)_ Update CHANGELOG.md [skip ci]
-- _(changelog)_ Update CHANGELOG.md [skip ci]
-- _(changelog)_ Update CHANGELOG.md [skip ci]
-- _(changelog)_ Update CHANGELOG.md [skip ci]
+- *(changelog)* Update CHANGELOG.md [skip ci]
+- *(changelog)* Update CHANGELOG.md [skip ci]
+- *(changelog)* Update CHANGELOG.md [skip ci]
+- *(changelog)* Update CHANGELOG.md [skip ci]
+- *(changelog)* Update CHANGELOG.md [skip ci]
+- *(changelog)* Update CHANGELOG.md [skip ci]
