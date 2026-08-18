@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 
 import { getSecretKeys, secretKeySettingsOptions } from '@/lib/mockApi';
-import { SecretKeyDialog, CreatedSecretKey } from '@/components/dialogs/secret-key-dialog';
+import { SecretKeyDialog } from '@/components/dialogs/secret-key-dialog';
 import { SecretKey } from '@/components/tables/secrets-columns';
 import { SecretsKeyTable } from '@/components/tables/secrets-table';
 
@@ -18,7 +18,23 @@ const initialKeys = getSecretKeys();
 export default function SecretKeysPage() {
   const [keys, setKeys] = useState<SecretKey[]>(initialKeys);
   const [search, setSearch] = useState('');
+
+  function emptySecretKey(): SecretKey {
+    return {
+      id: '',
+      name: '',
+      description: '',
+      permissions: [],
+      prefix: '',
+      lastFour: '',
+      createdAt: '',
+      status: 'active',
+    };
+  }
+
   const [createOpen, setCreateOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [editingKey, setEditingKey] = useState<SecretKey | null>(null);
 
   const filteredKeys = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -29,35 +45,29 @@ export default function SecretKeysPage() {
 
     return keys.filter(
       (key) =>
-        key.name.toLowerCase().includes(query) ||
-        key.description.toLowerCase().includes(query) ||
-        key.environment.toLowerCase().includes(query)
+        key.name.toLowerCase().includes(query) || key.description.toLowerCase().includes(query)
     );
   }, [keys, search]);
 
-  const handleSave = (created: CreatedSecretKey) => {
-    const tableKey: SecretKey = {
-      id: created.id,
-      name: created.name,
-      description: created.description,
-      prefix: created.prefix,
-      lastFour: created.lastFour,
-      environment: created.environment,
-      createdAt: created.createdAt,
-      expiresAt: created.expiresAt,
-      status: created.status,
-      permissions: created.permissions,
-    };
-
-    setKeys((previous) => [...previous, tableKey]);
-
-    console.log('Store this secret securely:', created.secret);
-
-    toast.success('Secret key added.');
+  const handleEdit = (key: SecretKey) => {
+    setEditingKey(key);
+    setEditOpen(true);
   };
 
-  const handleOpen = (key: SecretKey) => {
-    toast.info(`Opening ${key.name}.`);
+  const handleCreate = (created: SecretKey) => {
+    setKeys((previous) => [...previous, created]);
+
+    console.log('New secret shown once:', created.id);
+
+    setCreateOpen(false);
+  };
+
+  const handleEditSave = (updated: SecretKey) => {
+    setKeys((previous) => previous.map((key) => (key.id === updated.id ? updated : key)));
+
+    setEditOpen(false);
+    setEditingKey(null);
+    toast.success('Secret key updated.');
   };
 
   return (
@@ -85,7 +95,7 @@ export default function SecretKeysPage() {
           </div>
 
           <SecretsKeyTable
-            onEdit={handleOpen}
+            onEdit={handleEdit}
             onDelete={() => console.log('deleted')}
             data={filteredKeys}
             pageSize={15}
@@ -96,7 +106,24 @@ export default function SecretKeysPage() {
       <SecretKeyDialog
         open={createOpen}
         onOpenChange={setCreateOpen}
-        onSave={handleSave}
+        mode="create"
+        initial={emptySecretKey()}
+        onSave={handleCreate}
+        permissionSettings={secretKeySettingsOptions()}
+      />
+
+      <SecretKeyDialog
+        open={editOpen}
+        onOpenChange={(open) => {
+          setEditOpen(open);
+
+          if (!open) {
+            setEditingKey(null);
+          }
+        }}
+        mode="edit"
+        initial={editingKey ?? emptySecretKey()}
+        onSave={handleEditSave}
         permissionSettings={secretKeySettingsOptions()}
       />
     </div>

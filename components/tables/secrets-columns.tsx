@@ -11,7 +11,6 @@ export type SecretKey = {
   description: string;
   prefix: string;
   lastFour: string;
-  environment: 'development' | 'staging' | 'production';
   createdAt: string;
   lastUsedAt?: string;
   expiresAt?: string;
@@ -56,15 +55,6 @@ export function secretKeysColumns(
           </div>
         );
       },
-    },
-    {
-      accessorKey: 'environment',
-      header: 'Environment',
-      cell: ({ row }) => (
-        <Badge variant="outline" className="capitalize">
-          {row.original.environment}
-        </Badge>
-      ),
     },
     {
       id: 'permissions',
