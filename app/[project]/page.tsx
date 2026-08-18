@@ -17,6 +17,7 @@ import { DetectionSession } from '@/components/tables/detection-columns';
 import { getDetectionSessionsByProject } from '@/lib/mockApi';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { usePathname, useRouter, useParams, useSearchParams } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 
 function ProjectPageContent() {
   const router = useRouter();
@@ -77,6 +78,7 @@ function ProjectPageContent() {
                 onChange={(e) => setSearch(e.target.value)}
               />
             </Field>
+            <Button onClick={() => console.log('Creating Session')}>Create session</Button>
           </div>
           <CreateDetectionTable
             onOpen={(id) => router.push(`${pathname}/${id}`)}

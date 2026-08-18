@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import * as LucideIcons from 'lucide-react';
-import { ProjectIcon } from '../project-cards';
+import { ProjectIcon } from '@/components/cards/project-cards';
 
 export type IconName = keyof typeof LucideIcons;
 

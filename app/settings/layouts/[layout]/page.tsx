@@ -78,7 +78,7 @@ function LayoutManagerPageContent() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const [steps, setSteps] = useState<LayoutStep[]>(getSessionsData()[0].layoutStep);
+  const [steps, setSteps] = useState<LayoutStep[]>(getSessionsData()[0].steps);
   const [form, setForm] = useState<StepForm>(EMPTY_FORM);
   const [dialogOpen, setDialogOpen] = useState(searchParams.get('dialog') === 'step');
 

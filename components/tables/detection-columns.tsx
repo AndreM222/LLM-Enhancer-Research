@@ -1,13 +1,13 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { Badge } from '../ui/badge';
-import { ButtonGroup } from '../ui/button-group';
-import { Button } from '../ui/button';
+import { Badge } from '@/components/ui/badge';
+import { ButtonGroup } from '@/components/ui/button-group';
+import { Button } from '@/components/ui/button';
 import { CheckCheck, ChevronRight, CloudSync, Trash, X } from 'lucide-react';
-import { Project } from '../project-cards';
-import { CircularProgress } from '../ui/circular-progress';
-import { ProjectBanner } from '../project-switcher';
+import { Project } from '@/components/cards/project-cards';
+import { CircularProgress } from '@/components/ui/circular-progress';
+import { ProjectBanner } from '@/components/project-switcher';
 
 export type DetectionSession = {
   id: string;

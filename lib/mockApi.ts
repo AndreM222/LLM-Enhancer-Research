@@ -90,7 +90,7 @@ export type LayoutStep = {
 
 export type SessionLayout = {
   id: string;
-  layoutStep: LayoutStep[];
+  steps: LayoutStep[];
 };
 
 export type DetectionLayer = {
@@ -679,8 +679,8 @@ const ALL_LAYOUTS: LayoutTableData[] = [
 
 const ALL_SESSION_LAYOUTS: SessionLayout[] = [
   {
-    id: '12312',
-    layoutStep: [
+    id: '1232',
+    steps: [
       {
         id: 'step-1',
         position: 1,
@@ -1255,6 +1255,27 @@ export const getProjectLayouts = (projectId?: string): LayoutTableData[] => {
       ?.map((id) => ALL_LAYOUTS.find((layout) => layout.id === id))
       .filter((layout): layout is LayoutTableData => Boolean(layout)) ?? []
   );
+};
+
+export type SessionLayoutGroup = LayoutTableData & {
+  steps: LayoutStep[];
+};
+
+export const getProjectSessionLayouts = (projectId?: string): SessionLayoutGroup[] => {
+  const layouts = getProjectLayouts(projectId);
+
+  return layouts.map((layout) => {
+    const sessionLayout = ALL_SESSION_LAYOUTS.find((item) => item.id === layout.id);
+
+    const steps = sessionLayout
+      ? [...sessionLayout.steps].sort((a, b) => a.position - b.position)
+      : [];
+
+    return {
+      ...layout,
+      steps,
+    };
+  });
 };
 
 export const getProjectServers = (projectId?: string): ServerActivity[] => {
