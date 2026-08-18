@@ -1,6 +1,6 @@
 'use client';
 
-import { Project } from '@/components/project-cards';
+import { Project } from '@/components/cards/project-cards';
 import { ProjectSwitcher } from '@/components/project-switcher';
 import PromptDiff from '@/components/promptDiff';
 import { Badge } from '@/components/ui/badge';

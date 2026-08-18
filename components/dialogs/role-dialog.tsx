@@ -17,9 +17,6 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { SingleSetting, updateSettingValue } from '@/components/tables/settings-columns';
 import { SingleSettingsTable } from '@/components/tables/settings-table';
-import { Project, ProjectIcon } from '@/components/project-cards';
-import { AddRow } from '@/app/[project]/settings/page';
-import { LinkDetectionTable } from '@/components/tables/detection-table';
 
 export type Role = {
   id: string;
@@ -35,7 +32,6 @@ export function RoleDialog({
   initial,
   onSave,
   mode,
-  projectsList,
   roleSettings,
 }: {
   open: boolean;
@@ -43,14 +39,10 @@ export function RoleDialog({
   initial: Role;
   onSave: (role: Role) => void;
   mode: 'create' | 'edit';
-  projectsList: Project[];
   roleSettings: SingleSetting[];
 }) {
   const [form, setForm] = useState<Role>(initial);
   const [settings, setSettings] = useState<SingleSetting[]>(roleSettings);
-
-  const [projectLinks, setProjectLinks] = useState<Project[]>(projectsList ?? []);
-  const [projectLinkValue, setProjectLinkValue] = useState('');
 
   const handleOpenChange = (v: boolean) => {
     if (v) setForm(initial);
@@ -65,8 +57,6 @@ export function RoleDialog({
     onSave(form);
     onOpenChange(false);
   };
-
-  const selectedProjectLink = projectsList.find((p) => p.id === projectLinkValue) ?? null;
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -128,53 +118,6 @@ export function RoleDialog({
                   onChange={(id, value) =>
                     setSettings((previous) => updateSettingValue(previous, id, value))
                   }
-                />
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Linked Projects</CardTitle>
-                <CardDescription>Add projects to link images.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <AddRow
-                  items={projectsList}
-                  value={(() => {
-                    const project = projectsList.find((curr) => curr.id === projectLinkValue);
-                    return project?.name ?? '';
-                  })()}
-                  onValueChange={setProjectLinkValue}
-                  placeholder="Search projects..."
-                  disabled={!selectedProjectLink}
-                  onAdd={() => {
-                    if (
-                      !selectedProjectLink ||
-                      projectLinks.some((p) => p.id === selectedProjectLink.id)
-                    )
-                      return;
-                    setProjectLinks((prev) => [...prev, selectedProjectLink]);
-                    setProjectLinkValue('');
-                    toast.success(`${selectedProjectLink.name} linked.`);
-                  }}
-                  renderItem={(p) => (
-                    <span className="flex items-center gap-2">
-                      <ProjectIcon icon={p.icon} color={p.color} className="w-6 h-6 rounded-md" />
-                      <span className="flex flex-col">
-                        <span>{p.name}</span>
-                        <span className="text-xs text-muted-foreground">{p.description}</span>
-                      </span>
-                    </span>
-                  )}
-                />
-                <LinkDetectionTable
-                  pageSize={4}
-                  data={projectLinks}
-                  onDelete={(id) => {
-                    setProjectLinks((prev) => prev.filter((p) => p.id !== id));
-                    toast.success('Project unlinked.');
-                  }}
-                  onOpen={(id) => console.log(id)}
                 />
               </CardContent>
             </Card>

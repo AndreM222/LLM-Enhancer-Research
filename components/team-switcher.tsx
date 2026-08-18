@@ -18,7 +18,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { AccountPicture } from './account-banner';
+import { AccountPicture } from '@/components/account-banner';
 import { Workspace } from '@/lib/mockApi';
 
 export function WorkspaceSwitcher({ workspaces: workspaces }: { workspaces: Workspace[] }) {

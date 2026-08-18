@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { NavItem, PageHeader } from '@/components/app-navigation';
 import { IconName } from '@/components/dialogs/project-icon';
-import { Project } from '@/components/project-cards';
+import { Project } from '@/components/cards/project-cards';
 import { getProjects } from '@/lib/mockApi';
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

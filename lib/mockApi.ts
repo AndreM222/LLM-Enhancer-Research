@@ -3,7 +3,7 @@ import { User } from '@/components/tables/users-columns';
 import { LayoutTableData } from '@/components/tables/layouts-columns';
 import { DetectionSession } from '@/components/tables/detection-columns';
 import { Log } from '@/components/tables/logs-columns';
-import { Project } from '@/components/project-cards';
+import { Project } from '@/components/cards/project-cards';
 import { TagGroupDetail } from '@/app/settings/tags/[tagGroup]/page';
 import { TagGroup } from '@/components/tables/tags-columns';
 import { ServerActivity } from '@/components/tables/global-columns';

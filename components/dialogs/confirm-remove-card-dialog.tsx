@@ -8,7 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { PaymentCard } from './add-payment-dialog';
+import { PaymentCard } from '@/components/dialogs/add-payment-dialog';
 import { getBrandLabel } from '@/components/card-brand';
 import { Button } from '@/components/ui/button';
 

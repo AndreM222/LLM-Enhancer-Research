@@ -16,7 +16,7 @@ import {
   Panel,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { ServiceNode } from './service-node';
+import { ServiceNode } from '@/components/service-node';
 import { ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -33,7 +33,7 @@ import {
 } from '@/components/ui/drawer';
 
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { LogsTable } from './tables/logs-table';
+import { LogsTable } from '@/components/tables/logs-table';
 import {
   Select,
   SelectContent,
@@ -41,10 +41,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from './ui/select';
-import { Field } from './ui/field';
-import { Input } from './ui/input';
-import { LogDialog } from './dialogs/log-dialog';
+} from '@/components/ui/select';
+import { Field } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { LogDialog } from '@/components/dialogs/log-dialog';
 
 const nodeTypes = { service: ServiceNode };
 

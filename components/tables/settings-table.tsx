@@ -3,7 +3,11 @@
 import { useMemo } from 'react';
 
 import { DataTable } from '@/components/data-table';
-import { SingleSetting, SettingValue, singleSettingsColumns } from './settings-columns';
+import {
+  SingleSetting,
+  SettingValue,
+  singleSettingsColumns,
+} from '@/components/tables/settings-columns';
 
 type SingleSettingsTableProps = {
   data: SingleSetting[];

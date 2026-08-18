@@ -2,10 +2,10 @@
 
 import { type NodeProps, Handle, Position } from '@xyflow/react';
 import { HardDrive } from 'lucide-react';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './ui/card';
-import { ProjectIcon } from './project-cards';
-import { IconName } from './dialogs/project-icon';
-import { Status, StatusIndicator } from './tables/global-columns';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { ProjectIcon } from '@/components/cards/project-cards';
+import { IconName } from '@/components/dialogs/project-icon';
+import { Status, StatusIndicator } from '@/components/tables/global-columns';
 
 type ServiceData = {
   name: string;

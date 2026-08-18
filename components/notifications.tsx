@@ -14,9 +14,9 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import Link from 'next/link';
-import { ShortcutView } from './shortcuts';
+import { ShortcutView } from '@/components/shortcuts';
 
 type notification = {
   id: number;

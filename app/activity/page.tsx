@@ -2,7 +2,7 @@
 
 import React, { Suspense, useEffect } from 'react';
 import ActivityCanvas from '@/components/activity-canvas';
-import { Project } from '@/components/project-cards';
+import { Project } from '@/components/cards/project-cards';
 import { ProjectSwitcher } from '@/components/project-switcher';
 import { Button } from '@/components/ui/button';
 import { getProjects, getActivityForProject, getLogs } from '@/lib/mockApi';

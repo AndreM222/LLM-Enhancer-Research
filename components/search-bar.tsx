@@ -13,13 +13,13 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/components/ui/command';
-import { InputGroup, InputGroupAddon } from './ui/input-group';
-import { getNavigationItems, NavItem } from './app-navigation';
+import { InputGroup, InputGroupAddon } from '@/components/ui/input-group';
+import { getNavigationItems, NavItem } from '@/components/app-navigation';
 import { useRouter } from 'next/navigation';
 import { getProjects } from '@/lib/mockApi';
-import { Project, ProjectIcon } from './project-cards';
+import { Project, ProjectIcon } from '@/components/cards/project-cards';
 import { Box, ChevronRight, SearchIcon } from 'lucide-react';
-import { ShortcutView } from './shortcuts';
+import { ShortcutView } from '@/components/shortcuts';
 
 const SEARCHBAR_KEYBOARD_SHORTCUT = 'k';
 const CLEAN_COMMAND_SHORTCUT = 'Backspace';

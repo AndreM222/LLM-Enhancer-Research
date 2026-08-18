@@ -2,7 +2,7 @@
 
 import { DataTable } from '@/components/data-table';
 import { useMemo } from 'react';
-import { SecretKey, secretKeysColumns } from './secrets-columns';
+import { SecretKey, secretKeysColumns } from '@/components/tables/secrets-columns';
 
 export function SecretsKeyTable({
   data,

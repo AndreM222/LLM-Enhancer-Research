@@ -1,19 +1,20 @@
 'use client';
 
 import { ArrowLeft } from 'lucide-react';
-import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenu } from './ui/sidebar';
-import { NavUser } from './account-banner';
-import { NameToIcon, NavContent } from './sidebarContent';
+import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenu } from '@/components/ui/sidebar';
+import { NavUser } from '@/components/account-banner';
+import { NavContent } from '@/components/sidebarContent';
 import { usePathname, useRouter } from 'next/navigation';
-import { WorkspaceSwitcher } from './team-switcher';
+import { WorkspaceSwitcher } from '@/components/team-switcher';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import { getAccountUser, getWorkspace } from '@/lib/mockApi';
-import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
-import { IconName } from './dialogs/project-icon';
-import { ProjectIcon } from './project-cards';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { IconName } from '@/components/dialogs/project-icon';
+import { ProjectIcon } from '@/components/cards/project-cards';
+import { ProjectBanner } from '@/components/project-switcher';
 
 export type NavItem = {
   title: string;
@@ -444,23 +445,16 @@ export default function SubNavigator() {
             href={item.url}
             className={cn(
               buttonVariants({ variant: 'outline' }),
-              'h-auto w-full justify-start rounded-xl border p-2 text-left transition-colors',
+              'h-auto w-full justify-between rounded-xl border p-2 text-left transition-colors',
               'border-primary/20 bg-primary/10 text-primary hover:bg-primary/10'
             )}
           >
-            {item.icon && (
-              <div className="flex min-h-12 min-w-12 items-center justify-center size-6 rounded-2xl border">
-                <NameToIcon name={item.icon} />
-              </div>
-            )}
-            <div className="flex w-full flex-col items-start gap-1">
-              <span className="text-sm font-medium">{item.title}</span>
-              {item.description ? (
-                <span className="line-clamp-2 text-xs leading-5 text-muted-foreground">
-                  {item.description}
-                </span>
-              ) : null}
-            </div>
+            <ProjectBanner
+              icon={item.icon ?? 'Folder'}
+              description={item.description}
+              name={item.title}
+              size="md"
+            />
             <ChevronRight />
           </Link>
         );

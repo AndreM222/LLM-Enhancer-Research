@@ -15,10 +15,10 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { Project, ProjectIcon } from './project-cards';
+import { Project, ProjectIcon } from '@/components/cards/project-cards';
 import { ChevronsUpDown, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { IconName } from './dialogs/project-icon';
+import { IconName } from '@/components/dialogs/project-icon';
 
 type BannerSize = keyof typeof sizeConfig;
 

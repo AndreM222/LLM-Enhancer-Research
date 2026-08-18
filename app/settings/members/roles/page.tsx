@@ -5,7 +5,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { getProjectLinks, getProjects, getRoles, roleSettingsOptions } from '@/lib/mockApi';
+import { getProjectLinks, getRoles, roleSettingsOptions } from '@/lib/mockApi';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,9 +20,6 @@ import { Button } from '@/components/ui/button';
 import { CreateRolesTable } from '@/components/tables/roles-table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import LinkGraph from '@/components/linkGraph';
-import { Project } from '@/components/project-cards';
-
-const projectsList: Project[] = getProjects();
 
 export type Role = {
   id: string;
@@ -168,7 +165,6 @@ function RolesPageContent() {
         initial={emptyRole()}
         onSave={handleCreate}
         mode="create"
-        projectsList={projectsList}
         roleSettings={roleSettingsOptions()}
       />
 
@@ -178,7 +174,6 @@ function RolesPageContent() {
         initial={editingRole}
         onSave={handleSaveEdit}
         mode="edit"
-        projectsList={projectsList}
         roleSettings={roleSettingsOptions()}
       />
 

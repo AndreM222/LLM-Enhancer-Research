@@ -15,8 +15,8 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
-import { NavItem } from './app-navigation';
-import { IconName } from './dialogs/project-icon';
+import { NavItem } from '@/components/app-navigation';
+import { IconName } from '@/components/dialogs/project-icon';
 import { ComponentType } from 'react';
 
 export const NameToIcon = ({ name, ...props }: { name?: IconName } & LucideIcons.LucideProps) => {

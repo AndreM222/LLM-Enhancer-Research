@@ -1,6 +1,6 @@
 import { Workspace } from '@/lib/mockApi';
 import { cn } from '@/lib/utils';
-import { AccountPicture } from './account-banner';
+import { AccountPicture } from '@/components/account-banner';
 
 type BannerSize = keyof typeof sizeConfig;
 

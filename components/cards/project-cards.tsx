@@ -3,17 +3,17 @@
 import Link from 'next/link';
 import { Card, CardAction, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { IconName } from './dialogs/project-icon';
-import { CircularProgress } from './ui/circular-progress';
-import { UsageTable } from './tables/usage-table';
-import { Usage } from './tables/usage-columns';
+import { IconName } from '@/components/dialogs/project-icon';
+import { CircularProgress } from '@/components/ui/circular-progress';
+import { UsageTable } from '@/components/tables/usage-table';
+import { Usage } from '@/components/tables/usage-columns';
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
-import { NameToIcon } from './sidebarContent';
+import { NameToIcon } from '@/components/sidebarContent';
 import { CheckCheck, CloudSync } from 'lucide-react';
 import { cva, VariantProps } from 'class-variance-authority';
-import { ProjectBanner } from './project-switcher';
+import { ProjectBanner } from '@/components/project-switcher';
 
 export type Project = {
   id: string;

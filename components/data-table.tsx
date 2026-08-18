@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Button } from './ui/button';
+import { Button } from '@/components/ui/button';
 import { useMemo, useState } from 'react';
 
 const rowStatusVariants = cva('transition-colors', {

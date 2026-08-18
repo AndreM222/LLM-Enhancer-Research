@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
-import { Badge } from './ui/badge';
-import { Button } from './ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Check, ShieldQuestionMark, Trash2 } from 'lucide-react';
 import { useRef } from 'react';
 import { FaApple, FaGoogle } from 'react-icons/fa6';

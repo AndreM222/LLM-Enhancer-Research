@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useMemo, useState } from 'react';
 import { ChartAreaInteractive } from '@/components/charts';
-import { Project } from '@/components/project-cards';
+import { Project } from '@/components/cards/project-cards';
 import { ProjectSwitcher } from '@/components/project-switcher';
 import { Correction } from '@/components/tables/correction-columns';
 import { CorrectionsTable } from '@/components/tables/corrections-table';

@@ -5,9 +5,9 @@ import {
   type DetectionSession,
   createDetectionColumns,
   linkedDetectionColumns,
-} from './detection-columns';
+} from '@/components/tables/detection-columns';
 import { useMemo } from 'react';
-import { Project } from '../project-cards';
+import { Project } from '@/components/cards/project-cards';
 
 function getRowStatus(session: DetectionSession): RowStatus {
   if (session.status === 'failed') return 'error';

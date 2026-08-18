@@ -2,7 +2,7 @@
 
 import { DataTable } from '@/components/data-table';
 import { useMemo } from 'react';
-import { type Correction, getCorrectionColumns } from './correction-columns';
+import { type Correction, getCorrectionColumns } from '@/components/tables/correction-columns';
 
 export function CorrectionsTable({
   data,

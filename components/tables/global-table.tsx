@@ -7,7 +7,7 @@ import {
   GlobeActivity,
   linkServerColumns,
   ServerActivity,
-} from './global-columns';
+} from '@/components/tables/global-columns';
 import { useMemo } from 'react';
 
 export function GlobalActivityTable({
