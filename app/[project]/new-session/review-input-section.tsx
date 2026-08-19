@@ -13,18 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 
 import { SessionLayoutGroup } from '@/lib/mockApi';
-
-type CapturedPicture = {
-  id: string;
-  stepId: string;
-  title: string;
-  src: string;
-  capturedAt: string;
-  location?: {
-    latitude: number;
-    longitude: number;
-  };
-};
+import { CapturedPicture } from './action-section';
 
 export function ReviewSection({
   layout,

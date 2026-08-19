@@ -16,13 +16,12 @@ import {
 } from '@/components/ui/stepper';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { getProjectById, getProjectSessionLayouts } from '@/lib/mockApi';
-import { PermissionsSection } from './permissions';
-import { LayoutSection } from './layoutSelector';
-import { CaptureSection } from './action';
-import { ReviewSection } from './checking';
-import { CompleteSection } from './completed';
+import { PermissionsSection } from './introduction-section';
+import { LayoutSection } from './layout-selector-section';
+import { CaptureSection } from './action-section';
+import { ReviewSection } from './review-input-section';
+import { CompleteSection } from './submission-section';
 
 type SessionStepId = 'permissions' | 'layout' | 'capture' | 'review' | 'complete';
 
@@ -126,6 +125,7 @@ export default function NewSession() {
   const [pictures, setPictures] = useState<CapturedPicture[]>([]);
   const [captureIndex, setCaptureIndex] = useState(0);
   const [isCapturing, setIsCapturing] = useState(false);
+  const [captureLayoutId, setCaptureLayoutId] = useState<string>();
 
   const currentCaptureStep = selectedLayout?.steps[captureIndex];
 
@@ -133,8 +133,8 @@ export default function NewSession() {
 
   const capturedRequiredCount = selectedLayout
     ? selectedLayout.steps.filter(
-        (step) => step.required && pictures.some((picture) => picture.stepId === step.id)
-      ).length
+      (step) => step.required && pictures.some((picture) => picture.stepId === step.id)
+    ).length
     : 0;
 
   const captureProgress =
@@ -190,8 +190,13 @@ export default function NewSession() {
   const canContinueFromCapture =
     requiredPictureCount > 0 && capturedRequiredCount === requiredPictureCount;
 
-  const goToStep = (step: SessionStepId) => {
-    setCurrentStep(step);
+  const [maxReached, setMaxReached] = useState(0);
+
+  const goToStep = (next: SessionStepId) => {
+    const index = steps.findIndex((s) => s.id === next);
+
+    setCurrentStep(next);
+    setMaxReached((prev) => Math.max(prev, index));
   };
 
   const handlePermissionContinue = () => {
@@ -204,12 +209,14 @@ export default function NewSession() {
   };
 
   const handleLayoutContinue = () => {
-    if (!canContinueFromLayout) {
-      return;
+    if (!canContinueFromLayout) return;
+
+    if (captureLayoutId !== selectedLayoutId) {
+      setPictures([]);
+      setCaptureIndex(0);
+      setCaptureLayoutId(selectedLayoutId);
     }
 
-    setCaptureIndex(0);
-    setPictures([]);
     goToStep('capture');
   };
 
@@ -222,9 +229,9 @@ export default function NewSession() {
 
     let location:
       | {
-          latitude: number;
-          longitude: number;
-        }
+        latitude: number;
+        longitude: number;
+      }
       | undefined;
 
     if (permissions.location) {
@@ -311,17 +318,6 @@ export default function NewSession() {
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-8">
-      <div className="space-y-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <h1 className="text-2xl font-semibold tracking-tight">Create detection session</h1>
-          <Badge variant="outline">{project.name}</Badge>
-        </div>
-
-        <p className="text-sm text-muted-foreground">
-          Follow the steps to capture and submit the pictures required for this project.
-        </p>
-      </div>
-
       <Stepper
         steps={steps}
         value={currentStep}
@@ -334,9 +330,13 @@ export default function NewSession() {
             <div key={step.id} className="flex min-w-0 flex-1">
               <StepperItem
                 stepId={step.id}
+                disabled={index > maxReached || currentStep === 'complete'}
                 completed={steps.findIndex((item) => item.id === currentStep) > index}
               >
-                <StepperTrigger className="w-full justify-start px-2 py-1">
+                <StepperTrigger
+                  className="w-full justify-start px-2 py-1"
+                  onClick={() => goToStep(step.id)}
+                >
                   <StepperIndicator>{index + 1}</StepperIndicator>
 
                   <div className="hidden min-w-0 text-left md:block">

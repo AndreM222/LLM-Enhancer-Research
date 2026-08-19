@@ -14,7 +14,7 @@ import { Separator } from '@/components/ui/separator';
 
 import { SessionLayoutGroup } from '@/lib/mockApi';
 
-type CapturedPicture = {
+export type CapturedPicture = {
   id: string;
   stepId: string;
   title: string;
