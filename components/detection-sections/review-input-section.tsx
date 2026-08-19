@@ -1,30 +1,14 @@
 'use client';
 
-import {
-  Check,
-  ChevronLeft,
-  CircleAlert,
-  RotateCcw,
-  Upload,
-} from 'lucide-react';
+import { Check, ChevronLeft, CircleAlert, RotateCcw, Upload } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
-import type {
-  SessionLayoutGroup,
-} from '@/lib/mockApi';
+import type { SessionLayoutGroup } from '@/lib/mockApi';
 
-import type {
-  CapturedPicture,
-} from './action-section';
+import type { CapturedPicture } from './action-section';
 
 import { SessionImage } from './action-section';
 
@@ -51,23 +35,18 @@ export function ReviewSection({
         <CardTitle>Check pictures</CardTitle>
 
         <CardDescription>
-          Review every picture before submitting the session.
-          Retake any picture that is unclear or incorrect.
+          Review every picture before submitting the session. Retake any picture that is unclear or
+          incorrect.
         </CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-5">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {layout.steps.map((step) => {
-            const picture = pictures.find(
-              (item) => item.stepId === step.id
-            );
+            const picture = pictures.find((item) => item.stepId === step.id);
 
             return (
-              <div
-                key={step.id}
-                className="overflow-hidden rounded-xl border"
-              >
+              <div key={step.id} className="overflow-hidden rounded-xl border">
                 <div className="aspect-video bg-muted/40">
                   {picture ? (
                     <SessionImage
@@ -79,9 +58,7 @@ export function ReviewSection({
                     <div className="flex h-full flex-col items-center justify-center gap-2 text-muted-foreground">
                       <CircleAlert className="h-6 w-6 text-amber-500" />
 
-                      <span className="text-xs">
-                        Picture missing
-                      </span>
+                      <span className="text-xs">Picture missing</span>
                     </div>
                   )}
                 </div>
@@ -89,21 +66,15 @@ export function ReviewSection({
                 <div className="space-y-3 p-4">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <p className="font-medium">
-                        {step.title}
-                      </p>
+                      <p className="font-medium">{step.title}</p>
 
-                      <p className="text-xs text-muted-foreground">
-                        Picture {step.position}
-                      </p>
+                      <p className="text-xs text-muted-foreground">Picture {step.position}</p>
                     </div>
 
                     {picture ? (
                       <Check className="h-4 w-4 text-emerald-500" />
                     ) : (
-                      <Badge variant="destructive">
-                        Missing
-                      </Badge>
+                      <Badge variant="destructive">Missing</Badge>
                     )}
                   </div>
 

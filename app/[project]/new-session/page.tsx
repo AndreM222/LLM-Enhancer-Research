@@ -133,8 +133,8 @@ export default function NewSession() {
 
   const capturedRequiredCount = selectedLayout
     ? selectedLayout.steps.filter(
-      (step) => step.required && pictures.some((picture) => picture.stepId === step.id)
-    ).length
+        (step) => step.required && pictures.some((picture) => picture.stepId === step.id)
+      ).length
     : 0;
 
   const captureProgress =
@@ -229,9 +229,9 @@ export default function NewSession() {
 
     let location:
       | {
-        latitude: number;
-        longitude: number;
-      }
+          latitude: number;
+          longitude: number;
+        }
       | undefined;
 
     if (permissions.location) {

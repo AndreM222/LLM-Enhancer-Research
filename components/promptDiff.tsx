@@ -1,67 +1,99 @@
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
-export default function PromptDiff() {
+type PromptVersion = {
+  id: string;
+  version: string;
+  accuracy: number;
+  content: string;
+  updated: string;
+};
+
+type PromptDiffProps = {
+  promptName: string;
+  current: PromptVersion;
+  previous: PromptVersion;
+};
+
+export default function PromptDiff({ promptName, current, previous }: PromptDiffProps) {
   return (
     <Card className="overflow-hidden">
       <CardHeader className="space-y-2">
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div>
-            <CardTitle>Prompt diff</CardTitle>
+            <CardTitle>Prompt behavior</CardTitle>
+
             <CardDescription>
-              Compare current best prompt against the previous best version.
+              Compare the active and previous versions of{' '}
+              <span className="font-medium text-foreground">{promptName}</span>.
             </CardDescription>
           </div>
-          <div className="flex gap-2">
-            <Badge variant="secondary">Unchanged</Badge>
-            <Badge className="bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300">
-              Added
-            </Badge>
-            <Badge variant="destructive">Removed</Badge>
+
+          <div className="flex flex-wrap gap-2">
+            <Badge variant="secondary">Previous {previous.version}</Badge>
+
+            <Badge>Current {current.version}</Badge>
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-5">
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="rounded-lg border">
-            <div className="border-b flex px-3 py-2 text-sm font-medium justify-between w-full">
-              <span>Previous best prompt prompt</span>
-              <Badge>97%</Badge>
-            </div>
-            <pre className="max-h-90 overflow-auto bg-muted/30 p-4 text-sm leading-6">
-              <span className="block bg-red-500/10 text-red-700 line-through">
-                Look for scratches, dents, and broken lights.
-              </span>
-              <span className="block text-muted-foreground">
-                Return bounding boxes for each visible issue.
-              </span>
-            </pre>
-          </div>
+          <PromptVersionPanel
+            label={`Previous · ${previous.version}`}
+            accuracy={previous.accuracy}
+            content={previous.content}
+          />
 
-          <div className="rounded-lg border">
-            <div className="border-b flex px-3 py-2 text-sm font-medium justify-between w-full">
-              <span>Current best prompt</span>
-              <Badge>99%</Badge>
-            </div>
-            <pre className="max-h-90 overflow-auto bg-muted/30 p-4 text-sm leading-6">
-              <span className="block bg-green-500/10 text-green-700">
-                Look for scratches, dents, broken lights, and bumper misalignment.
-              </span>
-              <span className="block text-muted-foreground">
-                Return bounding boxes for each visible issue.
-              </span>
-            </pre>
-          </div>
+          <PromptVersionPanel
+            label={`Current · ${current.version}`}
+            accuracy={current.accuracy}
+            content={current.content}
+            active
+          />
         </div>
 
-        <div className="flex gap-2">
-          <Button>Accept changes</Button>
-          <Button variant="outline">Keep old prompt</Button>
-          <Button variant="secondary">Generate new revision</Button>
+        <div className="rounded-lg border bg-muted/20 p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-medium">Evaluation result</p>
+
+              <p className="text-xs text-muted-foreground">
+                Both versions were evaluated against the same project examples.
+              </p>
+            </div>
+
+            <Badge className="bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300">
+              +{current.accuracy - previous.accuracy}% accuracy
+            </Badge>
+          </div>
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+function PromptVersionPanel({
+  label,
+  accuracy,
+  content,
+  active = false,
+}: {
+  label: string;
+  accuracy: number;
+  content: string;
+  active?: boolean;
+}) {
+  return (
+    <div className="rounded-lg border">
+      <div className="flex items-center justify-between gap-3 border-b px-3 py-2">
+        <span className="text-sm font-medium">{label}</span>
+        <Badge variant={active ? 'default' : 'secondary'}>{accuracy}%</Badge>
+      </div>
+
+      <pre className="max-h-90 overflow-auto whitespace-pre-wrap bg-muted/30 p-4 text-sm leading-6">
+        {content}
+      </pre>
+    </div>
   );
 }

@@ -22,11 +22,16 @@ export type UsageItem = {
 
 export type Prompt = {
   id: string;
+  layoutId: string;
+  layoutStepId?: string;
   name: string;
   accuracy: string;
   status: string;
   updated: string;
   description: string;
+  model: string;
+  version: string;
+  content: string;
 };
 
 export type MarketplaceTemplate = {
@@ -453,25 +458,6 @@ export const getPlanUsage = (): UsageItem[] => [
   { label: 'Models', value: 7, limit: 10, tone: 'bg-blue-500' },
   { label: 'Templates', value: 18, limit: 25, tone: 'bg-violet-500' },
   { label: 'Seats', value: 6, limit: 8, tone: 'bg-emerald-500' },
-];
-
-export const getPrompts = (): Prompt[] => [
-  {
-    id: 'p-001',
-    name: 'Car damage detector v4',
-    accuracy: '92%',
-    status: 'best',
-    updated: '2 hours ago',
-    description: 'Improved front-bumper and fender detection with fewer false positives.',
-  },
-  {
-    id: 'p-002',
-    name: 'Car damage detector v3',
-    accuracy: '88%',
-    status: 'previous',
-    updated: '1 day ago',
-    description: 'Good baseline, but misses small scratches on dark cars.',
-  },
 ];
 
 export const getMarketplaceFilters = (): string[] => [
@@ -1759,5 +1745,164 @@ export const getLogs = (projectId?: string, serviceId?: string): Log[] => {
     if (projectId && log.projectId !== projectId) return false;
     if (serviceId && log.serviceId !== serviceId) return false;
     return true;
+  });
+};
+
+export type ProjectPromptMetric = {
+  projectId: string;
+  layoutId: string;
+  promptId: string;
+  runs: number;
+  successfulRuns: number;
+  failedRuns: number;
+  accuracy: number;
+  averageLatencyMs: number;
+  averageInputTokens: number;
+  averageOutputTokens: number;
+  estimatedCost: number;
+  lastRun: string;
+};
+
+export type ProjectPromptUsage = {
+  prompt: Prompt;
+  layout: LayoutTableData;
+  step?: LayoutStep;
+  metric?: ProjectPromptMetric;
+};
+
+const ALL_PROJECT_PROMPT_METRICS: ProjectPromptMetric[] = [
+  {
+    projectId: 'area',
+    layoutId: '1232',
+    promptId: 'p-001',
+    runs: 428,
+    successfulRuns: 413,
+    failedRuns: 15,
+    accuracy: 94,
+    averageLatencyMs: 1180,
+    averageInputTokens: 642,
+    averageOutputTokens: 184,
+    estimatedCost: 1.84,
+    lastRun: '8 minutes ago',
+  },
+];
+
+const ALL_PROMPTS: Prompt[] = [
+  {
+    id: 'p-001',
+    layoutId: '1232',
+    layoutStepId: 'step-1',
+    name: 'Car damage detector',
+    accuracy: '94%',
+    status: 'best',
+    updated: '2 hours ago',
+    description: 'Detect visible damage on the front of the vehicle.',
+    model: 'Gemini 2.5 Flash',
+    version: 'v4',
+    content: `
+Analyze the image for visible vehicle damage.
+
+Identify:
+- Scratches
+- Dents
+- Broken lights
+- Bumper misalignment
+
+Return a structured result with:
+- label
+- confidence
+- bounding box
+    `.trim(),
+  },
+  {
+    id: 'p-002',
+    layoutId: '1232',
+    layoutStepId: 'step-2',
+    name: 'Vehicle label reader',
+    accuracy: '96%',
+    status: 'best',
+    updated: '5 hours ago',
+    description: 'Read the barcode and printed vehicle information.',
+    model: 'Gemini 2.5 Flash',
+    version: 'v2',
+    content: `
+Read the barcode and printed information in the image.
+
+Return:
+- barcode value
+- visible text
+- confidence
+    `.trim(),
+  },
+  {
+    id: 'p-003',
+    layoutId: '1235',
+    name: 'Drawing analyzer',
+    accuracy: '89%',
+    status: 'previous',
+    updated: '1 day ago',
+    description: 'Analyze the structure and strokes in the drawing.',
+    model: 'Gemini 2.5 Pro',
+    version: 'v3',
+    content: `
+Analyze the drawing and identify the visible strokes,
+regions, and structural elements.
+    `.trim(),
+  },
+];
+
+export const getPromptsByLayoutId = (layoutId: string): Prompt[] => {
+  return ALL_PROMPTS.filter((prompt) => prompt.layoutId === layoutId);
+};
+
+export const getProjectPrompts = (projectId?: string): Prompt[] => {
+  if (!projectId) {
+    return [];
+  }
+
+  const project = getProjectById(projectId);
+
+  if (!project) {
+    return [];
+  }
+
+  const layoutIds = project.layoutIds ?? [];
+
+  return ALL_PROMPTS.filter((prompt) => layoutIds.includes(prompt.layoutId));
+};
+
+export const getProjectPromptUsage = (projectId?: string): ProjectPromptUsage[] => {
+  if (!projectId) {
+    return [];
+  }
+
+  const layouts = getProjectLayouts(projectId);
+  const sessionLayouts = getProjectSessionLayouts(projectId);
+
+  return getProjectPrompts(projectId).flatMap((prompt) => {
+    const layout = layouts.find((item) => item.id === prompt.layoutId);
+
+    if (!layout) {
+      return [];
+    }
+
+    const sessionLayout = sessionLayouts.find((item) => item.id === prompt.layoutId);
+
+    const step = prompt.layoutStepId
+      ? sessionLayout?.steps.find((item) => item.id === prompt.layoutStepId)
+      : undefined;
+
+    const metric = ALL_PROJECT_PROMPT_METRICS.find(
+      (item) => item.projectId === projectId && item.promptId === prompt.id
+    );
+
+    return [
+      {
+        prompt,
+        layout,
+        step,
+        metric,
+      },
+    ];
   });
 };

@@ -36,32 +36,32 @@ const feedbackTypes: {
   label: string;
   icon: typeof MessageSquare;
 }[] = [
-    {
-      value: 'general',
-      label: 'General feedback',
-      icon: MessageSquare,
-    },
-    {
-      value: 'bug',
-      label: 'Report a bug',
-      icon: Bug,
-    },
-    {
-      value: 'feature',
-      label: 'Suggest an improvement',
-      icon: Lightbulb,
-    },
-    {
-      value: 'positive',
-      label: 'Something worked well',
-      icon: ThumbsUp,
-    },
-    {
-      value: 'negative',
-      label: 'Something went wrong',
-      icon: ThumbsDown,
-    },
-  ];
+  {
+    value: 'general',
+    label: 'General feedback',
+    icon: MessageSquare,
+  },
+  {
+    value: 'bug',
+    label: 'Report a bug',
+    icon: Bug,
+  },
+  {
+    value: 'feature',
+    label: 'Suggest an improvement',
+    icon: Lightbulb,
+  },
+  {
+    value: 'positive',
+    label: 'Something worked well',
+    icon: ThumbsUp,
+  },
+  {
+    value: 'negative',
+    label: 'Something went wrong',
+    icon: ThumbsDown,
+  },
+];
 
 export function FeedbackDialog({ open, onOpenChange, context }: FeedbackDialogProps) {
   const [type, setType] = useState<FeedbackType>('general');
