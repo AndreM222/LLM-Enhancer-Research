@@ -1,6 +1,6 @@
 'use client';
 
-import { Camera, ChevronRight, CircleAlert, MapPin } from 'lucide-react';
+import { Camera, ChevronRight, CircleAlert, LogOut, MapPin } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,12 +18,14 @@ export function PermissionsSection({
   onCameraChange,
   onLocationChange,
   onContinue,
+  onReturn,
 }: {
   permissions: PermissionState;
   message: string;
   onCameraChange: (value: boolean) => void;
   onLocationChange: (value: boolean) => void;
   onContinue: () => void;
+  onReturn: () => void;
 }) {
   return (
     <Card>
@@ -60,7 +62,12 @@ export function PermissionsSection({
           </div>
         )}
 
-        <div className="flex justify-end">
+        <div className="flex justify-between">
+          <Button onClick={onReturn}>
+            <LogOut className="mr-2 h-4 w-4" />
+            Return to project
+          </Button>
+
           <Button onClick={onContinue}>
             Continue
             <ChevronRight className="ml-2 h-4 w-4" />

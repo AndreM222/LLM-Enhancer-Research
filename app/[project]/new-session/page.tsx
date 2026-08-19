@@ -17,11 +17,11 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { getProjectById, getProjectSessionLayouts } from '@/lib/mockApi';
-import { PermissionsSection } from './introduction-section';
-import { LayoutSection } from './layout-selector-section';
-import { CaptureSection } from './action-section';
-import { ReviewSection } from './review-input-section';
-import { CompleteSection } from './submission-section';
+import { CaptureSection } from '@/components/detection-sections/action-section';
+import { PermissionsSection } from '@/components/detection-sections/introduction-section';
+import { LayoutSection } from '@/components/detection-sections/layout-selector-section';
+import { ReviewSection } from '@/components/detection-sections/review-input-section';
+import { CompleteSection } from '@/components/detection-sections/submission-section';
 
 type SessionStepId = 'permissions' | 'layout' | 'capture' | 'review' | 'complete';
 
@@ -133,8 +133,8 @@ export default function NewSession() {
 
   const capturedRequiredCount = selectedLayout
     ? selectedLayout.steps.filter(
-      (step) => step.required && pictures.some((picture) => picture.stepId === step.id)
-    ).length
+        (step) => step.required && pictures.some((picture) => picture.stepId === step.id)
+      ).length
     : 0;
 
   const captureProgress =
@@ -229,9 +229,9 @@ export default function NewSession() {
 
     let location:
       | {
-        latitude: number;
-        longitude: number;
-      }
+          latitude: number;
+          longitude: number;
+        }
       | undefined;
 
     if (permissions.location) {
@@ -377,6 +377,7 @@ export default function NewSession() {
                 }
               }}
               onContinue={handlePermissionContinue}
+              onReturn={() => router.push(`/${projectId}`)}
             />
           </StepperContent>
 
@@ -399,8 +400,7 @@ export default function NewSession() {
               isCapturing={isCapturing}
               onCapture={capturePicture}
               onBack={() => goToStep('layout')}
-              onReview={() => goToStep('review')}
-            />
+              onReview={() => goToStep('review')} canReview={false}            />
           </StepperContent>
 
           <StepperContent value="review">

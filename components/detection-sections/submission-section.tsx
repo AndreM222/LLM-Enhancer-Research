@@ -1,8 +1,6 @@
 'use client';
 
-import {
-  Check,
-} from 'lucide-react';
+import { Check, LogOut } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -33,6 +31,7 @@ export function CompleteSection({
 
         <Button className="mt-6" onClick={onReturn}>
           Return to project
+          <LogOut className="mr-2 h-4 w-4" />
         </Button>
 
         <p className="mt-3 text-xs text-muted-foreground">Project: {projectId}</p>

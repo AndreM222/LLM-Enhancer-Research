@@ -65,26 +65,13 @@ export function LayoutSection({
                     <p className="mt-1 text-sm text-muted-foreground">{layout.description}</p>
 
                     <div className="mt-3 flex flex-wrap gap-1">
-                      <Badge variant="secondary">{layout.steps.length} pictures</Badge>
-
                       <Badge variant="outline">
                         {layout.steps.filter((step) => step.required).length} required
                       </Badge>
-                    </div>
 
-                    <div className="mt-4 space-y-2">
-                      {layout.steps.map((step) => (
-                        <div
-                          key={step.id}
-                          className="flex items-center gap-2 text-xs text-muted-foreground"
-                        >
-                          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-muted text-[10px]">
-                            {step.position}
-                          </span>
-                          <span>{step.title}</span>
-                          {!step.required && <span className="ml-auto">Optional</span>}
-                        </div>
-                      ))}
+                      <Badge variant="outline">
+                        {layout.steps.filter((step) => !step.required).length} optional
+                      </Badge>
                     </div>
                   </div>
                 </div>
