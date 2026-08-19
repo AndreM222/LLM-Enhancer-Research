@@ -16,10 +16,12 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { LogOut, UserCircle, Wallet } from 'lucide-react';
+import { LogOut, MessageSquareWarning, UserCircle, Wallet } from 'lucide-react';
 import { FaGear } from 'react-icons/fa6';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { useState } from 'react';
+import { FeedbackDialog } from './dialogs/feedback-dialog';
 
 const sizeConfig = {
   sm: { avatar: 'h-8 w-8', name: 'text-sm', email: 'text-xs' },
@@ -95,58 +97,71 @@ export function NavUser({
     avatar: string;
   };
 }) {
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const { isMobile } = useSidebar();
 
   return (
-    <SidebarMenu>
-      <SidebarMenuItem>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+    <div>
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <SidebarMenuButton
+                size="lg"
+                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              >
+                <AccountBanner user={user} />
+              </SidebarMenuButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+              side={isMobile ? 'bottom' : 'right'}
+              align="end"
+              sideOffset={4}
             >
-              <AccountBanner user={user} />
-            </SidebarMenuButton>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-            side={isMobile ? 'bottom' : 'right'}
-            align="end"
-            sideOffset={4}
-          >
-            <DropdownMenuLabel className="p-0 font-normal">
-              <AccountBanner user={user} />
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem asChild>
-                <Link href="/settings/account">
-                  <UserCircle />
-                  Account
-                </Link>
+              <DropdownMenuLabel className="p-0 font-normal text-accent-foreground">
+                <AccountBanner user={user} />
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem asChild>
+                  <Link href="/settings/account">
+                    <UserCircle />
+                    Account
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/settings">
+                    <FaGear />
+                    Settings
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/billing">
+                    <Wallet />
+                    Billing
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFeedbackOpen(true)}>
+                  <MessageSquareWarning />
+                  Feedback
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <LogOut />
+                Log out
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/settings">
-                  <FaGear />
-                  Settings
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/billing">
-                  <Wallet />
-                  Billing
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut />
-              Log out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </SidebarMenuItem>
-    </SidebarMenu>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </SidebarMenuItem>
+      </SidebarMenu>
+
+      <FeedbackDialog
+        open={feedbackOpen}
+        onOpenChange={setFeedbackOpen}
+        context="new-session-capture"
+      />
+    </div>
   );
 }
